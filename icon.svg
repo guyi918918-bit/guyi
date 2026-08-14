@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="112" fill="#0066cc"/>
+  <rect x="64" y="64" width="384" height="384" rx="80" fill="#ffffff" opacity="0.06"/>
+  <text x="50%" y="46%" text-anchor="middle" dominant-baseline="central" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif" font-size="240" font-weight="700" fill="#ffffff">D</text>
+  <text x="50%" y="76%" text-anchor="middle" dominant-baseline="central" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif" font-size="64" font-weight="600" fill="#ffffff" opacity="0.92">工作台</text>
+</svg>
