@@ -1,0 +1,43 @@
+name: 保活 Supabase（防免费版休眠）
+
+# 作用：每天自动访问一次 Supabase 数据库，避免「连续 7 天无请求被暂停」。
+# 同时每次运行向本仓库写一条时间戳（push），避免 GitHub 在 60 天无活动时
+# 自动禁用这个定时任务本身。
+
+on:
+  schedule:
+    # 每天 UTC 12:00 跑一次（北京时间 20:00）。想改时间改这里即可。
+    - cron: '0 12 * * *'
+  # 允许在 Actions 页面手动点「Run workflow」立刻测一次
+  workflow_dispatch: {}
+
+# 需要写回仓库（记录时间戳），给 push 权限
+permissions:
+  contents: write
+
+jobs:
+  keepalive:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 拉取仓库
+        uses: actions/checkout@v4
+
+      - name: Ping Supabase（触发一次数据库查询，防止休眠）
+        run: |
+          CODE=$(curl -s -o /dev/null -w "%{http_code}" \
+            "${{ secrets.SUPABASE_URL }}/rest/v1/wb_kv?select=count" \
+            -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}")
+          echo "Supabase 响应 HTTP 状态码: $CODE"
+          if [ "$CODE" != "200" ]; then
+            echo "⚠️ 警告：Supabase 返回非 200，请检查 Secrets 里的 URL / anon key 是否正确"
+          fi
+
+      - name: 保持 Actions 活跃（写时间戳，防止 60 天无活动被 GitHub 禁用）
+        run: |
+          date -u "+%Y-%m-%dT%H:%M:%SZ" > ping-log.txt
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add ping-log.txt
+          git commit -m "chore: keepalive ping $(date -u)" || echo "无变化，跳过"
+          git push
