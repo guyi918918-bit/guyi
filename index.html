@@ -2763,6 +2763,44 @@ body.dark-mode *::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255
       .header-actions .btn-sm,
       .header-actions .theme-toggle { font-size: 12px; padding: 6px 8px; }
     }
+
+    /* [UX] dash 按钮与全局 .btn-sm 视觉对齐 */
+    .dash-btn {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 7px 14px; border-radius: 10px; border: 1px solid var(--border-color, rgba(0,0,0,.12));
+      background: var(--header-bg, #fff); color: var(--ui-text, #1d1d1f);
+      font-size: 14px; cursor: pointer; transition: background .15s, transform .1s;
+    }
+    .dash-btn:hover { background: #f2f2f7; }
+    .dash-btn:active { transform: scale(.97); }
+    .dash-btn.warn { color: #c45c5c; border-color: rgba(196,92,92,.4); }
+
+    /* [UX] 危险操作视觉降级 */
+    .btn-danger-soft {
+      background: #fff !important; color: #c45c5c !important;
+      border: 1px solid rgba(196,92,92,.45) !important; font-weight: 600;
+    }
+    .btn-danger-soft:hover { background: #fff5f5 !important; }
+
+    /* [UX] 云端空间进度环 */
+    .storage-ring-wrap { display: flex; align-items: center; gap: 12px; padding: 4px 2px 10px; }
+    .storage-ring { flex: 0 0 auto; }
+    .storage-ring-label { font-size: 12px; color: var(--ui-text-soft, #6e6e73); line-height: 1.4; }
+
+    /* [UX] 命令面板 Cmd+K */
+    .cmdk-overlay {
+      position: fixed; inset: 0; z-index: 9999; display: none;
+      background: rgba(0,0,0,.35); backdrop-filter: blur(2px);
+      align-items: flex-start; justify-content: center; padding-top: 12vh;
+    }
+    .cmdk-overlay.show { display: flex; }
+    .cmdk { width: min(560px, 92vw); background: #fff; border-radius: 14px; overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,.25); }
+    .cmdk-input { width: 100%; border: 0; border-bottom: 1px solid #ececf0; padding: 14px 16px; font-size: 15px; outline: none; }
+    .cmdk-list { list-style: none; margin: 0; padding: 6px; max-height: 50vh; overflow-y: auto; }
+    .cmdk-item { padding: 11px 14px; border-radius: 9px; font-size: 14px; cursor: pointer; color: #1d1d1f; }
+    .cmdk-item.active, .cmdk-item:hover { background: #f2f2f7; }
+    .cmdk-empty { padding: 14px; color: #8a8a8e; font-size: 14px; text-align: center; }
   </style>
 </head>
 <body>
@@ -3308,7 +3346,7 @@ body.dark-mode *::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255
         <span>⚙ 检索设置（设置后自动筛选本页；每日自动任务按此范围抓取新情报）</span>
         <button class="cfg-toggle" id="intelCfgToggle">展开 / 收起</button>
       </div>
-      <div class="cfg-body" id="intelCfgBox" style="display:none;">
+      <div class="cfg-body" id="intelCfgBox">
         <div class="cfg-row">
           <label>覆盖省份（四川为主，云贵渝陕为辅）</label>
           <div class="cfg-chks" id="intelRegions"></div>
@@ -6884,6 +6922,19 @@ select to_regclass('public.wb_kv');</div>
         }, type === 'err' ? 4200 : 2400);
       }
 
+      // [UX] 统一反馈：原生 alert 重定向为非阻塞 toast（审查优化）
+      (function () {
+        var OK_RE = /✅|成功|已保存|已添加|已连接|已完成|已恢复|已导出|已导入|已更新|拉取成功|同步成功|已复制|已生成|已写入|已应用/;
+        var ERR_RE = /失败|错误|不存在|无效|不能为空|请(输入|选择|填写)|无法|异常|冲突|超时|网络|拒绝|未配置|不正确|已存在|为空|不完整/;
+        window.alert = function (msg) {
+          msg = String(msg == null ? '' : msg);
+          var type = 'info';
+          if (OK_RE.test(msg)) type = 'ok';
+          else if (ERR_RE.test(msg)) type = 'err';
+          toast(msg, type);
+        };
+      })();
+
       // 静默执行：临时屏蔽 alert，用于自动保存复用原有保存函数
       function silent(fn) {
         var a = window.alert, c = window.confirm;
@@ -7159,12 +7210,23 @@ select to_regclass('public.wb_kv');</div>
           return '<div class="storage-row"><span class="storage-row-icon">' + g.icon + '</span><span class="storage-row-name">' + g.name + '</span><span class="storage-row-size">约 ' + formatBytes(g.bytes) + '</span><span class="storage-row-pct">占免费 500MB 的 ' + pctOfFree + '%</span></div>';
         }).join('');
 
+        function ringSvg(pct) {
+          pct = Math.max(0, Math.min(1, pct || 0));
+          var r = 26, c = 2 * Math.PI * r, off = c * (1 - pct);
+          var col = pct > 0.8 ? '#c45c5c' : (pct > 0.5 ? '#e0a458' : '#00b894');
+          return '<svg class="storage-ring" viewBox="0 0 64 64" width="64" height="64" aria-hidden="true">' +
+            '<circle cx="32" cy="32" r="' + r + '" fill="none" stroke="#ececf0" stroke-width="6"/>' +
+            '<circle cx="32" cy="32" r="' + r + '" fill="none" stroke="' + col + '" stroke-width="6" stroke-linecap="round" stroke-dasharray="' + c.toFixed(1) + '" stroke-dashoffset="' + off.toFixed(1) + '" transform="rotate(-90 32 32)"/>' +
+            '<text x="32" y="37" text-anchor="middle" font-size="13" font-weight="700" fill="#1d1d1f">' + (pct * 100).toFixed(1) + '%</text></svg>';
+        }
+        var ringHtml = '<div class="storage-ring-wrap">' + ringSvg(st.percent) + '<span class="storage-ring-label">占免费额度<br>' + formatBytes(st.total) + '</span></div>';
+
         var lastRun = 0;
         try { lastRun = parseInt(localStorage.getItem(MAINT.lastRunKey) || '0', 10) || 0; } catch (e) {}
         var lastRunTxt = lastRun ? new Date(lastRun).toLocaleString('zh-CN') : '尚未整理';
 
         return '<div class="storage-panel">' +
-          '<div class="storage-head"><span class="storage-head-icon">💽</span><span class="storage-head-title">云端空间占用（Supabase 免费版 500MB）</span></div>' +
+          '<div class="storage-head"><span class="storage-head-icon">💽</span><span class="storage-head-title">云端空间占用（Supabase 免费版 500MB）</span></div>' + ringHtml +
           '<div class="storage-card">' + rowsHtml +
             '<div class="storage-total">合计约 <b>' + formatBytes(st.total) + '</b> · 占免费额度 <b>' + (st.percent * 100).toFixed(4) + '%</b></div>' +
             (st.imageBytes ? '<div class="storage-img-note">图片附件约 ' + formatBytes(st.imageBytes) + '（已自动压缩）</div>' : '') +
@@ -8053,6 +8115,139 @@ select to_regclass('public.wb_kv');</div>
       }
 
       /* ============================================================
+       * 8.5 [UX] 体验增强：快捷键 / 恢复防护 / 命令面板
+       *     （审查优化：统一反馈、效率操作、可发现性）
+       * ============================================================ */
+      var CMDK_TABS = [
+        { id: 'dash', label: '🛰️ 情报搜集' },
+        { id: 'inspire', label: '💡 灵感早报' },
+        { id: 'work', label: '📋 日常工作' },
+        { id: 'projects', label: '📁 项目管理' },
+        { id: 'clients', label: '👥 客户管理' },
+        { id: 'recycle', label: '🗑️ 回收站' }
+      ];
+
+      function gotoTop(tab) {
+        try { if (window.showTop) { window.showTop(tab); return; } } catch (e) {}
+        var sel = document.querySelector('.top-tab[data-tab="' + tab + '"], .tab-btn[data-tab="' + tab + '"]');
+        if (sel) sel.click();
+      }
+
+      function initUXEnhancements() {
+        // —— 全局快捷键 ——
+        document.addEventListener('keydown', function (e) {
+          var t = e.target;
+          var typing = t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable);
+
+          if (e.key === 'Escape') {
+            document.querySelectorAll('.modal.show, .overlay.show, [data-modal].show, .popup.show, .cmdk-overlay.show').forEach(function (m) { m.classList.remove('show'); });
+            return;
+          }
+          if ((e.ctrlKey || e.metaKey) && (e.key === 's' || e.key === 'S')) {
+            e.preventDefault();
+            toast('数据已实时自动保存 ✅', 'ok');
+            return;
+          }
+          if (typing) return;
+
+          // 板块切换 ←/→ 或 j/k
+          if (e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'j' || e.key === 'k') {
+            var tabs = document.querySelectorAll('.tab-btn, [data-tab]');
+            if (!tabs.length) return;
+            var idx = -1;
+            tabs.forEach(function (b, i) { if (b.classList.contains('active')) idx = i; });
+            if (idx < 0) return;
+            var dir = (e.key === 'ArrowRight' || e.key === 'k') ? 1 : -1;
+            var next = tabs[idx + dir];
+            if (next) { e.preventDefault(); next.click(); }
+            return;
+          }
+          // / 聚焦搜索
+          if (e.key === '/') {
+            var box = document.querySelector('.panel.show input[type="search"], .panel.show input[placeholder*="搜索"], .panel.show input[placeholder*="筛选"], .panel.show input[placeholder*="关键词"]');
+            if (box) { e.preventDefault(); box.focus(); }
+          }
+        });
+
+        // —— 恢复按钮防护：视觉降级 + 点击自动快照 ——
+        try {
+          document.querySelectorAll('button').forEach(function (b) {
+            if (b.title && b.title.indexOf('恢复数据') >= 0) {
+              b.classList.add('btn-danger-soft');
+              b.title = '⚠️ 会覆盖全部数据；点击前已自动备份当前数据到本地快照';
+              b.addEventListener('click', function () {
+                try {
+                  var snap = {};
+                  SYNC_KEYS.forEach(function (k) { var v = localStorage.getItem(k); if (v != null) snap[k] = v; });
+                  localStorage.setItem('wb_restore_snapshot', JSON.stringify(snap));
+                  toast('已自动备份当前数据到本地快照，可回退', 'info');
+                } catch (e) {}
+              }, true);
+            }
+          });
+        } catch (e) {}
+
+        // —— 命令面板 ——
+        initCommandPalette();
+      }
+
+      function initCommandPalette() {
+        var overlay, input, list;
+        function ensure() {
+          if (overlay) return;
+          overlay = document.createElement('div');
+          overlay.className = 'cmdk-overlay';
+          overlay.id = 'cmdkOverlay';
+          overlay.innerHTML = '<div class="cmdk"><input class="cmdk-input" id="cmdkInput" placeholder="输入以筛选：板块 / 备份 / 整理 / 刷新 / 暗色…" /><ul class="cmdk-list" id="cmdkList"></ul></div>';
+          overlay.addEventListener('click', function (e) { if (e.target === overlay) overlay.classList.remove('show'); });
+          document.body.appendChild(overlay);
+          input = overlay.querySelector('#cmdkInput');
+          list = overlay.querySelector('#cmdkList');
+          input.addEventListener('input', render);
+          input.addEventListener('keydown', onKey);
+        }
+        var items = [];
+        function build() {
+          items = CMDK_TABS.map(function (x) { return { label: '前往 ' + x.label, run: function () { gotoTop(x.id); } }; });
+          items.push({ label: '📦 备份全部数据', run: function () { try { window.exportAllDataJSON && window.exportAllDataJSON(); } catch (e) {} } });
+          items.push({ label: '🧹 整理云空间', run: function () { try { window.runStorageMaintenance && window.runStorageMaintenance(true); } catch (e) {} } });
+          items.push({ label: '↻ 刷新情报搜集', run: function () { var b = document.getElementById('dashRefresh'); if (b) b.click(); } });
+          items.push({ label: '🌓 切换暗色模式', run: function () { try { window.toggleDarkMode && window.toggleDarkMode(); } catch (e) {} } });
+          items.push({ label: '⚙ 打开云同步设置', run: function () { var b = document.getElementById('syncBadge'); if (b) b.click(); } });
+        }
+        var active = 0;
+        function render() {
+          var q = (input.value || '').trim().toLowerCase();
+          var filtered = items.filter(function (it) { return !q || it.label.toLowerCase().indexOf(q) >= 0; });
+          if (!filtered.length) { list.innerHTML = '<li class="cmdk-empty">无匹配</li>'; return; }
+          list.innerHTML = filtered.map(function (it, i) {
+            return '<li class="cmdk-item' + (i === active ? ' active' : '') + '" data-i="' + i + '">' + it.label + '</li>';
+          }).join('');
+          Array.prototype.forEach.call(list.querySelectorAll('.cmdk-item'), function (li) {
+            li.addEventListener('click', function () { exec(filtered[+li.dataset.i]); });
+          });
+        }
+        function exec(it) { if (!it) return; overlay.classList.remove('show'); it.run(); }
+        function onKey(e) {
+          var q = (input.value || '').trim().toLowerCase();
+          var filtered = items.filter(function (it) { return !q || it.label.toLowerCase().indexOf(q) >= 0; });
+          if (!filtered.length) return;
+          if (e.key === 'ArrowDown') { e.preventDefault(); active = Math.min(filtered.length - 1, active + 1); render(); }
+          else if (e.key === 'ArrowUp') { e.preventDefault(); active = Math.max(0, active - 1); render(); }
+          else if (e.key === 'Enter') { e.preventDefault(); exec(filtered[active]); }
+        }
+        document.addEventListener('keydown', function (e) {
+          if ((e.ctrlKey || e.metaKey) && (e.key === 'k' || e.key === 'K')) {
+            e.preventDefault();
+            ensure(); build();
+            overlay.classList.add('show');
+            input.value = ''; active = 0; render();
+            setTimeout(function () { input.focus(); }, 30);
+          }
+        });
+      }
+
+      /* ============================================================
        * 9. 包装原有加载 / 保存函数，串入草稿逻辑
        * ============================================================ */
       function wrapLoad(name, type) {
@@ -8089,6 +8284,7 @@ select to_regclass('public.wb_kv');</div>
           wrapSave('saveMonthly', 'monthly');
 
           bindDraftAutosave();
+          initUXEnhancements();
 
           // 首屏补一次草稿恢复与分组渲染
           try { applyDraft('daily'); } catch (e) {}
