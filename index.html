@@ -2801,6 +2801,16 @@ body.dark-mode *::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255
     .cmdk-item { padding: 11px 14px; border-radius: 9px; font-size: 14px; cursor: pointer; color: #1d1d1f; }
     .cmdk-item.active, .cmdk-item:hover { background: #f2f2f7; }
     .cmdk-empty { padding: 14px; color: #8a8a8e; font-size: 14px; text-align: center; }
+
+    /* [UX] 客户卡可折叠紧凑化 */
+    .client-toggle { cursor: pointer; user-select: none; display: flex; align-items: center; flex-wrap: wrap; gap: 4px; }
+    .client-caret { display: inline-block; transition: transform .18s ease; color: var(--ui-text-soft, #6e6e73);
+      font-size: 11px; width: 12px; text-align: center; }
+    .client-item.expanded .client-caret { transform: rotate(90deg); }
+    .client-quick { font-size: 13px; color: var(--ui-text-soft, #6e6e73); margin: 3px 0 0; }
+    .client-detail { display: none; margin-top: 4px; font-size: 13px; color: var(--ui-text-soft, #6e6e73); }
+    .client-detail > div { margin: 1px 0; }
+    .client-item.expanded .client-detail { display: block; }
   </style>
 </head>
 <body>
@@ -3764,7 +3774,7 @@ body.dark-mode *::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255
       return formatDateCN(start) + ' ~ ' + formatDateCN(end);
     }
 
-    function getStorage(key) { let s = localStorage.getItem(key); return s ? JSON.parse(s) : []; }
+    function getStorage(key) { try { let s = localStorage.getItem(key); return s ? JSON.parse(s) : []; } catch (e) { console.error('[getStorage] 解析失败，已重置为空数组:', key, e); return []; } }
 
     function setStorage(key, arr) { localStorage.setItem(key, JSON.stringify(arr)); }
 
@@ -4261,27 +4271,30 @@ body.dark-mode *::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255
         const upcomingHtml = isUrgent ?
           `<div class="upcoming-badge">🔔 预警：${upcoming.map(u => `${u.month}月（${u.activity}）`).join('、')}</div>` :
           '';
-        return `
-                  <div class="client-item ${isUrgent ? 'urgent' : ''}">
-                      <input type="checkbox" class="client-select" value="${c.name}" />
-                      <div class="info">
-                          <div class="name">
-                              ${c.name}
-                              ${levelTag}
-                              ${importanceTag}
-                              ${closenessTag}
-                          </div>
-                          <div>联系人：${c.contact || '-'} ｜ 电话：${c.phone || '-'}</div>
+      return `
+              <div class="client-item ${isUrgent ? 'urgent' : ''}">
+                  <input type="checkbox" class="client-select" value="${c.name}" />
+                  <div class="info">
+                      <div class="name client-toggle">
+                          <span class="client-caret">▸</span>
+                          ${c.name}
+                          ${levelTag}
+                          ${importanceTag}
+                          ${closenessTag}
+                      </div>
+                      <div class="client-quick">联系人：${c.contact || '-'} ｜ 电话：${c.phone || '-'}</div>
+                      <div class="client-detail">
                           <div>行业：${c.industry || '-'} ｜ 备注：${c.remark || '-'}</div>
                           <div class="history-item">📋 过往消费：${historyStr}</div>
-                          ${upcomingHtml}
                       </div>
-                      <div class="actions">
-                          <button onclick="editClient('${c.name}')">✎ 编辑</button>
-                          <span class="del-client" onclick="deleteClient('${c.name}')">✖</span>
-                      </div>
+                      ${upcomingHtml}
                   </div>
-              `;
+                  <div class="actions">
+                      <button onclick="editClient('${c.name}')">✎ 编辑</button>
+                      <span class="del-client" onclick="deleteClient('${c.name}')">✖</span>
+                  </div>
+              </div>
+          `;
       }).join('');
       document.getElementById('selectAllClients').checked = false;
       updateClientDatalist();
@@ -5249,7 +5262,7 @@ body.dark-mode *::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255
     }
 
     // ====================== 周报（去重） ======================
-    document.getElementById('w-week').addEventListener('change', function() { updateWeeklyDateInfo(); });
+    document.getElementById('w-week').addEventListener('change', function() { updateWeeklyDateInfo(); loadWeekAutoData(); });
 
     function updateWeeklyDateInfo() {
       const val = document.getElementById('w-week').value;
@@ -5453,6 +5466,7 @@ body.dark-mode *::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255
     // ====================== 月报（去重） ======================
     document.getElementById('m-month').addEventListener('change', function() {
       document.getElementById('m-date-info').textContent = '📌 所选月份: ' + this.value;
+      loadMonthAutoData();
     });
 
     function loadMonthAutoData() {
@@ -8134,6 +8148,14 @@ select to_regclass('public.wb_kv');</div>
       }
 
       function initUXEnhancements() {
+        // —— 客户卡折叠（委托点击）——
+        document.addEventListener('click', function (e) {
+          var toggle = e.target.closest && e.target.closest('.client-toggle');
+          if (!toggle) return;
+          var item = toggle.closest('.client-item');
+          if (item) item.classList.toggle('expanded');
+        });
+
         // —— 全局快捷键 ——
         document.addEventListener('keydown', function (e) {
           var t = e.target;
