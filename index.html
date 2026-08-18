@@ -11,7 +11,7 @@
   <link rel="icon" type="image/png" href="./icon-192.png" />
   <link rel="apple-touch-icon" href="./icon-192.png" />
   <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIuiupOecn+W3peS9nOWPsCIsCiAgInNob3J0X25hbWUiOiAi5bel5L2c5Y+wIiwKICAiZGVzY3JpcHRpb24iOiAi5Zub5bed5rS75Yqo5oOF5oql5pCc6ZuG5LiO5pS/5LyB5a6i5oi3566h55CGIiwKICAic3RhcnRfdXJsIjogIi4vIiwKICAic2NvcGUiOiAiLi8iLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJvcmllbnRhdGlvbiI6ICJwb3J0cmFpdCIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiI2Y1ZjVmNyIsCiAgInRoZW1lX2NvbG9yIjogIiMwMDY2Y2MiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24tMTkyLnBuZyIsCiAgICAgICJzaXplcyI6ICIxOTJ4MTkyIiwKICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIiwKICAgICAgInB1cnBvc2UiOiAiYW55IgogICAgfSwKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24tNTEyLnBuZyIsCiAgICAgICJzaXplcyI6ICI1MTJ4NTEyIiwKICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIiwKICAgICAgInB1cnBvc2UiOiAiYW55IgogICAgfSwKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24uc3ZnIiwKICAgICAgInNpemVzIjogImFueSIsCiAgICAgICJ0eXBlIjogImltYWdlL3N2Zyt4bWwiLAogICAgICAicHVycG9zZSI6ICJhbnkiCiAgICB9CiAgXQp9Cg==" />
-  <script>window.APP_VERSION = "build@1787034351";</script>
+  <script>window.APP_VERSION = "build@1787035995";</script>
   <title>DSC销售 · 项目管理工作台（完整版）</title>
   <script src="./xlsx.full.min.js"></script>
   <script>
@@ -2884,14 +2884,31 @@ body.dark-mode *::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255
       visibility: hidden; opacity: 0;
       position: absolute; bottom: 135%; left: 50%;
       transform: translateX(-50%);
-      width: max-content; max-width: 340px;
+      width: max-content; min-width: 220px; max-width: 340px;
       background: #1d1d1f; color: #fff;
-      font-size: 12px; font-weight: 400; line-height: 1.6;
-      text-align: left; padding: 9px 11px; border-radius: 9px;
-      box-shadow: 0 6px 22px rgba(0, 0, 0, .28);
+      font-size: 12px; font-weight: 400;
+      text-align: left; padding: 12px 14px; border-radius: 12px;
+      box-shadow: 0 8px 26px rgba(0, 0, 0, .30);
       z-index: 10000; transition: opacity .15s ease;
       pointer-events: none;
     }
+    .info-icon .tooltip .tt-title {
+      display: block; font-weight: 700; font-size: 12px;
+      margin-bottom: 8px; padding-bottom: 6px;
+      border-bottom: 1px solid rgba(255, 255, 255, .18);
+      letter-spacing: .3px;
+    }
+    .info-icon .tooltip .tt-row {
+      display: flex; align-items: baseline; gap: 8px;
+      line-height: 1.8; white-space: normal;
+    }
+    .info-icon .tooltip .tt-k {
+      flex: 0 0 auto; min-width: 22px; text-align: center;
+      font-weight: 700; color: #8fd0ff;
+      background: rgba(143, 208, 255, .14);
+      border-radius: 5px; padding: 1px 5px; line-height: 1.5;
+    }
+    .info-icon .tooltip .tt-d { flex: 1 1 auto; color: #f2f2f2; }
     .info-icon:hover .tooltip,
     .info-icon:focus .tooltip,
     .info-icon:focus-within .tooltip { visibility: visible; opacity: 1; }
@@ -3304,7 +3321,7 @@ body.dark-mode *::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255
         <option value="importance">重要程度</option>
         <option value="closeness">紧密程度</option>
       </select>
-      <label>级别 <span class="info-icon" tabindex="0">ⓘ<span class="tooltip">级别编码：43 利润＞20万｜42 利润10–20万｜41 利润5–10万｜40 利润＜5万｜34 危机客户｜33 两年以上未成交老客户｜32 需求客户｜31 手微客户｜22 负责人客户（仅座机/负责人姓名）</span></span></label>
+      <label>级别 <span class="info-icon" tabindex="0">ⓘ<span class="tooltip"><span class="tt-title">客户级别编码</span><span class="tt-row"><span class="tt-k">43</span><span class="tt-d">利润 ＞ 20 万</span></span><span class="tt-row"><span class="tt-k">42</span><span class="tt-d">利润 10–20 万</span></span><span class="tt-row"><span class="tt-k">41</span><span class="tt-d">利润 5–10 万</span></span><span class="tt-row"><span class="tt-k">40</span><span class="tt-d">利润 ＜ 5 万</span></span><span class="tt-row"><span class="tt-k">34</span><span class="tt-d">危机客户</span></span><span class="tt-row"><span class="tt-k">33</span><span class="tt-d">两年以上未成交老客户</span></span><span class="tt-row"><span class="tt-k">32</span><span class="tt-d">需求客户</span></span><span class="tt-row"><span class="tt-k">31</span><span class="tt-d">手微客户</span></span><span class="tt-row"><span class="tt-k">22</span><span class="tt-d">负责人客户（仅座机/负责人姓名）</span></span></span></span></label>
       <select id="client-filter-level" onchange="renderClients()">
         <option value="">全部</option>
         <option value="43">43</option>
@@ -3317,7 +3334,7 @@ body.dark-mode *::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255
         <option value="31">31</option>
         <option value="22">22</option>
       </select>
-      <label>重要程度 <span class="info-icon" tabindex="0">ⓘ<span class="tooltip">消费能力分级：A 全年预估业绩≥5万｜B 全年预估业绩≥3万｜C 全年预估业绩≥1万｜D 曾经消费过但近2年无需求/消费｜E 放弃跟进</span></span></label>
+      <label>重要程度 <span class="info-icon" tabindex="0">ⓘ<span class="tooltip"><span class="tt-title">消费能力分级</span><span class="tt-row"><span class="tt-k">A</span><span class="tt-d">全年预估业绩 ≥ 5 万</span></span><span class="tt-row"><span class="tt-k">B</span><span class="tt-d">全年预估业绩 ≥ 3 万</span></span><span class="tt-row"><span class="tt-k">C</span><span class="tt-d">全年预估业绩 ≥ 1 万</span></span><span class="tt-row"><span class="tt-k">D</span><span class="tt-d">曾经消费过，但近 2 年无需求/消费</span></span><span class="tt-row"><span class="tt-k">E</span><span class="tt-d">放弃跟进</span></span></span></span></label>
       <select id="client-filter-importance" onchange="renderClients()">
         <option value="">全部</option>
         <option value="A">A</option>
@@ -3337,8 +3354,8 @@ body.dark-mode *::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255
     </div>
     <div class="form-row">
       <div class="form-col"><label>客户名称 <span class="red-star">*</span></label><input type="text" id="client-name" /></div>
-      <div class="form-col"><label>客户级别 <span class="info-icon" tabindex="0">ⓘ<span class="tooltip">级别编码：43 利润＞20万｜42 利润10–20万｜41 利润5–10万｜40 利润＜5万｜34 危机客户｜33 两年以上未成交老客户｜32 需求客户｜31 手微客户｜22 负责人客户（仅座机/负责人姓名）</span></span></label><select id="client-level"><option value="">—</option><option value="43">43｜利润＞20万</option><option value="42">42｜利润10–20万</option><option value="41">41｜利润5–10万</option><option value="40">40｜利润＜5万</option><option value="34">34｜危机客户</option><option value="33">33｜两年以上未成交</option><option value="32">32｜需求客户</option><option value="31">31｜手微客户</option><option value="22">22｜负责人客户</option></select></div>
-      <div class="form-col"><label>重要程度（消费能力） <span class="info-icon" tabindex="0">ⓘ<span class="tooltip">消费能力分级：A 全年预估业绩≥5万｜B 全年预估业绩≥3万｜C 全年预估业绩≥1万｜D 曾经消费过但近2年无需求/消费｜E 放弃跟进</span></span></label><select id="client-importance"><option value="">—</option><option value="A">A｜全年预估业绩≥5万</option><option value="B">B｜全年预估业绩≥3万</option><option value="C">C｜全年预估业绩≥1万</option><option value="D">D｜曾经消费过但近2年无需求/消费</option><option value="E">E｜放弃跟进</option></select></div>
+      <div class="form-col"><label>客户级别 <span class="info-icon" tabindex="0">ⓘ<span class="tooltip"><span class="tt-title">客户级别编码</span><span class="tt-row"><span class="tt-k">43</span><span class="tt-d">利润 ＞ 20 万</span></span><span class="tt-row"><span class="tt-k">42</span><span class="tt-d">利润 10–20 万</span></span><span class="tt-row"><span class="tt-k">41</span><span class="tt-d">利润 5–10 万</span></span><span class="tt-row"><span class="tt-k">40</span><span class="tt-d">利润 ＜ 5 万</span></span><span class="tt-row"><span class="tt-k">34</span><span class="tt-d">危机客户</span></span><span class="tt-row"><span class="tt-k">33</span><span class="tt-d">两年以上未成交老客户</span></span><span class="tt-row"><span class="tt-k">32</span><span class="tt-d">需求客户</span></span><span class="tt-row"><span class="tt-k">31</span><span class="tt-d">手微客户</span></span><span class="tt-row"><span class="tt-k">22</span><span class="tt-d">负责人客户（仅座机/负责人姓名）</span></span></span></span></label><select id="client-level"><option value="">—</option><option value="43">43｜利润＞20万</option><option value="42">42｜利润10–20万</option><option value="41">41｜利润5–10万</option><option value="40">40｜利润＜5万</option><option value="34">34｜危机客户</option><option value="33">33｜两年以上未成交</option><option value="32">32｜需求客户</option><option value="31">31｜手微客户</option><option value="22">22｜负责人客户</option></select></div>
+      <div class="form-col"><label>重要程度（消费能力） <span class="info-icon" tabindex="0">ⓘ<span class="tooltip"><span class="tt-title">消费能力分级</span><span class="tt-row"><span class="tt-k">A</span><span class="tt-d">全年预估业绩 ≥ 5 万</span></span><span class="tt-row"><span class="tt-k">B</span><span class="tt-d">全年预估业绩 ≥ 3 万</span></span><span class="tt-row"><span class="tt-k">C</span><span class="tt-d">全年预估业绩 ≥ 1 万</span></span><span class="tt-row"><span class="tt-k">D</span><span class="tt-d">曾经消费过，但近 2 年无需求/消费</span></span><span class="tt-row"><span class="tt-k">E</span><span class="tt-d">放弃跟进</span></span></span></span></label><select id="client-importance"><option value="">—</option><option value="A">A｜全年预估业绩≥5万</option><option value="B">B｜全年预估业绩≥3万</option><option value="C">C｜全年预估业绩≥1万</option><option value="D">D｜曾经消费过但近2年无需求/消费</option><option value="E">E｜放弃跟进</option></select></div>
       <div class="form-col"><label>紧密程度</label><select id="client-closeness"><option value="">—</option><option>高</option><option>中</option><option>低</option></select></div>
     </div>
     <div class="form-row">
@@ -4579,10 +4596,10 @@ body.dark-mode *::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255
       body.innerHTML = `
               <div class="form-row">
                   <div class="form-col"><label>客户名称</label><input type="text" id="edit-client-name" value="${c.name}" /></div>
-                  <div class="form-col"><label>客户级别 <span class="info-icon" tabindex="0">ⓘ<span class="tooltip">级别编码：43 利润＞20万｜42 利润10–20万｜41 利润5–10万｜40 利润＜5万｜34 危机客户｜33 两年以上未成交老客户｜32 需求客户｜31 手微客户｜22 负责人客户（仅座机/负责人姓名）</span></span></label><select id="edit-client-level"><option value="">—</option><option value="43" ${c.level==='43'?'selected':''}>43｜利润＞20万</option><option value="42" ${c.level==='42'?'selected':''}>42｜利润10–20万</option><option value="41" ${c.level==='41'?'selected':''}>41｜利润5–10万</option><option value="40" ${c.level==='40'?'selected':''}>40｜利润＜5万</option><option value="34" ${c.level==='34'?'selected':''}>34｜危机客户</option><option value="33" ${c.level==='33'?'selected':''}>33｜两年以上未成交</option><option value="32" ${c.level==='32'?'selected':''}>32｜需求客户</option><option value="31" ${c.level==='31'?'selected':''}>31｜手微客户</option><option value="22" ${c.level==='22'?'selected':''}>22｜负责人客户</option></select></div>
+                  <div class="form-col"><label>客户级别 <span class="info-icon" tabindex="0">ⓘ<span class="tooltip"><span class="tt-title">客户级别编码</span><span class="tt-row"><span class="tt-k">43</span><span class="tt-d">利润 ＞ 20 万</span></span><span class="tt-row"><span class="tt-k">42</span><span class="tt-d">利润 10–20 万</span></span><span class="tt-row"><span class="tt-k">41</span><span class="tt-d">利润 5–10 万</span></span><span class="tt-row"><span class="tt-k">40</span><span class="tt-d">利润 ＜ 5 万</span></span><span class="tt-row"><span class="tt-k">34</span><span class="tt-d">危机客户</span></span><span class="tt-row"><span class="tt-k">33</span><span class="tt-d">两年以上未成交老客户</span></span><span class="tt-row"><span class="tt-k">32</span><span class="tt-d">需求客户</span></span><span class="tt-row"><span class="tt-k">31</span><span class="tt-d">手微客户</span></span><span class="tt-row"><span class="tt-k">22</span><span class="tt-d">负责人客户（仅座机/负责人姓名）</span></span></span></span></label><select id="edit-client-level"><option value="">—</option><option value="43" ${c.level==='43'?'selected':''}>43｜利润＞20万</option><option value="42" ${c.level==='42'?'selected':''}>42｜利润10–20万</option><option value="41" ${c.level==='41'?'selected':''}>41｜利润5–10万</option><option value="40" ${c.level==='40'?'selected':''}>40｜利润＜5万</option><option value="34" ${c.level==='34'?'selected':''}>34｜危机客户</option><option value="33" ${c.level==='33'?'selected':''}>33｜两年以上未成交</option><option value="32" ${c.level==='32'?'selected':''}>32｜需求客户</option><option value="31" ${c.level==='31'?'selected':''}>31｜手微客户</option><option value="22" ${c.level==='22'?'selected':''}>22｜负责人客户</option></select></div>
               </div>
               <div class="form-row">
-                  <div class="form-col"><label>重要程度（消费能力） <span class="info-icon" tabindex="0">ⓘ<span class="tooltip">消费能力分级：A 全年预估业绩≥5万｜B 全年预估业绩≥3万｜C 全年预估业绩≥1万｜D 曾经消费过但近2年无需求/消费｜E 放弃跟进</span></span></label><select id="edit-client-importance"><option value="">—</option><option value="A" ${c.importance==='A'?'selected':''}>A｜全年预估业绩≥5万</option><option value="B" ${c.importance==='B'?'selected':''}>B｜全年预估业绩≥3万</option><option value="C" ${c.importance==='C'?'selected':''}>C｜全年预估业绩≥1万</option><option value="D" ${c.importance==='D'?'selected':''}>D｜曾经消费过但近2年无需求/消费</option><option value="E" ${c.importance==='E'?'selected':''}>E｜放弃跟进</option></select></div>
+                  <div class="form-col"><label>重要程度（消费能力） <span class="info-icon" tabindex="0">ⓘ<span class="tooltip"><span class="tt-title">消费能力分级</span><span class="tt-row"><span class="tt-k">A</span><span class="tt-d">全年预估业绩 ≥ 5 万</span></span><span class="tt-row"><span class="tt-k">B</span><span class="tt-d">全年预估业绩 ≥ 3 万</span></span><span class="tt-row"><span class="tt-k">C</span><span class="tt-d">全年预估业绩 ≥ 1 万</span></span><span class="tt-row"><span class="tt-k">D</span><span class="tt-d">曾经消费过，但近 2 年无需求/消费</span></span><span class="tt-row"><span class="tt-k">E</span><span class="tt-d">放弃跟进</span></span></span></span></label><select id="edit-client-importance"><option value="">—</option><option value="A" ${c.importance==='A'?'selected':''}>A｜全年预估业绩≥5万</option><option value="B" ${c.importance==='B'?'selected':''}>B｜全年预估业绩≥3万</option><option value="C" ${c.importance==='C'?'selected':''}>C｜全年预估业绩≥1万</option><option value="D" ${c.importance==='D'?'selected':''}>D｜曾经消费过但近2年无需求/消费</option><option value="E" ${c.importance==='E'?'selected':''}>E｜放弃跟进</option></select></div>
                   <div class="form-col"><label>紧密程度</label><select id="edit-client-closeness"><option value="">—</option><option ${c.closeness==='高'?'selected':''}>高</option><option ${c.closeness==='中'?'selected':''}>中</option><option ${c.closeness==='低'?'selected':''}>低</option></select></div>
               </div>
               <div class="form-row">
