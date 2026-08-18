@@ -11,6 +11,7 @@
   <link rel="icon" type="image/png" href="./icon-192.png" />
   <link rel="apple-touch-icon" href="./icon-192.png" />
   <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIuiupOecn+W3peS9nOWPsCIsCiAgInNob3J0X25hbWUiOiAi5bel5L2c5Y+wIiwKICAiZGVzY3JpcHRpb24iOiAi5Zub5bed5rS75Yqo5oOF5oql5pCc6ZuG5LiO5pS/5LyB5a6i5oi3566h55CGIiwKICAic3RhcnRfdXJsIjogIi4vIiwKICAic2NvcGUiOiAiLi8iLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJvcmllbnRhdGlvbiI6ICJwb3J0cmFpdCIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiI2Y1ZjVmNyIsCiAgInRoZW1lX2NvbG9yIjogIiMwMDY2Y2MiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24tMTkyLnBuZyIsCiAgICAgICJzaXplcyI6ICIxOTJ4MTkyIiwKICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIiwKICAgICAgInB1cnBvc2UiOiAiYW55IgogICAgfSwKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24tNTEyLnBuZyIsCiAgICAgICJzaXplcyI6ICI1MTJ4NTEyIiwKICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIiwKICAgICAgInB1cnBvc2UiOiAiYW55IgogICAgfSwKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24uc3ZnIiwKICAgICAgInNpemVzIjogImFueSIsCiAgICAgICJ0eXBlIjogImltYWdlL3N2Zyt4bWwiLAogICAgICAicHVycG9zZSI6ICJhbnkiCiAgICB9CiAgXQp9Cg==" />
+  <script>window.APP_VERSION = "build@1787033078";</script>
   <title>DSC销售 · 项目管理工作台（完整版）</title>
   <script src="./xlsx.full.min.js"></script>
   <script>
@@ -1490,6 +1491,62 @@
         max-width: 100px;
       }
     }
+    /* 表单字段提示图标 */
+    .hint-wrap {
+      position: relative;
+      display: inline-block;
+    }
+    .hint-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--primary, #0066cc);
+      color: #fff;
+      font-size: 11px;
+      cursor: help;
+      margin-left: 4px;
+      vertical-align: middle;
+      line-height: 1;
+      user-select: none;
+    }
+    .hint-icon:hover {
+      background: #0051a3;
+    }
+    .hint-tip {
+      display: none;
+      position: absolute;
+      bottom: 125%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.88);
+      color: #fff;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      line-height: 1.6;
+      white-space: normal;
+      min-width: 220px;
+      max-width: 320px;
+      z-index: 1000;
+      pointer-events: none;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    .hint-tip::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      margin-left: -5px;
+      border-width: 5px;
+      border-style: solid;
+      border-color: rgba(0, 0, 0, 0.88) transparent transparent transparent;
+    }
+    .hint-wrap:hover .hint-tip {
+      display: block;
+    }
 /* ===== 工作台 V3.3：Apple 官网风格 · 纯白磨砂玻璃 ===== */
 /* 硬性约束：仅改视觉层，保留原有布局/模块位置/按钮与文字结构 */
 
@@ -2812,6 +2869,47 @@ body.dark-mode *::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255
     .client-detail { display: none; margin-top: 4px; font-size: 13px; color: var(--ui-text-soft, #6e6e73); }
     .client-detail > div { margin: 1px 0; }
     .client-item.expanded .client-detail { display: block; }
+
+    /* [V4] ⓘ 字段说明气泡 */
+    .info-icon {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 15px; height: 15px; margin-left: 5px;
+      font-size: 10px; font-style: normal; line-height: 1;
+      color: var(--ui-primary, #0066cc);
+      background: rgba(0, 102, 204, .12);
+      border-radius: 50%; cursor: help; user-select: none;
+      position: relative; vertical-align: middle;
+    }
+    .info-icon .tooltip {
+      visibility: hidden; opacity: 0;
+      position: absolute; bottom: 135%; left: 50%;
+      transform: translateX(-50%);
+      width: max-content; max-width: 340px;
+      background: #1d1d1f; color: #fff;
+      font-size: 12px; font-weight: 400; line-height: 1.6;
+      text-align: left; padding: 9px 11px; border-radius: 9px;
+      box-shadow: 0 6px 22px rgba(0, 0, 0, .28);
+      z-index: 10000; transition: opacity .15s ease;
+      pointer-events: none;
+    }
+    .info-icon:hover .tooltip,
+    .info-icon:focus .tooltip,
+    .info-icon:focus-within .tooltip { visibility: visible; opacity: 1; }
+
+    /* [V4] 新版本提示条 */
+    .app-update-banner {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 9999;
+      background: linear-gradient(90deg, #0066cc, #00b894);
+      color: #fff; text-align: center;
+      padding: 9px 16px; font-size: 14px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, .22);
+      animation: appBannerIn .25s ease;
+    }
+    .app-update-banner a { color: #fff; font-weight: 700; text-decoration: underline; cursor: pointer; }
+    @keyframes appBannerIn { from { transform: translateY(-100%); } to { transform: translateY(0); } }
+    @media (prefers-color-scheme: dark) {
+      .info-icon { color: #4aa3ff; background: rgba(74, 163, 255, .16); }
+    }
   </style>
 </head>
 <body>
@@ -2826,6 +2924,7 @@ body.dark-mode *::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255
       <span class="sync-badge" id="syncBadge" data-state="unconfigured" onclick="openSyncModal()" title="点击配置云端同步">
         <span class="sync-dot"></span><span id="syncBadgeText">未配置云同步</span>
       </span>
+      <button class="btn-sm" onclick="checkAppUpdate()" title="联网检查是否有新版本">🔄 检查更新</button>
       <select id="globalYear" onchange="onYearChange()">
         <option value="2025">2025</option>
         <option value="2026" selected>2026</option>
@@ -3205,20 +3304,26 @@ body.dark-mode *::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255
         <option value="importance">重要程度</option>
         <option value="closeness">紧密程度</option>
       </select>
-      <label>级别</label>
+      <label>级别 <span class="info-icon" tabindex="0">ⓘ<span class="tooltip">级别编码：43 利润＞20万｜42 利润10–20万｜41 利润5–10万｜40 利润＜5万｜34 危机客户｜33 两年以上未成交老客户｜32 需求客户｜31 手微客户｜22 负责人客户（仅座机/负责人姓名）</span></span></label>
       <select id="client-filter-level" onchange="renderClients()">
+        <option value="">全部</option>
+        <option value="43">43</option>
+        <option value="42">42</option>
+        <option value="41">41</option>
+        <option value="40">40</option>
+        <option value="34">34</option>
+        <option value="33">33</option>
+        <option value="32">32</option>
+        <option value="31">31</option>
+        <option value="22">22</option>
+      </select>
+      <label>重要程度 <span class="info-icon" tabindex="0">ⓘ<span class="tooltip">消费能力分级：A 年消费≥20万（核心大客户）｜B 年消费10–20万｜C 年消费5–10万｜D 年消费＜5万 / 培育期</span></span></label>
+      <select id="client-filter-importance" onchange="renderClients()">
         <option value="">全部</option>
         <option value="A">A</option>
         <option value="B">B</option>
         <option value="C">C</option>
         <option value="D">D</option>
-      </select>
-      <label>重要程度</label>
-      <select id="client-filter-importance" onchange="renderClients()">
-        <option value="">全部</option>
-        <option value="高">高</option>
-        <option value="中">中</option>
-        <option value="低">低</option>
       </select>
       <label>紧密程度</label>
       <select id="client-filter-closeness" onchange="renderClients()">
@@ -3231,13 +3336,12 @@ body.dark-mode *::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255
     </div>
     <div class="form-row">
       <div class="form-col"><label>客户名称 <span class="red-star">*</span></label><input type="text" id="client-name" /></div>
-      <div class="form-col"><label>客户级别</label><select id="client-level"><option value="">—</option><option>A</option><option>B</option><option>C</option><option>D</option></select></div>
-      <div class="form-col"><label>重要程度（消费能力）</label><select id="client-importance"><option value="">—</option><option>高</option><option>中</option><option>低</option></select></div>
+      <div class="form-col"><label>客户级别 <span class="info-icon" tabindex="0">ⓘ<span class="tooltip">级别编码：43 利润＞20万｜42 利润10–20万｜41 利润5–10万｜40 利润＜5万｜34 危机客户｜33 两年以上未成交老客户｜32 需求客户｜31 手微客户｜22 负责人客户（仅座机/负责人姓名）</span></span></label><select id="client-level"><option value="">—</option><option value="43">43｜利润＞20万</option><option value="42">42｜利润10–20万</option><option value="41">41｜利润5–10万</option><option value="40">40｜利润＜5万</option><option value="34">34｜危机客户</option><option value="33">33｜两年以上未成交</option><option value="32">32｜需求客户</option><option value="31">31｜手微客户</option><option value="22">22｜负责人客户</option></select></div>
+      <div class="form-col"><label>重要程度（消费能力） <span class="info-icon" tabindex="0">ⓘ<span class="tooltip">消费能力分级：A 年消费≥20万（核心大客户）｜B 年消费10–20万｜C 年消费5–10万｜D 年消费＜5万 / 培育期</span></span></label><select id="client-importance"><option value="">—</option><option value="A">A｜核心大客户</option><option value="B">B｜高消费</option><option value="C">C｜中消费</option><option value="D">D｜培育期</option></select></div>
       <div class="form-col"><label>紧密程度</label><select id="client-closeness"><option value="">—</option><option>高</option><option>中</option><option>低</option></select></div>
     </div>
     <div class="form-row">
-      <div class="form-col"><label>联系人</label><input type="text" id="client-contact" /></div>
-      <div class="form-col"><label>电话</label><input type="text" id="client-phone" /></div>
+      <div class="form-col"><label>联系人</label><input type="text" id="client-contact" placeholder="座机 / 负责人姓名" /></div>
       <div class="form-col"><label>行业</label><input type="text" id="client-industry" /></div>
       <div class="form-col"><label>备注</label><input type="text" id="client-remark" /></div>
     </div>
@@ -3614,13 +3718,13 @@ body.dark-mode *::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255
       <div style="margin:12px 0;padding:12px;background:var(--card-bg);border-radius:8px;font-size:13px;">
         <p><strong>📌 格式要求：</strong></p>
         <p>每行一个客户，字段用 <strong>英文逗号</strong> 分隔，顺序如下：</p>
-        <p><code>客户名称,级别,重要程度,紧密程度,联系人,电话,行业,备注,过往消费(多行用分号分隔)</code></p>
+        <p><code>客户名称,级别,重要程度,紧密程度,联系人,行业,备注,过往消费(多行用分号分隔)</code></p>
         <p><strong>示例：</strong></p>
         <pre style="background:var(--code-bg);padding:8px;border-radius:4px;margin:4px 0;">
-张三,A,高,高,张经理,13800000000,IT,重点客户,2025-08 夏季促销;2024-09 中秋活动
-李四,B,中,中,李总,13900000001,金融,,2025-10 国庆合作
+张三,43,A,高,张经理,IT,重点客户,2025-08 夏季促销;2024-09 中秋活动
+李四,42,B,中,李总,金融,,2025-10 国庆合作
         </pre>
-        <p>💡 级别可选：A/B/C/D；重要程度/紧密程度可选：高/中/低；过往消费多条用分号分隔。</p>
+        <p>💡 级别为数字编码（43 利润＞20万 / 42 10–20万 / 41 5–10万 / 40 ＜5万 / 34 危机 / 33 两年以上老客 / 32 需求 / 31 手微 / 22 负责人客户）；重要程度可选 A/B/C/D（消费能力）；紧密程度可选 高/中/低；过往消费多条用分号分隔。</p>
         <p>⚠️ 客户名称不可为空，若名称已存在则覆盖更新。</p>
         <button class="btn-sm" onclick="downloadClientTemplate()">📄 下载模板CSV</button>
       </div>
@@ -4251,11 +4355,11 @@ body.dark-mode *::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255
       if (sortKey === 'name') {
         list.sort((a, b) => a.name.localeCompare(b.name));
       } else if (sortKey === 'level') {
-        const order = { 'A': 1, 'B': 2, 'C': 3, 'D': 4, '': 5 };
-        list.sort((a, b) => (order[a.level] || 5) - (order[b.level] || 5));
+        const order = { '43': 1, '42': 2, '41': 3, '40': 4, '34': 5, '33': 6, '32': 7, '31': 8, '22': 9, '': 10 };
+        list.sort((a, b) => (order[a.level] || 10) - (order[b.level] || 10));
       } else if (sortKey === 'importance') {
-        const order = { '高': 1, '中': 2, '低': 3, '': 4 };
-        list.sort((a, b) => (order[a.importance] || 4) - (order[b.importance] || 4));
+        const order = { 'A': 1, 'B': 2, 'C': 3, 'D': 4, '': 5 };
+        list.sort((a, b) => (order[a.importance] || 5) - (order[b.importance] || 5));
       } else if (sortKey === 'closeness') {
         const order = { '高': 1, '中': 2, '低': 3, '': 4 };
         list.sort((a, b) => (order[a.closeness] || 4) - (order[b.closeness] || 4));
@@ -4283,7 +4387,7 @@ body.dark-mode *::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255
                           ${importanceTag}
                           ${closenessTag}
                       </div>
-                      <div class="client-quick">联系人：${c.contact || '-'} ｜ 电话：${c.phone || '-'}</div>
+                      <div class="client-quick">联系人：${c.contact || '-'}</div>
                       <div class="client-detail">
                           <div>行业：${c.industry || '-'} ｜ 备注：${c.remark || '-'}</div>
                           <div class="history-item">📋 过往消费：${historyStr}</div>
@@ -4310,7 +4414,6 @@ body.dark-mode *::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255
         '重要程度': c.importance || '',
         '紧密程度': c.closeness || '',
         '联系人': c.contact || '',
-        '电话': c.phone || '',
         '行业': c.industry || '',
         '备注': c.remark || '',
         '过往消费': (c.history || []).map(h => `${h.month} ${h.activity}`).join('; ')
@@ -4333,10 +4436,10 @@ body.dark-mode *::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255
     }
 
     function downloadClientTemplate() {
-      const template = `客户名称,级别,重要程度,紧密程度,联系人,电话,行业,备注,过往消费(分号分隔)
-张三,A,高,高,张经理,13800000000,IT,重点客户,2025-08 夏季促销;2024-09 中秋活动
-李四,B,中,中,李总,13900000001,金融,,2025-10 国庆合作
-王五,C,低,低,王主管,13700000002,教育,,2025-11 校庆活动`;
+      const template = `客户名称,级别,重要程度,紧密程度,联系人,行业,备注,过往消费(分号分隔)
+张三,43,A,高,张经理,IT,重点客户,2025-08 夏季促销;2024-09 中秋活动
+李四,42,B,中,李总,金融,,2025-10 国庆合作
+王五,41,C,低,王主管,教育,,2025-11 校庆活动`;
       const blob = new Blob(['\uFEFF' + template], { type: 'text/csv;charset=utf-8;' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -4361,7 +4464,6 @@ body.dark-mode *::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255
       const importanceIdx = headers.findIndex(h => h.includes('重要程度'));
       const closenessIdx = headers.findIndex(h => h.includes('紧密程度'));
       const contactIdx = headers.findIndex(h => h.includes('联系人'));
-      const phoneIdx = headers.findIndex(h => h.includes('电话'));
       const industryIdx = headers.findIndex(h => h.includes('行业'));
       const remarkIdx = headers.findIndex(h => h.includes('备注'));
       const historyIdx = headers.findIndex(h => h.includes('过往消费'));
@@ -4376,7 +4478,6 @@ body.dark-mode *::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255
         const importance = importanceIdx >= 0 ? cols[importanceIdx] : '';
         const closeness = closenessIdx >= 0 ? cols[closenessIdx] : '';
         const contact = contactIdx >= 0 ? cols[contactIdx] : '';
-        const phone = phoneIdx >= 0 ? cols[phoneIdx] : '';
         const industry = industryIdx >= 0 ? cols[industryIdx] : '';
         const remark = remarkIdx >= 0 ? cols[remarkIdx] : '';
         const historyStr = historyIdx >= 0 ? cols[historyIdx] : '';
@@ -4395,7 +4496,6 @@ body.dark-mode *::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255
           existing.importance = importance;
           existing.closeness = closeness;
           existing.contact = contact;
-          existing.phone = phone;
           existing.industry = industry;
           existing.remark = remark;
           existing.history = history;
@@ -4407,7 +4507,6 @@ body.dark-mode *::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255
             importance,
             closeness,
             contact,
-            phone,
             industry,
             remark,
             history
@@ -4436,7 +4535,6 @@ body.dark-mode *::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255
         importance: document.getElementById('client-importance').value,
         closeness: document.getElementById('client-closeness').value,
         contact: document.getElementById('client-contact').value.trim(),
-        phone: document.getElementById('client-phone').value.trim(),
         industry: document.getElementById('client-industry').value.trim(),
         remark: document.getElementById('client-remark').value.trim(),
         history: history
@@ -4447,7 +4545,6 @@ body.dark-mode *::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255
       document.getElementById('client-importance').value = '';
       document.getElementById('client-closeness').value = '';
       document.getElementById('client-contact').value = '';
-      document.getElementById('client-phone').value = '';
       document.getElementById('client-industry').value = '';
       document.getElementById('client-remark').value = '';
       document.getElementById('client-history').value = '';
@@ -4479,15 +4576,14 @@ body.dark-mode *::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255
       body.innerHTML = `
               <div class="form-row">
                   <div class="form-col"><label>客户名称</label><input type="text" id="edit-client-name" value="${c.name}" /></div>
-                  <div class="form-col"><label>客户级别</label><select id="edit-client-level"><option value="">—</option><option ${c.level==='A'?'selected':''}>A</option><option ${c.level==='B'?'selected':''}>B</option><option ${c.level==='C'?'selected':''}>C</option><option ${c.level==='D'?'selected':''}>D</option></select></div>
+                  <div class="form-col"><label>客户级别 <span class="info-icon" tabindex="0">ⓘ<span class="tooltip">级别编码：43 利润＞20万｜42 利润10–20万｜41 利润5–10万｜40 利润＜5万｜34 危机客户｜33 两年以上未成交老客户｜32 需求客户｜31 手微客户｜22 负责人客户（仅座机/负责人姓名）</span></span></label><select id="edit-client-level"><option value="">—</option><option value="43" ${c.level==='43'?'selected':''}>43｜利润＞20万</option><option value="42" ${c.level==='42'?'selected':''}>42｜利润10–20万</option><option value="41" ${c.level==='41'?'selected':''}>41｜利润5–10万</option><option value="40" ${c.level==='40'?'selected':''}>40｜利润＜5万</option><option value="34" ${c.level==='34'?'selected':''}>34｜危机客户</option><option value="33" ${c.level==='33'?'selected':''}>33｜两年以上未成交</option><option value="32" ${c.level==='32'?'selected':''}>32｜需求客户</option><option value="31" ${c.level==='31'?'selected':''}>31｜手微客户</option><option value="22" ${c.level==='22'?'selected':''}>22｜负责人客户</option></select></div>
               </div>
               <div class="form-row">
-                  <div class="form-col"><label>重要程度（消费能力）</label><select id="edit-client-importance"><option value="">—</option><option ${c.importance==='高'?'selected':''}>高</option><option ${c.importance==='中'?'selected':''}>中</option><option ${c.importance==='低'?'selected':''}>低</option></select></div>
+                  <div class="form-col"><label>重要程度（消费能力） <span class="info-icon" tabindex="0">ⓘ<span class="tooltip">消费能力分级：A 年消费≥20万（核心大客户）｜B 年消费10–20万｜C 年消费5–10万｜D 年消费＜5万 / 培育期</span></span></label><select id="edit-client-importance"><option value="">—</option><option value="A" ${c.importance==='A'?'selected':''}>A｜核心大客户</option><option value="B" ${c.importance==='B'?'selected':''}>B｜高消费</option><option value="C" ${c.importance==='C'?'selected':''}>C｜中消费</option><option value="D" ${c.importance==='D'?'selected':''}>D｜培育期</option></select></div>
                   <div class="form-col"><label>紧密程度</label><select id="edit-client-closeness"><option value="">—</option><option ${c.closeness==='高'?'selected':''}>高</option><option ${c.closeness==='中'?'selected':''}>中</option><option ${c.closeness==='低'?'selected':''}>低</option></select></div>
               </div>
               <div class="form-row">
-                  <div class="form-col"><label>联系人</label><input type="text" id="edit-client-contact" value="${c.contact||''}" /></div>
-                  <div class="form-col"><label>电话</label><input type="text" id="edit-client-phone" value="${c.phone||''}" /></div>
+                  <div class="form-col"><label>联系人</label><input type="text" id="edit-client-contact" value="${c.contact||''}" placeholder="座机 / 负责人姓名" /></div>
               </div>
               <div class="form-row">
                   <div class="form-col"><label>行业</label><input type="text" id="edit-client-industry" value="${c.industry||''}" /></div>
@@ -4516,7 +4612,6 @@ body.dark-mode *::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255
       c.importance = document.getElementById('edit-client-importance').value;
       c.closeness = document.getElementById('edit-client-closeness').value;
       c.contact = document.getElementById('edit-client-contact').value.trim();
-      c.phone = document.getElementById('edit-client-phone').value.trim();
       c.industry = document.getElementById('edit-client-industry').value.trim();
       c.remark = document.getElementById('edit-client-remark').value.trim();
       const historyText = document.getElementById('edit-client-history').value;
@@ -13394,6 +13489,39 @@ select to_regclass('public.wb_kv');</div>
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", initExtra);
   else initExtra();
+
+  /* ====================== [V4] 内置版本更新检查 ====================== */
+  (function () {
+    function showUpdateBanner() {
+      if (document.getElementById('app-update-banner')) return;
+      var b = document.createElement('div');
+      b.id = 'app-update-banner';
+      b.className = 'app-update-banner';
+      b.innerHTML = '🎉 发现新版本（含新功能），<a href="javascript:void(0)" onclick="appDoUpdate()">点击刷新</a>';
+      document.body.appendChild(b);
+    }
+    window.appDoUpdate = function () {
+      try { location.reload(true); } catch (e) { location.reload(); }
+    };
+    window.checkAppUpdate = function () {
+      try {
+        var url = new URL('version.json', location.href);
+        url.searchParams.set('_', String(Date.now()));
+        fetch(url.toString(), { cache: 'no-store' }).then(function (r) {
+          if (!r.ok) return null;
+          return r.json();
+        }).then(function (data) {
+          if (data && data.version && window.APP_VERSION && data.version !== window.APP_VERSION) {
+            showUpdateBanner();
+          }
+        }).catch(function () {});
+      } catch (e) {}
+    };
+    window.addEventListener('load', function () {
+      setTimeout(window.checkAppUpdate, 3000);
+      setInterval(window.checkAppUpdate, 5 * 60 * 1000);
+    });
+  })();
 })();
 
 </script></body>
