@@ -11,7 +11,7 @@
   <link rel="icon" type="image/png" href="./icon-192.png" />
   <link rel="apple-touch-icon" href="./icon-192.png" />
   <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIuiupOecn+W3peS9nOWPsCIsCiAgInNob3J0X25hbWUiOiAi5bel5L2c5Y+wIiwKICAiZGVzY3JpcHRpb24iOiAi5Zub5bed5rS75Yqo5oOF5oql5pCc6ZuG5LiO5pS/5LyB5a6i5oi3566h55CGIiwKICAic3RhcnRfdXJsIjogIi4vIiwKICAic2NvcGUiOiAiLi8iLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJvcmllbnRhdGlvbiI6ICJwb3J0cmFpdCIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiI2Y1ZjVmNyIsCiAgInRoZW1lX2NvbG9yIjogIiMwMDY2Y2MiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24tMTkyLnBuZyIsCiAgICAgICJzaXplcyI6ICIxOTJ4MTkyIiwKICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIiwKICAgICAgInB1cnBvc2UiOiAiYW55IgogICAgfSwKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24tNTEyLnBuZyIsCiAgICAgICJzaXplcyI6ICI1MTJ4NTEyIiwKICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIiwKICAgICAgInB1cnBvc2UiOiAiYW55IgogICAgfSwKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24uc3ZnIiwKICAgICAgInNpemVzIjogImFueSIsCiAgICAgICJ0eXBlIjogImltYWdlL3N2Zyt4bWwiLAogICAgICAicHVycG9zZSI6ICJhbnkiCiAgICB9CiAgXQp9Cg==" />
-  <script>window.APP_VERSION = "build@1787102179";</script>
+  <script>window.APP_VERSION = "build@1787795422";</script>
   <title>DSC销售 · 项目管理工作台（完整版）</title>
   <script src="./xlsx.full.min.js"></script>
   <script>
@@ -2870,6 +2870,43 @@ body.dark-mode *::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255
     .client-detail > div { margin: 1px 0; }
     .client-item.expanded .client-detail { display: block; }
 
+    /* [V5] 跟进记录标签与列表 */
+    .follow-tag { background: #f2f2f7; color: #6e6e73; }
+    .follow-tag.reply { background: rgba(0, 122, 255, .13); color: #007aff; font-weight: 600; }
+    .follow-badge { margin-top: 5px; font-size: 12px; color: var(--ui-text, #1d1d1f); background: rgba(0, 122, 255, .06); padding: 5px 8px; border-radius: 6px; border-left: 3px solid #007aff; }
+    .follow-time { color: #6e6e73; margin-left: 6px; font-size: 11px; }
+    .followup-list { max-height: 160px; overflow-y: auto; border: 1px solid rgba(0,0,0,.08); border-radius: 8px; padding: 6px; background: rgba(0,0,0,.02); }
+    .followup-item { display: flex; align-items: flex-start; gap: 8px; padding: 6px; border-bottom: 1px solid rgba(0,0,0,.05); font-size: 12px; }
+    .followup-item:last-child { border-bottom: 0; }
+    .followup-type { flex: 0 0 auto; font-size: 11px; font-weight: 600; padding: 1px 5px; border-radius: 4px; }
+    .followup-type.reply { background: rgba(0, 122, 255, .13); color: #007aff; }
+    .followup-type.contact { background: rgba(52, 199, 89, .13); color: #34c759; }
+    .followup-type.note { background: rgba(175, 82, 222, .13); color: #af52de; }
+    .followup-time { flex: 0 0 auto; color: #8a8a8e; font-size: 11px; white-space: nowrap; }
+    .followup-content { flex: 1 1 auto; color: var(--ui-text, #1d1d1f); word-break: break-word; }
+    .followup-del { flex: 0 0 auto; color: #c45c5c; cursor: pointer; font-size: 12px; padding: 0 2px; }
+    .client-item.has-reply { border-left: 4px solid #007aff; }
+
+    /* [V5] 设置弹窗：导航排序 */
+    .nav-catalog-list { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
+    .nav-catalog-item { display: flex; align-items: center; gap: 8px; padding: 8px 10px; background: #fff; border: 1px solid rgba(0,0,0,.08); border-radius: 10px; cursor: move; transition: box-shadow .15s ease; }
+    .nav-catalog-item:hover { box-shadow: 0 2px 8px rgba(0,0,0,.08); }
+    .nav-catalog-item.dragging { opacity: .5; }
+    .nav-catalog-item .drag-handle { color: #c7c7cc; cursor: move; font-size: 14px; }
+    .nav-catalog-item .nav-icon { font-size: 16px; }
+    .nav-catalog-item .nav-label { flex: 1; font-size: 14px; color: var(--ui-text, #1d1d1f); }
+    .nav-catalog-item input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; }
+    .nav-catalog-item .nav-mover { display: flex; gap: 2px; }
+    .nav-catalog-item .nav-mover button { padding: 2px 6px; font-size: 12px; border: 1px solid rgba(0,0,0,.08); background: #f2f2f7; border-radius: 5px; cursor: pointer; }
+    .nav-catalog-item .nav-mover button:hover { background: #e5e5ea; }
+    @media (prefers-color-scheme: dark) {
+      .nav-catalog-item { background: #1c1c1e; border-color: rgba(255,255,255,.12); }
+      .nav-catalog-item .nav-mover button { background: #2c2c2e; border-color: rgba(255,255,255,.12); color: #f2f2f2; }
+      .nav-catalog-item .nav-mover button:hover { background: #3a3a3c; }
+    }
+    body.dark-mode .nav-catalog-item { background: #1c1c1e; border-color: rgba(255,255,255,.12); }
+    body.dark-mode .nav-catalog-item .nav-mover button { background: #2c2c2e; color: #f2f2f2; }
+
     /* [V4] ⓘ 字段说明气泡 */
     .info-icon {
       display: inline-flex; align-items: center; justify-content: center;
@@ -2941,6 +2978,7 @@ body.dark-mode *::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255
       <span class="sync-badge" id="syncBadge" data-state="unconfigured" onclick="openSyncModal()" title="点击配置云端同步">
         <span class="sync-dot"></span><span id="syncBadgeText">未配置云同步</span>
       </span>
+      <button class="btn-sm" onclick="openSettingsModal()" title="导航排序与显示设置">⚙️ 设置</button>
       <button class="btn-sm" onclick="checkAppUpdate()" title="联网检查是否有新版本">🔄 检查更新</button>
       <select id="globalYear" onchange="onYearChange()">
         <option value="2025">2025</option>
@@ -2957,7 +2995,7 @@ body.dark-mode *::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255
   </div>
 
       <!-- ===== 七大板块导航 ===== -->
-    <div class="tab-bar">
+    <div class="tab-bar" id="topNavBar">
       <button class="top-tab active" data-tab="dash">🛰️ 情报搜集</button>
       <button class="top-tab" data-tab="inspire">💡 灵感早报</button>
       <button class="top-tab" data-tab="work">🗓️ 日常工作</button>
@@ -3313,7 +3351,7 @@ body.dark-mode *::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255
       <button class="btn-del" onclick="batchDeleteClients()" style="padding:4px 16px;">🗑️ 批量删除</button>
       <span>选中后将移入回收站</span>
     </div>
-    <div class="filter-bar" style="margin-bottom:16px;">
+    <div class="filter-bar" style="margin-bottom:16px;flex-wrap:wrap;gap:10px;">
       <label>排序</label>
       <select id="client-sort" onchange="renderClients()">
         <option value="name">名称</option>
@@ -3321,7 +3359,9 @@ body.dark-mode *::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255
         <option value="importance">重要程度</option>
         <option value="closeness">紧密程度</option>
         <option value="recent">近期有活动</option>
+        <option value="followup">最近跟进优先</option>
       </select>
+      <input type="search" id="client-search" placeholder="🔍 搜索客户/联系人" oninput="renderClients()" style="min-width:150px;flex:1;max-width:260px;" />
       <label>级别 <span class="info-icon" tabindex="0">ⓘ<span class="tooltip"><span class="tt-title">客户级别编码</span><span class="tt-row"><span class="tt-k">43</span><span class="tt-d">利润 ＞ 20 万</span></span><span class="tt-row"><span class="tt-k">42</span><span class="tt-d">利润 10–20 万</span></span><span class="tt-row"><span class="tt-k">41</span><span class="tt-d">利润 5–10 万</span></span><span class="tt-row"><span class="tt-k">40</span><span class="tt-d">利润 ＜ 5 万</span></span><span class="tt-row"><span class="tt-k">34</span><span class="tt-d">危机客户</span></span><span class="tt-row"><span class="tt-k">33</span><span class="tt-d">两年以上未成交老客户</span></span><span class="tt-row"><span class="tt-k">32</span><span class="tt-d">需求客户</span></span><span class="tt-row"><span class="tt-k">31</span><span class="tt-d">手微客户</span></span><span class="tt-row"><span class="tt-k">22</span><span class="tt-d">负责人客户（仅座机/负责人姓名）</span></span></span></span></label>
       <select id="client-filter-level" onchange="renderClients()">
         <option value="">全部</option>
@@ -3743,7 +3783,7 @@ body.dark-mode *::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255
 张三,43,A,高,张经理,IT,重点客户,2025-08 夏季促销;2024-09 中秋活动
 李四,42,B,中,李总,金融,,2025-10 国庆合作
         </pre>
-        <p>💡 级别为数字编码（43 利润＞20万 / 42 10–20万 / 41 5–10万 / 40 ＜5万 / 34 危机 / 33 两年以上老客 / 32 需求 / 31 手微 / 22 负责人客户）；重要程度可选 A/B/C/D/E：A 全年预估业绩≥5万｜B ≥3万｜C ≥1万｜D 曾经消费过但近2年无需求/消费｜E 放弃跟进；紧密程度可选 高/中/低；过往消费多条用分号分隔。</p>
+        <p>💡 级别为数字编码（43 利润＞20万 / 42 10–20万 / 41 5–10万 / 40 ＜5万 / 34 危机 / 33 两年以上老客 / 32 需求 / 31 手微 / 22 负责人客户）；重要程度可选 A/B/C/D/E：A 全年预估业绩≥5万｜B ≥3万｜C ≥1万｜D 曾经消费过但近2年无需求/消费｜E 放弃跟进；紧密程度可选 高/中/低；过往消费多条用分号分隔。跟进记录格式：<code>[回复 2026-08-20 10:00] 内容</code>，多条用 | 分隔。</p>
         <p>⚠️ 客户名称不可为空，若名称已存在则覆盖更新。</p>
         <button class="btn-sm" onclick="downloadClientTemplate()">📄 下载模板CSV</button>
       </div>
@@ -4297,6 +4337,31 @@ body.dark-mode *::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255
       return history.map(h => `${h.month} ${h.activity}`).join('；');
     }
 
+    function getLastFollowUpTime(client) {
+      if (!client.followUps || !client.followUps.length) return null;
+      const times = client.followUps.map(f => new Date(f.time || 0).getTime()).filter(t => !isNaN(t));
+      return times.length ? Math.max(...times) : null;
+    }
+    function getLastFollowUp(client) {
+      if (!client.followUps || !client.followUps.length) return null;
+      return client.followUps.slice().sort((a, b) => new Date(b.time || 0) - new Date(a.time || 0))[0];
+    }
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+    function parseFollowUpsFromText(text) {
+      if (!text) return [];
+      const typeMap = { '回复': 'reply', '联系': 'contact', '备注': 'note' };
+      const list = [];
+      const re = /\[(回复|联系|备注)\s+(\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2})\]\s*([^|]*)/g;
+      let m;
+      while ((m = re.exec(text)) !== null) {
+        list.push({ type: typeMap[m[1]] || 'note', time: m[2], content: m[3].trim() });
+      }
+      return list;
+    }
+
     function getUpcomingActivities(client) {
       if (!client.history || !client.history.length) return [];
       const now = new Date();
@@ -4370,6 +4435,10 @@ body.dark-mode *::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255
       if (levelFilter) list = list.filter(c => c.level === levelFilter);
       if (importanceFilter) list = list.filter(c => c.importance === importanceFilter);
       if (closenessFilter) list = list.filter(c => c.closeness === closenessFilter);
+      const searchVal = document.getElementById('client-search').value.trim().toLowerCase();
+      if (searchVal) {
+        list = list.filter(c => (c.name || '').toLowerCase().includes(searchVal) || (c.contact || '').toLowerCase().includes(searchVal) || (c.industry || '').toLowerCase().includes(searchVal) || (c.remark || '').toLowerCase().includes(searchVal));
+      }
       const sortKey = document.getElementById('client-sort').value;
       if (sortKey === 'name') {
         list.sort((a, b) => a.name.localeCompare(b.name));
@@ -4394,6 +4463,15 @@ body.dark-mode *::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255
           }
           return a.name.localeCompare(b.name);
         });
+      } else if (sortKey === 'followup') {
+        list.sort((a, b) => {
+          const tA = getLastFollowUpTime(a);
+          const tB = getLastFollowUpTime(b);
+          if (tA && !tB) return -1;
+          if (!tA && tB) return 1;
+          if (tA && tB) return tB - tA;
+          return a.name.localeCompare(b.name);
+        });
       }
       const container = document.getElementById('client-list-container');
       if (!list.length) { container.innerHTML = '<div class="empty-tip">暂无客户</div>'; return; }
@@ -4407,8 +4485,16 @@ body.dark-mode *::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255
         const upcomingHtml = isUrgent ?
           `<div class="upcoming-badge">🔔 预警：${upcoming.map(u => `${u.month}月（${u.activity}）`).join('、')}</div>` :
           '';
+        const lastFu = getLastFollowUp(c);
+        const hasReply = lastFu && lastFu.type === 'reply';
+        const followBadge = lastFu ?
+          `<span class="tag follow-tag ${hasReply ? 'reply' : ''}">${hasReply ? '📩 有新回复' : '📝 已跟进'}</span>` :
+          '';
+        const followHtml = lastFu ?
+          `<div class="follow-badge">${hasReply ? '📩' : '📝'} 最近${lastFu.type === 'reply' ? '回复' : lastFu.type === 'contact' ? '联系' : '跟进'}：${escapeHtml(lastFu.content || '')} <span class="follow-time">${lastFu.time || ''}</span></div>` :
+          '';
       return `
-              <div class="client-item ${isUrgent ? 'urgent' : ''}">
+              <div class="client-item ${isUrgent ? 'urgent' : ''} ${hasReply ? 'has-reply' : ''}">
                   <input type="checkbox" class="client-select" value="${c.name}" />
                   <div class="info">
                       <div class="name client-toggle">
@@ -4417,11 +4503,13 @@ body.dark-mode *::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255
                           ${levelTag}
                           ${importanceTag}
                           ${closenessTag}
+                          ${followBadge}
                       </div>
                       <div class="client-quick">联系人：${c.contact || '-'}</div>
                       <div class="client-detail">
                           <div>行业：${c.industry || '-'} ｜ 备注：${c.remark || '-'}</div>
                           <div class="history-item">📋 过往消费：${historyStr}</div>
+                          ${followHtml}
                       </div>
                       ${upcomingHtml}
                   </div>
@@ -4447,7 +4535,8 @@ body.dark-mode *::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255
         '联系人': c.contact || '',
         '行业': c.industry || '',
         '备注': c.remark || '',
-        '过往消费': (c.history || []).map(h => `${h.month} ${h.activity}`).join('; ')
+        '过往消费': (c.history || []).map(h => `${h.month} ${h.activity}`).join('; '),
+        '跟进记录': (c.followUps || []).map(f => `[${f.type === 'reply' ? '回复' : f.type === 'contact' ? '联系' : '备注'} ${f.time}] ${f.content}`).join(' | ')
       }));
       const wb = XLSX.utils.book_new();
       const ws = XLSX.utils.json_to_sheet(data);
@@ -4467,12 +4556,12 @@ body.dark-mode *::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255
     }
 
     function downloadClientTemplate() {
-      const template = `客户名称,级别,重要程度,紧密程度,联系人,行业,备注,过往消费(分号分隔)
-张三,43,A,高,张经理,IT,重点客户,2025-08 夏季促销;2024-09 中秋活动
-李四,42,B,中,李总,金融,,2025-10 国庆合作
-王五,41,C,低,王主管,教育,,2025-11 校庆活动
-赵六,40,D,低,赵主任,零售,近2年无需求,
-孙七,34,E,低,孙经理,制造,放弃跟进,`;
+      const template = `客户名称,级别,重要程度,紧密程度,联系人,行业,备注,过往消费(分号分隔),跟进记录
+张三,43,A,高,张经理,IT,重点客户,2025-08 夏季促销;2024-09 中秋活动,[回复 2026-08-20 10:00] 对运动会项目感兴趣
+李四,42,B,中,李总,金融,,2025-10 国庆合作,
+王五,41,C,低,王主管,教育,,2025-11 校庆活动,
+赵六,40,D,低,赵主任,零售,近2年无需求,,
+孙七,34,E,低,孙经理,制造,放弃跟进,,`;
       const blob = new Blob(['\uFEFF' + template], { type: 'text/csv;charset=utf-8;' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -4500,6 +4589,7 @@ body.dark-mode *::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255
       const industryIdx = headers.findIndex(h => h.includes('行业'));
       const remarkIdx = headers.findIndex(h => h.includes('备注'));
       const historyIdx = headers.findIndex(h => h.includes('过往消费'));
+      const followUpsIdx = headers.findIndex(h => h.includes('跟进记录'));
       let added = 0,
         updated = 0;
       const clients = getClients();
@@ -4523,6 +4613,8 @@ body.dark-mode *::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255
           }
           return null;
         }).filter(h => h) : [];
+        const followUpsStr = followUpsIdx >= 0 ? cols[followUpsIdx] : '';
+        const followUps = followUpsStr ? parseFollowUpsFromText(followUpsStr) : undefined;
         const existing = clients.find(c => c.name === name);
         if (existing) {
           existing.level = level;
@@ -4532,6 +4624,7 @@ body.dark-mode *::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255
           existing.industry = industry;
           existing.remark = remark;
           existing.history = history;
+          if (followUps !== undefined) existing.followUps = followUps;
           updated++;
         } else {
           clients.push({
@@ -4542,7 +4635,8 @@ body.dark-mode *::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255
             contact,
             industry,
             remark,
-            history
+            history,
+            followUps: followUps || []
           });
           added++;
         }
@@ -4570,7 +4664,8 @@ body.dark-mode *::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255
         contact: document.getElementById('client-contact').value.trim(),
         industry: document.getElementById('client-industry').value.trim(),
         remark: document.getElementById('client-remark').value.trim(),
-        history: history
+        history: history,
+        followUps: []
       });
       setClients(list);
       document.getElementById('client-name').value = '';
@@ -4628,6 +4723,31 @@ body.dark-mode *::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255
                       <textarea id="edit-client-history" rows="3">${historyStr}</textarea>
                   </div>
               </div>
+              <div class="form-row" style="align-items:flex-start;">
+                  <div class="form-col" style="flex:2;">
+                      <label>📋 跟进记录（最新的会显示在客户卡上）</label>
+                      <div class="followup-list" id="edit-client-followups">
+                          ${(c.followUps || []).slice().sort((a,b)=>new Date(b.time||0)-new Date(a.time||0)).map((f, i) => `
+                            <div class="followup-item" data-idx="${i}">
+                              <span class="followup-type ${f.type || 'note'}">${f.type === 'reply' ? '客户回复' : f.type === 'contact' ? '我联系TA' : '备注记录'}</span>
+                              <span class="followup-time">${f.time || ''}</span>
+                              <span class="followup-content">${escapeHtml(f.content || '')}</span>
+                              <span class="followup-del" onclick="deleteClientFollowUp(${i})" title="删除">✖</span>
+                            </div>
+                          `).join('') || '<div class="empty-tip" style="padding:8px 0;">暂无跟进记录</div>'}
+                      </div>
+                  </div>
+                  <div class="form-col" style="flex:1;min-width:180px;">
+                      <label>新增跟进</label>
+                      <select id="edit-followup-type" style="margin-bottom:6px;">
+                          <option value="reply">📩 客户回复</option>
+                          <option value="contact">📞 我联系TA</option>
+                          <option value="note">📝 备注记录</option>
+                      </select>
+                      <textarea id="edit-followup-content" rows="2" placeholder="回复内容 / 联系摘要 / 需求或兴趣点"></textarea>
+                      <button class="btn-save" style="margin-top:6px;width:100%;" onclick="addClientFollowUp()">➕ 添加跟进</button>
+                  </div>
+              </div>
           `;
       document.getElementById('clientEditModal').classList.add('active');
     }
@@ -4653,6 +4773,32 @@ body.dark-mode *::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255
       renderClients();
       closeClientEditModal();
       alert('✅ 客户已更新');
+    }
+
+    function addClientFollowUp() {
+      const list = getClients();
+      const c = list.find(item => item.name === editClientName);
+      if (!c) return;
+      const type = document.getElementById('edit-followup-type').value;
+      const content = document.getElementById('edit-followup-content').value.trim();
+      if (!content) { alert('请输入跟进内容'); return; }
+      const now = new Date();
+      const timeStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+      if (!c.followUps) c.followUps = [];
+      c.followUps.push({ type, content, time: timeStr });
+      setClients(list);
+      editClient(editClientName);
+      renderClients();
+    }
+    function deleteClientFollowUp(idx) {
+      const list = getClients();
+      const c = list.find(item => item.name === editClientName);
+      if (!c || !c.followUps || !c.followUps[idx]) return;
+      if (!confirm('确认删除这条跟进记录？')) return;
+      c.followUps.splice(idx, 1);
+      setClients(list);
+      editClient(editClientName);
+      renderClients();
     }
 
     function closeClientEditModal() {
@@ -7014,6 +7160,25 @@ select to_regclass('public.wb_kv');</div>
 
   <div id="wbToastWrap"></div>
 
+  <!-- ===== 设置弹窗：导航排序与显示 ===== -->
+  <div class="modal-overlay" id="settingsModal">
+    <div class="modal-content" style="max-width:520px;">
+      <button class="close-btn" onclick="closeSettingsModal()">✕</button>
+      <h2>⚙️ 设置</h2>
+
+      <div class="settings-section">
+        <h3>📑 导航排序与显示（目录）</h3>
+        <p class="hint">拖拽或点击 ↑↓ 调整顶部导航顺序；取消勾选可隐藏该板块（仍可通过快捷键或设置进入）。</p>
+        <div class="nav-catalog-list" id="navCatalogList"></div>
+      </div>
+
+      <div class="btn-group" style="margin-top:18px;justify-content:flex-end;">
+        <button class="btn-reset" onclick="resetNavCatalog()">恢复默认</button>
+        <button class="btn-save" onclick="saveNavCatalog()">💾 保存设置</button>
+      </div>
+    </div>
+  </div>
+
   <!-- ==================================================================
        增强模块：Supabase 云同步 · 草稿自动保存 · 历史按日期折叠
        ================================================================== -->
@@ -7037,7 +7202,8 @@ select to_regclass('public.wb_kv');</div>
         'sport_recycle_bin', 'sport_todos', DRAFT_KEY,
         'wb_radar', 'wb_radar_kw', 'wb_radar_check', 'wb_cases',
         'wb_intel_links', 'wb_intel_link_order',
-        'wb_insp_links', 'wb_insp_link_order'
+        'wb_insp_links', 'wb_insp_link_order',
+        'wb_nav_catalog'
       ];
 
       function $(id) { return document.getElementById(id); }
@@ -8276,6 +8442,131 @@ select to_regclass('public.wb_kv');</div>
         if (sel) sel.click();
       }
 
+      /* ============================================================
+       * [V5] 设置：导航排序与显示（目录）
+       * ============================================================ */
+      var DEFAULT_NAV = [
+        { id: 'dash', label: '🛰️ 情报搜集', visible: true },
+        { id: 'inspire', label: '💡 灵感早报', visible: true },
+        { id: 'work', label: '🗓️ 日常工作', visible: true },
+        { id: 'projects', label: '📌 项目管理', visible: true },
+        { id: 'clients', label: '👥 客户管理', visible: true },
+        { id: 'recycle', label: '🗑️ 回收站', visible: true }
+      ];
+      var NAV_CATALOG_KEY = 'wb_nav_catalog';
+
+      function getDefaultNavCatalog() { return JSON.parse(JSON.stringify(DEFAULT_NAV)); }
+      function getNavCatalog() {
+        try {
+          var raw = localStorage.getItem(NAV_CATALOG_KEY);
+          if (raw) {
+            var parsed = JSON.parse(raw);
+            if (Array.isArray(parsed) && parsed.length) return parsed;
+          }
+        } catch (e) {}
+        return getDefaultNavCatalog();
+      }
+      function saveNavCatalogConfig(cfg) {
+        localStorage.setItem(NAV_CATALOG_KEY, JSON.stringify(cfg));
+      }
+      function applyNavOrder() {
+        var bar = document.getElementById('topNavBar');
+        if (!bar) return;
+        var cfg = getNavCatalog();
+        var buttons = Array.prototype.slice.call(bar.querySelectorAll('.top-tab'));
+        var byId = {};
+        buttons.forEach(function (b) { byId[b.dataset.tab] = b; });
+        cfg.forEach(function (item) {
+          var b = byId[item.id];
+          if (!b) return;
+          b.style.display = item.visible === false ? 'none' : '';
+          bar.appendChild(b);
+        });
+      }
+      function openSettingsModal() {
+        renderNavCatalogList();
+        document.getElementById('settingsModal').classList.add('active');
+      }
+      function closeSettingsModal() {
+        document.getElementById('settingsModal').classList.remove('active');
+      }
+      function renderNavCatalogList() {
+        var container = document.getElementById('navCatalogList');
+        if (!container) return;
+        var cfg = getNavCatalog();
+        container.innerHTML = cfg.map(function (item, i) {
+          return '<div class="nav-catalog-item" draggable="true" data-idx="' + i + '" data-id="' + item.id + '">' +
+            '<span class="drag-handle">☰</span>' +
+            '<span class="nav-icon">' + (item.label.match(/^\S+/) || [''])[0] + '</span>' +
+            '<span class="nav-label">' + item.label.replace(/^\S+\s*/, '') + '</span>' +
+            '<span class="nav-mover">' +
+              '<button onclick="moveNavItem(' + i + ', -1)" title="上移">↑</button>' +
+              '<button onclick="moveNavItem(' + i + ', 1)" title="下移">↓</button>' +
+            '</span>' +
+            '<input type="checkbox" ' + (item.visible !== false ? 'checked' : '') + ' onchange="toggleNavItemVisible(' + i + ', this.checked)" title="显示/隐藏" />' +
+          '</div>';
+        }).join('');
+        setupNavDragAndDrop();
+      }
+      function moveNavItem(idx, dir) {
+        var cfg = getNavCatalog();
+        var ni = idx + dir;
+        if (ni < 0 || ni >= cfg.length) return;
+        var tmp = cfg[idx]; cfg[idx] = cfg[ni]; cfg[ni] = tmp;
+        saveNavCatalogConfig(cfg);
+        renderNavCatalogList();
+      }
+      function toggleNavItemVisible(idx, visible) {
+        var cfg = getNavCatalog();
+        cfg[idx].visible = visible;
+        saveNavCatalogConfig(cfg);
+        applyNavOrder();
+      }
+      function saveNavCatalog() {
+        applyNavOrder();
+        closeSettingsModal();
+        toast('导航设置已保存 ✅', 'ok');
+      }
+      function resetNavCatalog() {
+        if (!confirm('恢复默认导航排序与显示？')) return;
+        saveNavCatalogConfig(getDefaultNavCatalog());
+        renderNavCatalogList();
+        applyNavOrder();
+      }
+      function setupNavDragAndDrop() {
+        var container = document.getElementById('navCatalogList');
+        if (!container) return;
+        var dragged = null;
+        container.querySelectorAll('.nav-catalog-item').forEach(function (item) {
+          item.addEventListener('dragstart', function (e) {
+            dragged = item;
+            item.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+          });
+          item.addEventListener('dragend', function () {
+            item.classList.remove('dragging');
+            dragged = null;
+            var ids = Array.prototype.slice.call(container.querySelectorAll('.nav-catalog-item')).map(function (el) { return parseInt(el.dataset.idx); });
+            var cfg = getNavCatalog();
+            var reordered = ids.map(function (oldIdx) { return cfg[oldIdx]; });
+            saveNavCatalogConfig(reordered);
+            renderNavCatalogList();
+            applyNavOrder();
+          });
+          item.addEventListener('dragover', function (e) {
+            e.preventDefault();
+            if (!dragged || dragged === item) return;
+            var rect = item.getBoundingClientRect();
+            var mid = rect.top + rect.height / 2;
+            if (e.clientY < mid) container.insertBefore(dragged, item);
+            else container.insertBefore(dragged, item.nextSibling);
+          });
+        });
+      }
+      function initNavCatalog() {
+        applyNavOrder();
+      }
+
       function initUXEnhancements() {
         // —— 客户卡折叠（委托点击）——
         document.addEventListener('click', function (e) {
@@ -8436,6 +8727,7 @@ select to_regclass('public.wb_kv');</div>
 
           bindDraftAutosave();
           initUXEnhancements();
+          initNavCatalog();
 
           // 首屏补一次草稿恢复与分组渲染
           try { applyDraft('daily'); } catch (e) {}
@@ -8460,6 +8752,12 @@ select to_regclass('public.wb_kv');</div>
 
       // 暴露少量调试入口
       window.__wbSync = Sync;
+      window.openSettingsModal = openSettingsModal;
+      window.closeSettingsModal = closeSettingsModal;
+      window.saveNavCatalog = saveNavCatalog;
+      window.resetNavCatalog = resetNavCatalog;
+      window.moveNavItem = moveNavItem;
+      window.toggleNavItemVisible = toggleNavItemVisible;
     })();
   </script>
 
