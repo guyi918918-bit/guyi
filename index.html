@@ -11,7 +11,7 @@
   <link rel="icon" type="image/png" href="./icon-192.png" />
   <link rel="apple-touch-icon" href="./icon-192.png" />
   <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIuiupOecn+W3peS9nOWPsCIsCiAgInNob3J0X25hbWUiOiAi5bel5L2c5Y+wIiwKICAiZGVzY3JpcHRpb24iOiAi5Zub5bed5rS75Yqo5oOF5oql5pCc6ZuG5LiO5pS/5LyB5a6i5oi3566h55CGIiwKICAic3RhcnRfdXJsIjogIi4vIiwKICAic2NvcGUiOiAiLi8iLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJvcmllbnRhdGlvbiI6ICJwb3J0cmFpdCIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiI2Y1ZjVmNyIsCiAgInRoZW1lX2NvbG9yIjogIiMwMDY2Y2MiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24tMTkyLnBuZyIsCiAgICAgICJzaXplcyI6ICIxOTJ4MTkyIiwKICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIiwKICAgICAgInB1cnBvc2UiOiAiYW55IgogICAgfSwKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24tNTEyLnBuZyIsCiAgICAgICJzaXplcyI6ICI1MTJ4NTEyIiwKICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIiwKICAgICAgInB1cnBvc2UiOiAiYW55IgogICAgfSwKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24uc3ZnIiwKICAgICAgInNpemVzIjogImFueSIsCiAgICAgICJ0eXBlIjogImltYWdlL3N2Zyt4bWwiLAogICAgICAicHVycG9zZSI6ICJhbnkiCiAgICB9CiAgXQp9Cg==" />
-  <script>window.APP_VERSION = "build@1787816191";</script>
+  <script>window.APP_VERSION = "build@1789872518";</script>
   <title>DSC销售 · 项目管理工作台（完整版）</title>
   <script src="./xlsx.full.min.js"></script>
   <script>
@@ -4218,8 +4218,53 @@ body.dark-mode *::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255
       const item = todos.find(t => t.id === id);
       if (!item) return;
       item.done = !item.done;
+      if (item.done) syncTodoDoneToDaily(item);
       setTodos(todos);
       renderTodos();
+    }
+
+    // V7：待办完成 → 自动同步到当日日报「今日其他工作」
+    // 规则：只追加，不重复（同一待办同一天只同步一次）；取消勾选不撤销（日报可能已提交）；
+    // 同步后用户随时清空待办，日报里的记录不受影响。
+    function syncTodoDoneToDaily(item) {
+      try {
+        const now = new Date();
+        const today = formatDate(now);
+        if (item.syncedDate === today) return; // 防重复（取消后当天再勾选）
+        item.syncedDate = today;
+        const timeStr = pad(now.getHours()) + ':' + pad(now.getMinutes());
+        const line = '✅ [' + timeStr + '] ' + (item.text || '(图片)');
+        const otherEl = document.getElementById('d-today-other');
+        const dateEl = document.getElementById('d-date');
+        // 路径 A：日报表单当前正在编辑今天 → 追加到输入框（随日报一起保存）
+        if (otherEl && dateEl && dateEl.value === today) {
+          const cur = otherEl.value.trim();
+          if (!cur.split('\n').some(l => l.trim() === line)) {
+            otherEl.value = cur ? cur + '\n' + line : line;
+          }
+          // 双写存储，防止未保存日报时切换页面丢失记录
+        }
+        // 写入存储中的当日日报（无则创建一条仅含今日其他工作的记录）
+        const list = getStorage(KEY_DAILY);
+        let data = list.find(x => x.dateRaw === today);
+        if (!data) {
+          const d = new Date(today);
+          data = {
+            date: formatDateCN(d),
+            dateRaw: today,
+            week: getWeekStrFromDate(today),
+            month: d.getFullYear() + '-' + pad(d.getMonth() + 1),
+            year: d.getFullYear(),
+            todayOther: line
+          };
+          list.push(data);
+        } else {
+          const cur = (data.todayOther || '').trim();
+          if (cur.split('\n').some(l => l.trim() === line)) return;
+          data.todayOther = cur ? cur + '\n' + line : line;
+        }
+        setStorage(KEY_DAILY, list);
+      } catch (e) { console.warn('[todo->daily 同步失败]', e); }
     }
 
     function setImportant(id, level) {
@@ -9087,7 +9132,7 @@ select to_regclass('public.wb_kv');</div>
   </script>
 
 <script>window.__SEED_FEED__ = {
-  "updatedAt": "2026-08-14T09:09:35+08:00",
+  "updatedAt": "2026-08-28T09:11:44+08:00",
   "note": "数据由 WorkBuddy 于 2026-08-08 通过公开渠道检索整理。情报搜集覆盖全国多省市招投标与活动采购，来源不限于政府采购网、中国政府采购网、各省公共资源交易中心、各级总工会/工会官网、国企/金融/医疗/高新单位官网、招标代理机构挂网及微信公众号等；行业涵盖工会群团、金融银行、医疗行业、高新技术(通信)、国有企业、政府部门、事业单位、其他企事业单位。灵感早报覆盖全国公开活动案例(工会活动、品牌营销、文旅节庆、青年联谊、商业快闪/市集/音乐节)并附活动日历。系统每周自动刷新，最新窗口优先展示近30天/近90天情报。",
   "config": {
     "intel": {
@@ -12178,6 +12223,441 @@ select to_regclass('public.wb_kv');</div>
       "learn": "区级医院工会年度活动10万/年（文化艺术节+趣味运动会），自筹资金、院内采购。医疗客户工会活动正从‘单次’转向‘年度框架’，中小活动公司命中率高。",
       "notice": "竞争性磋商",
       "sector": "医疗行业"
+    },
+    {
+      "id": "t0828-01",
+      "title": "SPD-05河北某单位工会夏送清凉慰问品采购项目成交公告",
+      "buyer": "SPD-05（河北某单位工会）",
+      "amount": "6.66 万元",
+      "winner": "石家庄裕华区信誉楼加美超市有限公司",
+      "date": "2026-08-24",
+      "province": "河北",
+      "area": "石家庄市",
+      "type": "职工关爱/夏送清凉",
+      "url": "https://www.ccgp.gov.cn/cggg/zygg/cjgg/202608/t20260824_27192913.htm",
+      "learn": "省级单位工会夏送清凉走政采成交，冰糖/绿豆/电解质饮料/花露水/降暑贴组合，6.66万小包。说明即便'某单位'脱敏项目也会公开挂网，可盯中国政府采购网中央公告栏挖同类。",
+      "notice": "采购结果",
+      "sector": "工会/群团"
+    },
+    {
+      "id": "t0828-02",
+      "title": "林区总工会2026年送清凉活动物资采购成交公告",
+      "buyer": "神农架林区总工会",
+      "amount": "6.16 万元",
+      "winner": "神农架安鲜汇食品供应链有限公司",
+      "date": "2026-08-10",
+      "province": "湖北",
+      "area": "神农架林区",
+      "type": "职工关爱/夏送清凉",
+      "url": "http://www.snj.gov.cn/zwgk/bmxxgk/zgh/gsgg/202608/t20260810_5991846.shtml",
+      "learn": "林区工会700份防暑物资（毛巾/沐浴露/洗发水/花露水）9.33分高分成交，履约8月20日前完成。山区/林区工会物资配送有本地化壁垒，是中小供应商切入窗口。",
+      "notice": "采购结果",
+      "sector": "工会/群团"
+    },
+    {
+      "id": "t0828-03",
+      "title": "淮上区总工会购买第三方服务参与开展2026年“送清凉”物品采购项目成交候选供应商公示",
+      "buyer": "蚌埠市淮上区总工会",
+      "amount": "12.27 万元（第一候选费率72.9%）",
+      "winner": "合肥百大集团蚌埠合家福百大超市有限责任公司（第一候选）",
+      "date": "2026-08-25",
+      "province": "安徽",
+      "area": "蚌埠市",
+      "type": "职工关爱/夏送清凉",
+      "url": "https://www.huaishang.gov.cn/xwzx/tzgg/5096429.html",
+      "learn": "由采购公告(t26-10)走到候选公示：费率竞争+据实结算，首候选报72.9%远低于限价100%。提示送清凉物资类'费率报价'已成主流，投标要按预算的7-9折报价才有竞争力。",
+      "notice": "中标候选",
+      "sector": "工会/群团"
+    },
+    {
+      "id": "t0828-04",
+      "title": "经开区总工会2026年工会送清凉物品采购项目成交候选供应商公示",
+      "buyer": "蚌埠经济开发区总工会",
+      "amount": "9.35 万元",
+      "winner": "合肥百大集团蚌埠合家福百大超市有限责任公司",
+      "date": "2026-08-12",
+      "province": "安徽",
+      "area": "蚌埠市",
+      "type": "职工关爱/夏送清凉",
+      "url": "https://jjkfq.bengbu.gov.cn/xwdt/tzgg/141085508.html",
+      "learn": "由采购公告(t26-11)走到候选公示：9.35万、合同签订后5日内到货。蚌埠两区总工会均选同一本土商超，说明本地商超在工会慰问品赛道已建壁垒，外地公司应攻'策划+配送'而非纯物资。",
+      "notice": "中标候选",
+      "sector": "工会/群团"
+    },
+    {
+      "id": "t0828-05",
+      "title": "成都市龙泉驿区总工会2026年夏季“送清凉”慰问品采购及配送服务项目履约验收结果公示",
+      "buyer": "成都市龙泉驿区总工会",
+      "amount": "156 元/份 × 7677 人",
+      "winner": "成都佳业致诚科技有限公司",
+      "date": "2026-08-21",
+      "province": "四川",
+      "area": "成都市",
+      "type": "职工关爱/夏送清凉",
+      "url": "https://www.lqzgh.com/view/wzzy/messageDetail/2768",
+      "learn": "★四川本地标杆：单区工会覆盖7677名一线职工（交通/物流/电力/建筑/环卫/公安/消防及新就业形态），标准156元/份，履约验收满分通过。说明成都区级工会送清凉体量已达百万级，且重点向新就业形态劳动者倾斜，是川内稳定大单。",
+      "notice": "采购结果",
+      "sector": "工会/群团"
+    },
+    {
+      "id": "t0828-06",
+      "title": "伊金霍洛旗第十二届职工运动会赛事服务项目竞争性磋商公告",
+      "buyer": "伊金霍洛旗教育体育事业发展中心",
+      "amount": "120.00 万元",
+      "winner": "—",
+      "date": "2026-08-14",
+      "province": "内蒙古",
+      "area": "鄂尔多斯市伊金霍洛旗",
+      "type": "职工运动会/赛事运营",
+      "url": "https://ggzyjy.nmg.gov.cn/jyxx/index_39.html?id=zc-402881b69fdc4010019fffa8d753117f",
+      "learn": "旗县职工运动会9月初举办、120万单包、专门面向中小企业，服务周期30天含搭建+执行+拆除。内蒙古旗县工会赛事预算厚，且偏好'全流程总承包'一体供应商。",
+      "notice": "采购公告",
+      "sector": "政府部门"
+    },
+    {
+      "id": "t0828-07",
+      "title": "陕西省国防工会委员会2026陕西国防系统第二届职工健身运动会(游泳赛项)赛事服务竞争性磋商公告",
+      "buyer": "陕西省国防工会委员会",
+      "amount": "42.00 万元",
+      "winner": "—",
+      "date": "2026-08-19",
+      "province": "陕西",
+      "area": "西安市",
+      "type": "职工健身运动会/游泳赛项",
+      "url": "https://www.ccgp-shaanxi.gov.cn/freecms/site/shaanxi/ggxx/info/2026/8a69c89e9ff191d201a0194597934d51.html?noticeType=001016&noticeId=c0313d1f-9bb4-11f1-8063-08c0eb20c666",
+      "learn": "产业工会（国防工会）把职工健身运动会拆赛项单独采购，9月西安办游泳赛、42万。系统工会（国防/能源/金融）是比地方总工会更垂直的长期客群。",
+      "notice": "采购公告",
+      "sector": "工会/群团"
+    },
+    {
+      "id": "t0828-08",
+      "title": "中检院第六届职工运动会比赛服务采购项目竞争性磋商公告",
+      "buyer": "中国食品药品检定研究院工会",
+      "amount": "32.00 万元",
+      "winner": "—",
+      "date": "2026-08-21",
+      "province": "北京",
+      "area": "北京市",
+      "type": "职工运动会/赛事服务",
+      "url": "https://www.nifdc.org.cn/nifdc//xxgk/ggtzh/cggg/202608211551182172685.html",
+      "learn": "国家级研究院工会32万办第六届职工运动会，合同期至年底。科研院/事业单位工会赛事需求稳定，且常以'工会'名义院内采购、不上政采网，需盯单位官网通知栏。",
+      "notice": "采购公告",
+      "sector": "医疗行业"
+    },
+    {
+      "id": "t0828-09",
+      "title": "山东大学附属生殖医院工会大型体育运动项目竞争性磋商公告",
+      "buyer": "山东大学附属生殖医院工会",
+      "amount": "16.50 万元（职工运动会13万+球类3.5万）",
+      "winner": "—",
+      "date": "2026-08-17",
+      "province": "其它",
+      "area": "山东省济南市",
+      "type": "职工运动会/球类比赛",
+      "url": "http://www.sduivf.com/a/shouye/xinwenzhongxin/yiyuangonggao/zhaobiaog/2026/0817/1793.html",
+      "learn": "医院工会要求场地8公里内、设个人5-7项+集体6-8项+亲子2-3项，预付款30%。医疗客户偏好'就近+全包（含保险救护/图片直播）'，且明确要200人以上办赛业绩。",
+      "notice": "采购公告",
+      "sector": "医疗行业"
+    },
+    {
+      "id": "t0828-10",
+      "title": "华夏银行北京分行2026年至2028年大型员工活动承办服务入围项目竞争性磋商公告",
+      "buyer": "华夏银行股份有限公司北京分行",
+      "amount": "未披露（两年框架：包1竞技比赛3家+包2春秋游5家）",
+      "winner": "—",
+      "date": "2026-08",
+      "province": "北京",
+      "area": "北京市",
+      "type": "员工活动/框架入围",
+      "url": "https://www.ggzyjypt.cn/bszz/229572.html",
+      "learn": "★分行级两年框架拆两包：竞技比赛类（单笔<20万、年累计<50万）拟入围3家，春秋游类入围5家。银行分行'按类入围、据实下单'模式成熟，中小活动公司应主攻单项包件降低门槛。",
+      "notice": "采购公告",
+      "sector": "金融银行"
+    },
+    {
+      "id": "t0828-11",
+      "title": "广发银行深圳分行工会2026年员工秋游活动项目(第三次)中选结果公示",
+      "buyer": "广发银行股份有限公司深圳分行工会",
+      "amount": "1148 元/人（预估1250人）",
+      "winner": "未披露（公示脱敏）",
+      "date": "2026-08-14",
+      "province": "广东",
+      "area": "深圳市",
+      "type": "工会秋游/中选",
+      "url": "https://www.jinrongzhaobiao.com/news-c4c724590ae2105c257983518aa6ad75",
+      "learn": "深圳分行工会秋游第三次采购终成交，单价1148元/人（限价1200元/人），三次挂网说明前两轮流标——外地/新供应商在'流标重招'项目上机会更大。",
+      "notice": "采购结果",
+      "sector": "金融银行"
+    },
+    {
+      "id": "t0828-12",
+      "title": "中信银行杭州分行职工春秋游活动承办项目公开招标公告",
+      "buyer": "中信银行股份有限公司杭州分行",
+      "amount": "未披露（须旅行社资质）",
+      "winner": "—",
+      "date": "2026-08-19",
+      "province": "浙江",
+      "area": "杭州市",
+      "type": "职工春秋游/招标",
+      "url": "https://ebid.cfhc.citic/cms/default/webfile/ywgg1/20260819/1274817977694289920.html",
+      "learn": "股份行分行春秋游硬性要求《旅行社业务经营许可证》且须含国内旅游业务，案例须含春秋游/拓展/登山等至少一类。金融客户'资质+业绩'双门槛明确，活动公司需与持证旅行社绑定或自取资质。",
+      "notice": "招标公告",
+      "sector": "金融银行"
+    },
+    {
+      "id": "t0828-13",
+      "title": "2026海南儋州马拉松赛运营服务项目公开招标公告",
+      "buyer": "儋州市旅游和文化广电体育局",
+      "amount": "757.00 万元",
+      "winner": "—",
+      "date": "2026-08-19",
+      "province": "海南",
+      "area": "儋州市",
+      "type": "马拉松赛事运营",
+      "url": "https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202608/t20260819_27165348.htm",
+      "learn": "地级市马拉松757万且专门面向中小企业，9月9日开标。海南加码路跑赛事，与海口/三亚形成全省马拉松矩阵，运营商可按'省域巡回'思路跟进各市县。",
+      "notice": "招标公告",
+      "sector": "政府部门"
+    },
+    {
+      "id": "t0828-14",
+      "title": "2026河湟之旅红古·民和半程马拉松赛事运营项目公开招标公告",
+      "buyer": "兰州市红古区文化体育和旅游局",
+      "amount": "未披露（须田协注册备案）",
+      "winner": "—",
+      "date": "2026-08-18",
+      "province": "甘肃",
+      "area": "兰州市红古区",
+      "type": "半程马拉松运营",
+      "url": "https://www.gsei.com.cn/html/1336/2026-08-18/content-694979.html",
+      "learn": "县域半程马拉松要求投标人在中国田径协会系统注册备案，硬门槛筛掉多数通用活动公司。路跑类项目'田协资质'是核心护城河，需提前储备。",
+      "notice": "招标公告",
+      "sector": "政府部门"
+    },
+    {
+      "id": "t0828-15",
+      "title": "洪湖市文化和旅游局本级2026洪湖半程马拉松赛事运营服务项目需求公示",
+      "buyer": "洪湖市文化和旅游局",
+      "amount": "400.00 万元（限价300万）",
+      "winner": "—",
+      "date": "2026-08-27",
+      "province": "湖北",
+      "area": "洪湖市",
+      "type": "半程马拉松运营",
+      "url": "http://ggzyjy.honghu.gov.cn/e/action/ShowInfo.php?classid=58&id=5848",
+      "learn": "县级半程马拉松预算400万（控制最高价300万），8月27日需求公示、9月初正式采购。需求公示阶段即可提前备方案，比公告期早一周锁定先机。",
+      "notice": "提前项目",
+      "sector": "政府部门"
+    },
+    {
+      "id": "t0828-16",
+      "title": "兴义市文体广电旅游局2026贵州万峰林半程马拉松赛事服务单位采购项目（采购意向）",
+      "buyer": "兴义市文体广电旅游局",
+      "amount": "272.00 万元",
+      "winner": "—",
+      "date": "2026-08-19",
+      "province": "贵州",
+      "area": "兴义市",
+      "type": "半程马拉松运营",
+      "url": "https://www.gzxy.gov.cn/zwgk/17/zfgzbm/430/432/202608/t20260819_90749825.html",
+      "learn": "依托万峰林景区IP办半程马拉松、272万预计9月采购。'景区+马拉松'是黔西南文旅引流固定打法，活动公司可绑定景区做常年赛事运营。",
+      "notice": "提前项目",
+      "sector": "政府部门"
+    },
+    {
+      "id": "t0828-17",
+      "title": "2026年中山翠亨新区半程马拉松赛赛事运营服务项目采购需求调查公告",
+      "buyer": "中山市南朗街道宣传和教体文旅办公室",
+      "amount": "300.00 万元",
+      "winner": "—",
+      "date": "2026-08-19",
+      "province": "广东",
+      "area": "中山市",
+      "type": "半程马拉松运营",
+      "url": "https://www.zs.gov.cn/zsnlz/gkmlpt/content/2/2643/post_2643299.html",
+      "learn": "珠三角新区半程马拉松300万处需求调查阶段（8/19-8/26问卷），正式挂网前可提前对接。大湾区路跑市场密集，运营商可建'湾区巡回'服务模型。",
+      "notice": "提前项目",
+      "sector": "政府部门"
+    },
+    {
+      "id": "t0828-18",
+      "title": "中国电信股份有限公司荆州分公司2026年高价值客户回馈服务项目二次询比公告",
+      "buyer": "中国电信股份有限公司荆州分公司",
+      "amount": "280.00 万元（不含税，两年框架）",
+      "winner": "—",
+      "date": "2026-08-11",
+      "province": "湖北",
+      "area": "荆州市",
+      "type": "高价值客户回馈/答谢会",
+      "url": "https://www.gc-zb.com/read-768916203.html",
+      "learn": "与t26-93（荆州客户信息服务推广280万）并行的第二张框架：聚焦'一键系列'产品品鉴会/感恩答谢会/内购会/推介会+专属权益。运营商地市分公司客户活动呈'多标并行'态势，同一甲方可同时跟多个包。",
+      "notice": "询比公告",
+      "sector": "高新技术"
+    },
+    {
+      "id": "t0828-19",
+      "title": "中国移动西藏公司2026年-2027年全区产品推介会项目询比公告",
+      "buyer": "中国移动通信集团西藏有限公司",
+      "amount": "480.00 万元（含税，两年）",
+      "winner": "—",
+      "date": "2026-08",
+      "province": "其它",
+      "area": "西藏拉萨市",
+      "type": "产品推介会/政企",
+      "url": "http://www.bbda.com/bidDetail/7b987c71b745fb607bb9c00411e82873761135342bfe6744243a3d5a1be46011.html",
+      "learn": "移动省公司全区产品推介会480万两年框架，覆盖高峰论坛/产品演示/前沿技术交流。运营商省级政企活动体量稳定，且偏好'会议+体验'综合服务，是高新技术赛道最厚订单源之一。",
+      "notice": "询比公告",
+      "sector": "高新技术"
+    },
+    {
+      "id": "t0828-20",
+      "title": "2026-2027年汕尾分公司政企客户服务活动支撑采购项目询比公告",
+      "buyer": "中国电信股份有限公司汕尾分公司",
+      "amount": "150.00 万元（拟选2家）",
+      "winner": "—",
+      "date": "2026-08-18",
+      "province": "广东",
+      "area": "汕尾市",
+      "type": "政企客户活动支撑",
+      "url": "https://www.infochina.cn/zhaobiao-20260818190934690440.html",
+      "learn": "电信地市分公司150万两年框架、拟选2家，覆盖展会/博览会/产品推介会/行业交流会/专题论坛全流程支撑，要求近3年宣传策划业绩。'多供应商入围'降低单家门槛，中小公司可冲份额二。",
+      "notice": "询比公告",
+      "sector": "高新技术"
+    },
+    {
+      "id": "t0828-21",
+      "title": "国网甘肃省电力公司工会超高压公司委员会慰问物资采购项目1包月饼竞争性磋商公告",
+      "buyer": "国网甘肃省电力公司工会超高压公司委员会",
+      "amount": "12.77 万元（851份月饼）",
+      "winner": "—",
+      "date": "2026-08-26",
+      "province": "甘肃",
+      "area": "兰州市",
+      "type": "工会中秋慰问/月饼",
+      "url": "https://www.gsei.com.cn/html/1662/2026-08-26/content-697020.html",
+      "learn": "★中秋窗口开启：电力系统工会851份月饼12.77万（约150元/份），需食品经营许可。国网/央企工会中秋慰问物资8月下旬集中发标，是季节性的稳定物资订单。",
+      "notice": "采购公告",
+      "sector": "国有企业"
+    },
+    {
+      "id": "t0828-22",
+      "title": "中航技工业园工会服务站2026年手工艺活动成交公告",
+      "buyer": "北京经济技术开发区总工会（中航技工业园工会服务站）",
+      "amount": "19.00 万元",
+      "winner": "北京亦香企业管理有限责任公司",
+      "date": "2026-08-12",
+      "province": "北京",
+      "area": "北京市",
+      "type": "工会手工艺活动",
+      "url": "https://kfqgw.beijing.gov.cn/zwgkkfq/tzgg/202608/t20260811_4818496.html",
+      "learn": "工业园工会服务站手工艺活动19万成交（90.33分），服务期至11月30日。园区/开发区工会服务站是'小而美'常态活动采购方，适合手工/亲子/非遗类轻量产品。",
+      "notice": "采购结果",
+      "sector": "国有企业"
+    },
+    {
+      "id": "t0828-23",
+      "title": "人保健康2026-2029年机关工会会员活动采购项目竞争性磋商公告",
+      "buyer": "中国人民健康保险股份有限公司工会",
+      "amount": "未披露（3年框架，拟选3家）",
+      "winner": "—",
+      "date": "2026-08",
+      "province": "北京",
+      "area": "北京市",
+      "type": "工会活动/纪念品框架",
+      "url": "https://bidding.citic/zfwzb/26528.jhtml",
+      "learn": "★保险系统工会三年长框：包1活动服务+纪念品（3家）、包2图书/运动鞋服提货券商城（1家），要求近3年≥2个同类活动业绩。金融子公司工会框架期长、复购稳，是比银行更长的约。",
+      "notice": "采购公告",
+      "sector": "金融银行"
+    },
+    {
+      "id": "t0828-24",
+      "title": "内蒙古自治区人民医院工会2026年“健步走、乒羽赛”等职工文体活动奖品采购询价公告",
+      "buyer": "内蒙古自治区人民医院工会",
+      "amount": "22.84 万元",
+      "winner": "—",
+      "date": "2026-08-21",
+      "province": "内蒙古",
+      "area": "呼和浩特市",
+      "type": "职工文体/奖品采购",
+      "url": "https://www.nmgyy.cn/info/5577.html",
+      "learn": "医院工会把健步走/乒羽赛奖品打包22.84万询价，8/21-8/25报名、8/27开标。医疗客户'赛事+奖品'分标是常规结构，活动公司可主接赛事、并把奖品供应链作为配套。",
+      "notice": "询价公告",
+      "sector": "医疗行业"
+    },
+    {
+      "id": "t0828-25",
+      "title": "深圳市龙岗区第八人民医院工会会员2026年中秋、国庆节慰问品采购项目招标公告",
+      "buyer": "深圳市龙岗区第八人民医院工会",
+      "amount": "38.50 万元（770人×500元）",
+      "winner": "—",
+      "date": "2026-08-25",
+      "province": "广东",
+      "area": "深圳市",
+      "type": "双节慰问品",
+      "url": "https://www.lg.gov.cn/xxgk/zwgk/tzgg/content/post_12953780.html",
+      "learn": "★深圳医院工会双节慰问：770人×500元、须正规大型商超+本地门店+食品经营许可，支持提货券自提+按需配货双模式。粤港医疗系统双节物资8月下旬密集发标。",
+      "notice": "招标公告",
+      "sector": "医疗行业"
+    },
+    {
+      "id": "t0828-26",
+      "title": "深圳市龙岗中心医院关于2026年工会会员中秋、国庆节慰问物品招标的公告",
+      "buyer": "深圳市龙岗中心医院工会",
+      "amount": "193.55 万元（3787份×500元+一线140份×300元）",
+      "winner": "—",
+      "date": "2026-08",
+      "province": "广东",
+      "area": "深圳市",
+      "type": "双节慰问品",
+      "url": "https://www.lg.gov.cn/zwfw/zdfw/yl/fwmbyljg/tzgg/content/post_12947275.html",
+      "learn": "近190万级双节慰问（3787份×500元），拟招2家、2日内配送。深圳大型医院工会双节体量惊人，且明确要求'门店提货+按需配货'，考验供应商本地仓配能力。",
+      "notice": "招标公告",
+      "sector": "医疗行业"
+    },
+    {
+      "id": "t0828-27",
+      "title": "茂名市妇幼保健院工会委员会2026年中秋节、国庆节慰问品采购项目竞争性磋商公告",
+      "buyer": "茂名市妇幼保健院工会委员会",
+      "amount": "65.45 万元（中秋35.7万+国庆扶贫29.75万）",
+      "winner": "—",
+      "date": "2026-08-22",
+      "province": "广东",
+      "area": "茂名市",
+      "type": "双节慰问品",
+      "url": "https://www.chengezhao.com/cms/post/e/3/e395c30dc102ed5f353d27276271e502",
+      "learn": "拆两包：中秋提货券+国庆扶贫产品提货券，提货有效期至9/24或3个月。'扶贫产品'纳入国庆包是政策导向，活动/供应链公司可对接消费帮扶渠道做差异化。",
+      "notice": "采购公告",
+      "sector": "医疗行业"
+    },
+    {
+      "id": "t0828-28",
+      "title": "中共辽宁省委党校2026年教职工中秋节、国庆节慰问品比选采购公告",
+      "buyer": "中共辽宁省委党校工会",
+      "amount": "33.90 万元（565份×600元，拟选2家）",
+      "winner": "—",
+      "date": "2026-08-26",
+      "province": "辽宁",
+      "area": "沈阳市",
+      "type": "双节慰问品",
+      "url": "https://www.lnswdx.cn/lnswdx/tzgg/2026082511345330072/index.shtml",
+      "learn": "事业单位（党校）双节慰问565份×600元、比选2家，要求2025年以来≥1个30万以上项目业绩+实体门店。教育/党校系统工会双节物资也是稳定小众客群。",
+      "notice": "采购公告",
+      "sector": "事业单位-教育"
+    },
+    {
+      "id": "t0828-29",
+      "title": "石狮市湖滨社区卫生服务中心工会委员会2026年工会会员国庆中秋节双节慰问品采购招标公告",
+      "buyer": "石狮市湖滨社区卫生服务中心工会委员会",
+      "amount": "450 元/份 × 109 份",
+      "winner": "—",
+      "date": "2026-08-26",
+      "province": "福建",
+      "area": "泉州市石狮市",
+      "type": "双节慰问品",
+      "url": "https://ssshosp.com/hosapi/adminiCenterController.do?admini_gonggao&id=2c907e70a02af47101a03d7729e3018f",
+      "learn": "基层社区卫生服务中心双节慰问109份×450元，月饼/米油/蛋奶/果干/日用品组合，须持券自提或配送。基层医疗工会虽量小但频次高、门槛低，适合本地小微供应商。",
+      "notice": "招标公告",
+      "sector": "医疗行业"
     }
   ],
   "cases": [
@@ -13020,6 +13500,174 @@ select to_regclass('public.wb_kv');</div>
       "url": "https://rm-nhwapp-1.hinews.cn/page.html?newsId=2835664",
       "highlight": "38支队伍680余人；‘海垦青椰接力/一场一品九宫格/海垦笔韵初心赛/国风海垦投福壶/和牛全认知’把垦区产业元素（橡胶/椰子/和牛）融入竞技，国风+产业双主题。",
       "learn": "★‘一场一品’：把企业核心产业做成运动会专属项目，让职工在闯关中深化文化认同。国企运动会‘产业IP化’是可对外复制的差异化提案点。"
+    },
+    {
+      "id": "c0828-01",
+      "title": "湖北工会“会聚良缘”点亮青年职工交友新场景",
+      "host": "湖北省总工会及各级工会",
+      "date": "2026-08-20",
+      "province": "湖北",
+      "source": "今日头条/中工网",
+      "type": "职工婚恋/多元场景",
+      "url": "https://www.toutiao.com/article/7676026573548470836/",
+      "highlight": "七夕全省联动近百场：武汉'以画识人'直播联谊220人/20余对、襄阳复古草坪300人骑行、十堰'工会红娘'建档120人一对一、宜昌溶洞、枣阳汉城国风、荆州科创、神农架非遗古风；湖北移动在工人文化宫开职工专场。",
+      "learn": "★省级工会把婚恋做成'年度百场'工程（湖北列为年度十件实事），且同一品牌下各地自创场景。活动公司可输出'省域婚恋活动标准化套餐+本地场景定制'双产品。"
+    },
+    {
+      "id": "c0828-02",
+      "title": "东方市“工会佳缘”七夕交友活动浪漫上演 15对青年职工成功牵手",
+      "host": "东方市总工会、市妇联、市民政局、团市委",
+      "date": "2026-08-20",
+      "province": "海南",
+      "source": "人民网",
+      "type": "职工婚恋/游园+室内",
+      "url": "https://hainan.people.com.cn/n2/2026/0820/c231190-41673382.html",
+      "highlight": "100名单身青年先在自然瑰宝园结伴游园（孔雀/浣熊萌宠破冰），再移步室内多轮协作游戏，最终15对牵手。'游园赏景+室内交友'双段式降低初见尴尬。",
+      "learn": "工会婚恋品牌化（海南'工会佳缘'自2012年）：用'正规+健康+温馨'定位解决青年社交圈窄痛点，可复制到各市县的轻量模板。"
+    },
+    {
+      "id": "c0828-03",
+      "title": "2026西安工会“1+3”七夕职工交友联谊活动季启幕",
+      "host": "西安市总工会",
+      "date": "2026-08-17",
+      "province": "陕西",
+      "source": "人民网",
+      "type": "职工婚恋/国风沉浸",
+      "url": "https://sn.people.com.cn/n2/2026/0817/c347857-41670015.html",
+      "highlight": "主会场（浐灞盛唐诗词）+临潼华清宫汉服投壶+新城区幸福林带轻运动+灞桥白鹿原葡萄公园田园，共920人。飞花令/手写许愿诗/分区闯关集章，以唐诗为纽带自然破冰。",
+      "learn": "★'一主三分'全域联动：主会场做文化内核，分会场按客群差异化（机关/产业工人/园区青年），覆盖广且成本摊薄。城市级婚恋活动可借鉴此'总-分'架构。"
+    },
+    {
+      "id": "c0828-04",
+      "title": "复古列车搭“鹊桥” 青年职工浪漫相约（津旅时光号）",
+      "host": "天津市总工会女职工委员会、天津旅游集团工会等",
+      "date": "2026-08-21",
+      "province": "其它",
+      "source": "今日头条/中工网",
+      "type": "职工婚恋/文旅专列",
+      "url": "https://www.toutiao.com/article/7676361755387298323/",
+      "highlight": "150人乘'津旅时光号'文旅专列赴蓟州，列车上进行音乐/BINGO/信纸告白破冰，到蓟州按意向重新分组做共建鹊桥协作，20对现场牵手。",
+      "learn": "★'交通即场景'：把通勤/出游路程本身设计成交友前奏（车上破冰+到站深化），是低成本高记忆点的婚恋活动结构，可对接本地文旅专列资源。"
+    },
+    {
+      "id": "c0828-05",
+      "title": "河北省石家庄市平山县2026年七夕青年职工联谊活动",
+      "host": "平山县总工会、团县委、县妇联",
+      "date": "2026-08-19",
+      "province": "河北",
+      "source": "中工网",
+      "type": "职工婚恋/趣味运动",
+      "url": "https://www.workercn.cn/c/2026-08-19/8874302.shtml",
+      "highlight": "100余人县工人文化宫联谊，击鼓传绣球/国风反串/蒙眼穿行破冰，7对牵手+11对意向，尾声包场观影《欢迎来龙餐馆》延续交流。",
+      "learn": "县域工会婚恋用'趣味运动+影视社交'收尾延长情感连接，且联合群团（工会+团委+妇联）扩量，是县级小型活动的标准联动模板。"
+    },
+    {
+      "id": "c0828-06",
+      "title": "大武口城市快闪消费季·龙虾啤酒狂欢周（第二周）",
+      "host": "石嘴山市大武口区商务和投资促进局",
+      "date": "2026-08-16",
+      "province": "宁夏",
+      "source": "中国新闻网",
+      "type": "夜经济/主题周市集",
+      "url": "https://www.nx.chinanews.com/ds/2026-08-16/doc-ihfieyqp7843855.shtml",
+      "highlight": "继首周'面包碳水生活周'后，龙虾+11家精酿厂牌+飞天威亚实景秀+大学生Live+剥虾大赛接棒，'1+4+N'架构实现主题周迭代，客流量/营收双升。",
+      "learn": "★同一核心夜市IP下'周周换主题'（碳水→龙虾→…）既保流量连续性又造新鲜感，是市集从'三天热度'升级为'月度运营'的关键。可提议政府做'主题周轮播'。"
+    },
+    {
+      "id": "c0828-07",
+      "title": "2026北京西城百姓戏剧文化市集（西单更新场）",
+      "host": "北京市西城区",
+      "date": "2026-08-21",
+      "province": "北京",
+      "source": "人民网",
+      "type": "戏剧市集/商圈快闪",
+      "url": "https://bj.people.com.cn/n2/2026/0820/c82838-41672616.html",
+      "highlight": "8/21-23西单更新场把专业戏剧舞台搬进商圈：三晚不同主题（传统/阖家/潮乐）、金融街购物中心戏剧快闪+戏曲手工、经典角色巡游偶遇、六处集章兑戏剧文创。",
+      "learn": "★'戏剧+商圈'：用集章打卡+消费兑礼把文化流量导进商场销售，是文商旅融合的可复制模型。活动公司可做'非遗/戏曲IP进商圈'标准化产品。"
+    },
+    {
+      "id": "c0828-08",
+      "title": "延安市养老保险经办处工会委员会拓展训练及趣味运动会",
+      "host": "延安市养老保险经办处工会委员会",
+      "date": "2026-08",
+      "province": "陕西",
+      "source": "陕西城乡劳动就业网",
+      "type": "职工拓展/趣味运动会",
+      "url": "http://www.sxcxldjy.com/show-131-36444-1.html",
+      "highlight": "甘泉劳山国家森林公园办'中空五连/攀岩/高空独木杆'拓展+沙包投掷/飞盘九宫格/公鸡下蛋/套圈/数字抱团趣味赛，市县级经办机构联合开展。",
+      "learn": "机关事业单位工会把'拓展+趣味'合并办进景区，既放松又炼团队。此类'近郊景区一日营'是中小活动公司的轻量标准产品。"
+    },
+    {
+      "id": "c0828-09",
+      "title": "乌鲁木齐水磨沟工业园首届非公企业趣味运动会",
+      "host": "水磨沟工业园非公企业综合党委、工业园工会联合会",
+      "date": "2026-08-10",
+      "province": "新疆",
+      "source": "水磨沟区政府网",
+      "type": "非公企业趣味运动会",
+      "url": "http://www.xjsmgq.gov.cn/sx/gndt/28475.htm",
+      "highlight": "十余支队伍近150名非公企业职工参赛，同舟共济/妙笔生花/毛毛虫竞速/拔河，园区已集聚700余家企业，街道承诺常态化办夜校、篮球赛、技能比武。",
+      "learn": "★非公企业工会是增量蓝海：工业园工会联合会统筹、企业免费参与，'以活动聚人心'换取企业留驻。活动公司可对接园区管委会做年度服务包。"
+    },
+    {
+      "id": "c0828-10",
+      "title": "“中国梦·劳动美”铜仁市第五届职工趣味运动会暨第二届职工亲子运动会",
+      "host": "铜仁市总工会（工行铜仁分行协办）",
+      "date": "2026-08-14",
+      "province": "贵州",
+      "source": "铜仁网",
+      "type": "职工趣味运动会/亲子+市集",
+      "url": "https://www.tongren.gov.cn/2026/0814/352020.shtml",
+      "highlight": "89队980余人，陆地（龟兔赛跑/毛毛虫）+水上（赛龙舟/八仙过海）双馆并行；赛场外接'工会夏日集市'（抹茶/小吃/手作文创+满减），工行协办。",
+      "learn": "★'运动会+市集+银行协办'三合一：赛事聚人流、市集变现、金融客户赞助降成本。一场活动对工会/商户/银行三方交付，是抬高单场预算天花板的结构。"
+    },
+    {
+      "id": "c0828-11",
+      "title": "长汀县首届“状元杯”青年趣味运动会",
+      "host": "长汀县总工会、团县委、县妇联（汀州状元府承办）",
+      "date": "2026-08-19",
+      "province": "福建",
+      "source": "搜狐",
+      "type": "青年趣味运动会/现金奖",
+      "url": "https://www.sohu.com/a/1065420134_121106994",
+      "highlight": "16支青年队8个项目计时积分：螃蟹赛跑/滚雪球/腰缠万贯/你比划我猜/风火轮/五人六足/夹球跑；冠军1888元现金+奖杯、二三名1288/888元，全员伴手礼。",
+      "learn": "★现金奖金+定制奖杯直接拉满参与欲与传播欲，'福利全覆盖'（人人有伴手礼）提升口碑。县域青年运动会用'竞技奖金'做钩子值得借鉴。"
+    },
+    {
+      "id": "c0828-12",
+      "title": "广东省工伤康复医院2026年中国医师节系列庆祝活动",
+      "host": "广东省工伤康复医院",
+      "date": "2026-08-19",
+      "province": "广东",
+      "source": "官网",
+      "type": "医师节/职工关怀",
+      "url": "https://gzrehab.com.cn/News/info.aspx?itemid=1272&lcid=5",
+      "highlight": "'微笑服务·暖心康复'短视频大赛+心理减压工作坊（外请专家）+表彰大会+慰问蛋糕+'医'起趣闯关趣味团建，把人文培训/典型选树/职工关怀融为一体。",
+      "learn": "★医师节活动新范式：短视频大赛（新媒体传播）+心理团辅（减压）+趣味团建（凝聚）三件套，医院宣传/工会/心理三线合并采购，活动公司可做'医师节全案'。"
+    },
+    {
+      "id": "c0828-13",
+      "title": "三亚中心医院2026年“8.19中国医师节”系列活动",
+      "host": "三亚中心医院（海南省第三人民医院）",
+      "date": "2026-08-26",
+      "province": "海南",
+      "source": "中新网海南",
+      "type": "医师节/表彰+沙龙+游园",
+      "url": "https://www.hi.chinanews.com.cn/hnnew/2026-08-26/744943.html",
+      "highlight": "表彰大会（四类奖+11家医疗集团联动）+美食沙龙'烟火暖医心'+趣味游园会+观影+亲子油画，恰逢七夕增设医师夫妻鲜花与廉洁签字展板。",
+      "learn": "医师节与七夕/廉政等主题叠加做'复合仪式'，用美食沙龙+游园替代传统座谈，医院工会关怀正从'发慰问品'升级为'体验式关怀'。"
+    },
+    {
+      "id": "c0828-14",
+      "title": "乐清多家医院花式宠“医” 医师节撞上七夕",
+      "host": "乐清市中医院/三院/人民医院/妇幼/五院/二院等",
+      "date": "2026-08-21",
+      "province": "浙江",
+      "source": "乐清网",
+      "type": "医师节/院庆+打卡",
+      "url": "https://www.yqcn.com/system/2026/08/21/015575474.shtml",
+      "highlight": "中医院建院40周年写寄语+定制纪念礼；三院主题打卡墙+抽奖+短视频；人民医院医师专属营养自助餐（听诊器甜品）；妇幼逐科送花送蛋糕；五院从医十/二十/三十周年专属纪念照；二院初心签名墙+医师专属餐。",
+      "learn": "★县域医院'一院一策'医师节：院庆结合/打卡墙/短视频/专属餐/纪念照多手法并行，且多院同主题形成区域传播声量。活动公司可按'院史节点'做差异化方案库。"
     }
   ]
 };</script>
@@ -13587,6 +14235,8 @@ select to_regclass('public.wb_kv');</div>
       WORK_SUBS.forEach(function (s) { var p = $("panel-" + s); if (p) p.classList.remove("show"); });
     }
     var p = $("panel-" + tab); if (p) p.classList.add("show");
+    // V7：待办看板仅在「日常工作」板块显示，其他板块隐藏
+    var tb = $("todoBoard"); if (tb) tb.style.display = (tab === "work") ? "" : "none";
     document.querySelectorAll(".top-tab").forEach(function (b) { b.classList.toggle("active", b.dataset.tab === tab); });
     try {
       if (tab === "work") { if (!currentSub) showSub("daily"); }
