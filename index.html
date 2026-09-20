@@ -11,7 +11,7 @@
   <link rel="icon" type="image/png" href="./icon-192.png" />
   <link rel="apple-touch-icon" href="./icon-192.png" />
   <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIuiupOecn+W3peS9nOWPsCIsCiAgInNob3J0X25hbWUiOiAi5bel5L2c5Y+wIiwKICAiZGVzY3JpcHRpb24iOiAi5Zub5bed5rS75Yqo5oOF5oql5pCc6ZuG5LiO5pS/5LyB5a6i5oi3566h55CGIiwKICAic3RhcnRfdXJsIjogIi4vIiwKICAic2NvcGUiOiAiLi8iLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJvcmllbnRhdGlvbiI6ICJwb3J0cmFpdCIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiI2Y1ZjVmNyIsCiAgInRoZW1lX2NvbG9yIjogIiMwMDY2Y2MiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24tMTkyLnBuZyIsCiAgICAgICJzaXplcyI6ICIxOTJ4MTkyIiwKICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIiwKICAgICAgInB1cnBvc2UiOiAiYW55IgogICAgfSwKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24tNTEyLnBuZyIsCiAgICAgICJzaXplcyI6ICI1MTJ4NTEyIiwKICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIiwKICAgICAgInB1cnBvc2UiOiAiYW55IgogICAgfSwKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24uc3ZnIiwKICAgICAgInNpemVzIjogImFueSIsCiAgICAgICJ0eXBlIjogImltYWdlL3N2Zyt4bWwiLAogICAgICAicHVycG9zZSI6ICJhbnkiCiAgICB9CiAgXQp9Cg==" />
-  <script>window.APP_VERSION = "build@1789888469";</script>
+  <script>window.APP_VERSION = "build@1789894254";</script>
   <title>DSC销售 · 项目管理工作台（完整版）</title>
   <script src="./xlsx.full.min.js"></script>
   <script>
@@ -2380,6 +2380,61 @@ body.dark-mode .project-card,
 body.dark-mode .client-card { background: var(--ui-card-bg); border-color: var(--ui-border); }
 body.dark-mode *::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, .18); border: 2px solid transparent; background-clip: content-box; }
 body.dark-mode *::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, .30); background-clip: content-box; }
+
+/* ===== V8：日报 / 周报 / 月报「其他」框 —— 平时小框，点击放大编辑 ===== */
+textarea.zoomable-ta { cursor: zoom-in; }
+.zoom-chip {
+  margin-left: 8px; font-size: 11px; line-height: 1; padding: 3px 9px;
+  border-radius: 999px; border: 1px solid var(--ui-border);
+  background: transparent; color: var(--ui-text-soft);
+  cursor: pointer; vertical-align: middle; font-family: inherit;
+}
+.zoom-chip:hover { background: var(--ui-primary-ghost); color: var(--ui-primary); border-color: var(--ui-primary); }
+
+.zoom-overlay {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, .45);
+  display: none; align-items: center; justify-content: center;
+  z-index: 9999; padding: 24px;
+}
+.zoom-card {
+  width: min(880px, 100%); max-height: 88vh;
+  display: flex; flex-direction: column;
+  background: var(--ui-card-bg);
+  border: 1px solid var(--ui-border);
+  border-radius: 16px;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, .24);
+  overflow: hidden;
+}
+.zoom-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 20px; border-bottom: 1px solid var(--ui-border);
+  font-size: 15px; font-weight: 700; color: var(--ui-text);
+}
+.zoom-x { border: none; background: transparent; font-size: 15px; color: var(--ui-text-soft); cursor: pointer; padding: 2px 6px; border-radius: 8px; }
+.zoom-x:hover { background: var(--ui-bg-soft); color: var(--ui-text); }
+.zoom-body { padding: 16px 20px; flex: 1; min-height: 0; }
+.zoom-ta {
+  width: 100%; height: 50vh; min-height: 300px; padding: 14px;
+  border-radius: 12px; border: 1px solid var(--ui-border);
+  background: var(--ui-bg); color: var(--ui-text);
+  font-size: 14px; line-height: 1.6; resize: vertical; font-family: inherit;
+}
+.zoom-ta:focus { outline: none; border-color: var(--ui-primary); box-shadow: 0 0 0 3px var(--ui-primary-ghost); }
+.zoom-foot { display: flex; gap: 10px; justify-content: flex-end; padding: 12px 20px 18px; border-top: 1px solid var(--ui-border); }
+.zoom-btn {
+  padding: 9px 20px; border-radius: 10px; border: 1px solid var(--ui-border);
+  background: transparent; color: var(--ui-text); font-size: 14px; cursor: pointer; font-family: inherit;
+}
+.zoom-btn.primary { background: var(--ui-primary); border-color: transparent; color: #fff; }
+.zoom-btn:active { transform: scale(.97); }
+@media (prefers-reduced-motion: reduce) { .zoom-btn:active { transform: none; } }
+
+body.dark-mode .zoom-card { background: var(--ui-card-bg); border-color: var(--ui-border); }
+body.dark-mode .zoom-btn.primary { background: var(--ui-primary); }
+@media (prefers-color-scheme: dark) {
+  .zoom-overlay { background: rgba(0, 0, 0, .6); }
+}
 
     /* ==================================================================
        增强模块样式：云同步状态 / 历史折叠 / 草稿提示 / 移动端优化
@@ -15217,7 +15272,8 @@ select to_regclass('public.wb_kv');</div>
     setUpdated(SEED);
     renderIntel();
     renderInspire();
-    showTop("dash");
+    // V8：进入页面默认显示「日常工作」板块（原为情报搜集）
+    showTop("work");
     loadAll();
     setInterval(loadAll, POLL_MS);
   }
@@ -15721,6 +15777,129 @@ select to_regclass('public.wb_kv');</div>
       setInterval(window.checkAppUpdate, 5 * 60 * 1000);
     });
   })();
+})();
+
+/* ============================================================
+ * V8：日报 / 周报 / 月报「其他」框 —— 平时保持小框，点击弹出大框编辑
+ * 仅新增交互，不改原有保存 / 汇总 / 草稿逻辑：
+ * 大框保存后写回原 textarea 并派发 input/change，原有草稿自动保存照常触发。
+ * ============================================================ */
+(function () {
+  "use strict";
+
+  var TARGETS = [
+    { id: "d-today-other", title: "今日其他工作" },
+    { id: "w-week-other-mon", title: "周一其他" },
+    { id: "w-week-other-tue", title: "周二其他" },
+    { id: "w-week-other-wed", title: "周三其他" },
+    { id: "w-week-other-thu", title: "周四其他" },
+    { id: "w-week-other-fri", title: "周五其他" },
+    { id: "m-month-other-week1", title: "第一周其他" },
+    { id: "m-month-other-week2", title: "第二周其他" },
+    { id: "m-month-other-week3", title: "第三周其他" },
+    { id: "m-month-other-week4", title: "第四周其他" }
+  ];
+
+  var overlay = null, bigTa = null, bigTitle = null;
+  var curEl = null, origVal = "";
+
+  function ensure() {
+    if (overlay) return overlay;
+    overlay = document.createElement("div");
+    overlay.className = "zoom-overlay";
+    overlay.innerHTML =
+      '<div class="zoom-card">' +
+        '<div class="zoom-head"><span class="zoom-title"></span>' +
+        '<button class="zoom-x" type="button" title="关闭（保存）">✕</button></div>' +
+        '<div class="zoom-body"><textarea class="zoom-ta" spellcheck="false"></textarea></div>' +
+        '<div class="zoom-foot">' +
+          '<button class="zoom-btn" type="button" data-act="cancel">取消</button>' +
+          '<button class="zoom-btn primary" type="button" data-act="save">保存</button>' +
+        '</div>' +
+      '</div>';
+    document.body.appendChild(overlay);
+    bigTa = overlay.querySelector(".zoom-ta");
+    bigTitle = overlay.querySelector(".zoom-title");
+
+    overlay.addEventListener("click", function (e) {
+      var t = e.target;
+      if (t === overlay) { commit(); return; }
+      var act = t && t.dataset ? t.dataset.act : null;
+      if (act === "save") commit();
+      else if (act === "cancel") cancel();
+      else if (t && t.classList && t.classList.contains("zoom-x")) commit();
+    });
+
+    document.addEventListener("keydown", function (e) {
+      if (!overlay || overlay.style.display !== "flex") return;
+      if (e.key === "Escape") { e.preventDefault(); commit(); }
+    });
+
+    return overlay;
+  }
+
+  function open(field) {
+    var el = document.getElementById(field.id);
+    if (!el) return;
+    ensure();
+    curEl = el;
+    origVal = el.value;
+    bigTitle.textContent = "✏️ " + field.title + "（放大编辑）";
+    bigTa.value = el.value;
+    overlay.style.display = "flex";
+    setTimeout(function () {
+      try {
+        bigTa.focus();
+        bigTa.setSelectionRange(bigTa.value.length, bigTa.value.length);
+      } catch (e) {}
+    }, 30);
+  }
+
+  function close() {
+    if (overlay) overlay.style.display = "none";
+    curEl = null;
+  }
+
+  function commit() {
+    if (!curEl) return close();
+    var el = curEl;
+    el.value = bigTa.value;
+    // 保持原有联动：草稿自动保存 / 统计刷新（原本用户输入时也会触发）
+    try { el.dispatchEvent(new Event("input", { bubbles: true })); } catch (e) {}
+    try { el.dispatchEvent(new Event("change", { bubbles: true })); } catch (e) {}
+    close();
+  }
+
+  function cancel() {
+    if (!curEl) return close();
+    curEl.value = origVal;
+    close();
+  }
+
+  function bind() {
+    TARGETS.forEach(function (f) {
+      var el = document.getElementById(f.id);
+      if (!el || el.dataset.zoomBound === "1") return;
+      el.dataset.zoomBound = "1";
+      el.classList.add("zoomable-ta");
+      el.setAttribute("title", "点击放大编辑");
+      el.addEventListener("click", function (e) { e.preventDefault(); open(f); });
+      // 标签旁加一颗「⤢ 放大」小按钮，方便发现
+      var lab = el.previousElementSibling;
+      if (lab && /^LABEL$/i.test(lab.tagName) && !lab.querySelector(".zoom-chip")) {
+        var chip = document.createElement("button");
+        chip.type = "button";
+        chip.className = "zoom-chip";
+        chip.textContent = "⤢ 放大";
+        chip.title = "放大编辑";
+        chip.addEventListener("click", function (e) { e.preventDefault(); open(f); });
+        lab.appendChild(chip);
+      }
+    });
+  }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", bind);
+  else bind();
 })();
 
 </script></body>
