@@ -11,7 +11,7 @@
   <link rel="icon" type="image/png" href="./icon-192.png" />
   <link rel="apple-touch-icon" href="./icon-192.png" />
   <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIuiupOecn+W3peS9nOWPsCIsCiAgInNob3J0X25hbWUiOiAi5bel5L2c5Y+wIiwKICAiZGVzY3JpcHRpb24iOiAi5Zub5bed5rS75Yqo5oOF5oql5pCc6ZuG5LiO5pS/5LyB5a6i5oi3566h55CGIiwKICAic3RhcnRfdXJsIjogIi4vIiwKICAic2NvcGUiOiAiLi8iLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJvcmllbnRhdGlvbiI6ICJwb3J0cmFpdCIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiI2Y1ZjVmNyIsCiAgInRoZW1lX2NvbG9yIjogIiMwMDY2Y2MiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24tMTkyLnBuZyIsCiAgICAgICJzaXplcyI6ICIxOTJ4MTkyIiwKICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIiwKICAgICAgInB1cnBvc2UiOiAiYW55IgogICAgfSwKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24tNTEyLnBuZyIsCiAgICAgICJzaXplcyI6ICI1MTJ4NTEyIiwKICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIiwKICAgICAgInB1cnBvc2UiOiAiYW55IgogICAgfSwKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24uc3ZnIiwKICAgICAgInNpemVzIjogImFueSIsCiAgICAgICJ0eXBlIjogImltYWdlL3N2Zyt4bWwiLAogICAgICAicHVycG9zZSI6ICJhbnkiCiAgICB9CiAgXQp9Cg==" />
-  <script>window.APP_VERSION = "build@1789896552";</script>
+  <script>window.APP_VERSION = "build@1789959037";</script>
   <title>DSC销售 · 项目管理工作台（完整版）</title>
   <script src="./xlsx.full.min.js"></script>
   <script>
@@ -5156,7 +5156,7 @@ body.dark-mode .zoom-btn.primary { background: var(--ui-primary); }
                       ${renderInteractionDashboard(c)}
                       <label style="margin-top:12px;display:block;">📋 跟进记录（最新的会显示在客户卡上）</label>
                       <div class="followup-list" id="edit-client-followups">
-                          ${(c.followUps || []).slice().sort((a,b)=>new Date(b.time||0)-new Date(a.time||0)).map((f, i) => `
+                          ${(c.followUps || []).map((f, _i) => ({ f: f, _i: _i })).sort((a,b)=>new Date(b.f.time||0)-new Date(a.f.time||0)).map(({ f, _i: i }) => `
                             <div class="followup-item" data-idx="${i}">
                               <span class="followup-time">${f.time || ''}</span>
                               <span class="followup-methods">${formatInteractionMethods(f.methods, f.type)}</span>
@@ -5818,17 +5818,17 @@ body.dark-mode .zoom-btn.primary { background: var(--ui-primary); }
         const rows = yesterdayData[map[tid]] || [];
         fillTableFromRows(tid, rows, false, false);
       });
-      const fields = ['follow', 'interview', 'newdemand', 'lost', 'lostReason', 'call', 'newcus', 'marketing',
-        'visit', 'trainNum', 'trainText', 'todayOther', 'tomorrowPlan'
-      ];
-      fields.forEach(f => {
-        const el = document.getElementById('d-' + f);
+      // 修正：字段名 -> 实际 DOM id（原来直接拼 'd-'+字段，导致 lostReason/trainNum/trainText/todayOther/tomorrowPlan 找不到元素、静默不继承）
+      const fieldIdMap = {
+        follow: 'd-follow', interview: 'd-interview', newdemand: 'd-newdemand', lost: 'd-lost',
+        lostReason: 'd-lost-reason', call: 'd-call', newcus: 'd-newcus', marketing: 'd-marketing',
+        visit: 'd-visit', trainNum: 'd-train-num', trainText: 'd-train-text',
+        todayOther: 'd-today-other', tomorrowPlan: 'd-tomorrow'
+      };
+      Object.keys(fieldIdMap).forEach(f => {
+        const el = document.getElementById(fieldIdMap[f]);
         if (el && yesterdayData[f] !== undefined) {
-          if (el.tagName === 'SELECT') {
-            el.value = yesterdayData[f] || '';
-          } else {
-            el.value = yesterdayData[f] || '';
-          }
+          el.value = yesterdayData[f] || '';
         }
       });
       extractClientsFromTables().forEach(name => syncClient(name));
@@ -6774,15 +6774,17 @@ body.dark-mode .zoom-btn.primary { background: var(--ui-primary); }
     }
 
     function buildEditForm(type, data) {
+      // 统一转义：避免内容里的引号把表单 HTML 截断（导致字段丢失、保存后数据被截断）
+      const eh = (v) => escapeHtml(v === undefined || v === null ? '' : String(v));
       let html = '<div class="form-row">';
       if (type === 'daily') {
-        html += `<div class="form-col"><label>📅 日期</label><input type="text" value="${data.date}" readonly></div>`;
-        html += `<div class="form-col"><label>📌 周</label><input type="text" value="${weekStrToDisplay(data.week)}" readonly></div>`;
+        html += `<div class="form-col"><label>📅 日期</label><input type="text" value="${eh(data.date)}" readonly></div>`;
+        html += `<div class="form-col"><label>📌 周</label><input type="text" value="${eh(weekStrToDisplay(data.week))}" readonly></div>`;
       } else if (type === 'weekly') {
-        html += `<div class="form-col"><label>📅 周</label><input type="text" value="${data.week}" readonly></div>`;
-        html += `<div class="form-col"><label>📌 月份</label><input type="text" value="${data.month}" readonly></div>`;
+        html += `<div class="form-col"><label>📅 周</label><input type="text" value="${eh(data.week)}" readonly></div>`;
+        html += `<div class="form-col"><label>📌 月份</label><input type="text" value="${eh(data.month)}" readonly></div>`;
       } else {
-        html += `<div class="form-col"><label>📅 月份</label><input type="text" value="${data.month}" readonly></div>`;
+        html += `<div class="form-col"><label>📅 月份</label><input type="text" value="${eh(data.month)}" readonly></div>`;
       }
       html += '</div>';
 
@@ -6795,7 +6797,7 @@ body.dark-mode .zoom-btn.primary { background: var(--ui-primary); }
       });
       if (type === 'daily') {
         html +=
-          `<div class="form-col"><label>丢单原因</label><input type="text" id="edit-lostReason" value="${data.lostReason||''}"></div>`;
+          `<div class="form-col"><label>丢单原因</label><input type="text" id="edit-lostReason" value="${eh(data.lostReason||'')}"></div>`;
       }
       html += '</div>';
 
@@ -6809,7 +6811,7 @@ body.dark-mode .zoom-btn.primary { background: var(--ui-primary); }
         html += `
                 <div style="margin:8px 0;">
                     <label><strong>${t.label}</strong></label>
-                    <textarea class="json-editor" id="edit-${t.id}" rows="4">${jsonStr}</textarea>
+                    <textarea class="json-editor" id="edit-${t.id}" rows="4">${eh(jsonStr)}</textarea>
                     <div style="margin-top:4px;">
                         <button type="button" class="btn-refresh-stat" style="padding:2px 10px;font-size:12px;" onclick="previewJson('edit-${t.id}','preview-${t.id}')">👁️ 预览</button>
                     </div>
@@ -6827,9 +6829,9 @@ body.dark-mode .zoom-btn.primary { background: var(--ui-primary); }
         html +=
           `<div class="form-col"><label>差额</label><input type="text" id="edit-diff" value="${data.diff||0}" readonly></div>`;
         html += '</div>';
-        html += `<label>欠款</label><textarea id="edit-debt" rows="2">${data.debt||''}</textarea>`;
+        html += `<label>欠款</label><textarea id="edit-debt" rows="2">${eh(data.debt||'')}</textarea>`;
         if (type === 'monthly') {
-          html += `<label>业绩分析</label><textarea id="edit-analysis" rows="2">${data.analysis||''}</textarea>`;
+          html += `<label>业绩分析</label><textarea id="edit-analysis" rows="2">${eh(data.analysis||'')}</textarea>`;
         }
       }
 
@@ -6838,12 +6840,12 @@ body.dark-mode .zoom-btn.primary { background: var(--ui-primary); }
       if (type !== 'daily') stratFields.push(['客情', 'cusmanage']);
       stratFields.forEach(([label, key]) => {
         html +=
-          `<div class="form-col"><label>${label}</label><input type="text" id="edit-${key}" value="${data[key]||0}"></div>`;
+          `<div class="form-col"><label>${label}</label><input type="text" id="edit-${key}" value="${eh(data[key]||0)}"></div>`;
       });
       html +=
         `<div class="form-col"><label>培训数</label><input type="number" id="edit-trainNum" value="${data.trainNum||0}"></div>`;
       html +=
-        `<div class="form-col"><label>培训内容</label><input type="text" id="edit-trainText" value="${data.trainText||''}"></div>`;
+        `<div class="form-col"><label>培训内容</label><input type="text" id="edit-trainText" value="${eh(data.trainText||'')}"></div>`;
       html += '</div>';
 
       if (type === 'monthly') {
@@ -6860,8 +6862,8 @@ body.dark-mode .zoom-btn.primary { background: var(--ui-primary); }
       }
 
       if (type === 'daily') {
-        html += `<label>今日其他工作</label><textarea id="edit-todayOther" rows="2">${data.todayOther||''}</textarea>`;
-        html += `<label>明日计划</label><textarea id="edit-tomorrowPlan" rows="2">${data.tomorrowPlan||''}</textarea>`;
+        html += `<label>今日其他工作</label><textarea id="edit-todayOther" rows="2">${eh(data.todayOther||'')}</textarea>`;
+        html += `<label>明日计划</label><textarea id="edit-tomorrowPlan" rows="2">${eh(data.tomorrowPlan||'')}</textarea>`;
       } else if (type === 'weekly') {
         html += `<label>本周其他(周一~周五)</label><div style="font-size:12px;color:#6b7280;">已按天拆分存储</div>`;
         const dayFields = ['mon', 'tue', 'wed', 'thu', 'fri'];
@@ -6869,9 +6871,9 @@ body.dark-mode .zoom-btn.primary { background: var(--ui-primary); }
         dayFields.forEach((f, i) => {
           const fieldKey = 'weekOther' + f.charAt(0).toUpperCase() + f.slice(1);
           html +=
-            `<label style="font-size:12px;margin-top:4px;">${dayLabels[i]}</label><textarea id="edit-${fieldKey}" rows="1">${data[fieldKey]||''}</textarea>`;
+            `<label style="font-size:12px;margin-top:4px;">${dayLabels[i]}</label><textarea id="edit-${fieldKey}" rows="1">${eh(data[fieldKey]||'')}</textarea>`;
         });
-        html += `<label>下周计划</label><textarea id="edit-nextPlan" rows="2">${data.nextPlan||''}</textarea>`;
+        html += `<label>下周计划</label><textarea id="edit-nextPlan" rows="2">${eh(data.nextPlan||'')}</textarea>`;
       } else {
         html += `<label>本月其他(第一周~第四周)</label><div style="font-size:12px;color:#6b7280;">已按周拆分存储</div>`;
         const weekFields = ['week1', 'week2', 'week3', 'week4'];
@@ -6879,23 +6881,12 @@ body.dark-mode .zoom-btn.primary { background: var(--ui-primary); }
         weekFields.forEach((f, i) => {
           const fieldKey = 'monthOther' + f.charAt(0).toUpperCase() + f.slice(1);
           html +=
-            `<label style="font-size:12px;margin-top:4px;">${weekLabels[i]}</label><textarea id="edit-${fieldKey}" rows="1">${data[fieldKey]||''}</textarea>`;
+            `<label style="font-size:12px;margin-top:4px;">${weekLabels[i]}</label><textarea id="edit-${fieldKey}" rows="1">${eh(data[fieldKey]||'')}</textarea>`;
         });
-        html += `<label>下月计划</label><textarea id="edit-nextPlan" rows="2">${data.nextPlan||''}</textarea>`;
+        html += `<label>下月计划</label><textarea id="edit-nextPlan" rows="2">${eh(data.nextPlan||'')}</textarea>`;
       }
-
-      if (type !== 'daily') {
-        html += `<script>
-                document.getElementById('edit-target')?.addEventListener('input', calcEditDiff);
-                document.getElementById('edit-finish')?.addEventListener('input', calcEditDiff);
-                function calcEditDiff() {
-                    let t = Number(document.getElementById('edit-target')?.value) || 0;
-                    let f = Number(document.getElementById('edit-finish')?.value) || 0;
-                    let diff = document.getElementById('edit-diff');
-                    if (diff) diff.value = (f - t).toFixed(2);
-                }
-            <\/script>`;
-      }
+      // 注：原来这里用 innerHTML 注入 <script> 绑定「目标/完成 → 差额」，但 innerHTML 插入的脚本不会执行，
+      // 导致编辑周/月报改动完成额后差额不更新、保存的是旧差额。改由 patch 用事件委托绑定（见 bindEditDiff）。
       return html;
     }
 
@@ -8194,8 +8185,17 @@ select to_regclass('public.wb_kv');</div>
           (Array.isArray(remote) ? remote : []).forEach(function (t) {
             if (!t || !t.id) return;
             if (tmap[t.id]) {
-              // 完成态并集：本地已完成或远端已完成都算完成，避免被陈旧版本回滚
-              tmap[t.id] = Object.assign({}, tmap[t.id], { done: !!(tmap[t.id].done || t.done) });
+              var a = tmap[t.id], b = t;
+              var ta = Number(a.doneTs) || 0, tb = Number(b.doneTs) || 0;
+              var doneVal;
+              if (ta || tb) {
+                // 有「最后改动时间」：以最新一次操作为准 —— 勾选与取消勾选都能正确同步
+                doneVal = (tb > ta) ? !!b.done : !!a.done;
+              } else {
+                // 老数据没有时间戳：仍是并集，防止刚勾选的完成态被陈旧云端版本回滚
+                doneVal = !!(a.done || b.done);
+              }
+              tmap[t.id] = Object.assign({}, a, { done: doneVal, doneTs: Math.max(ta, tb) || undefined });
             } else {
               tmap[t.id] = t;
             }
@@ -15997,6 +15997,158 @@ select to_regclass('public.wb_kv');</div>
     var el = document.getElementById(id);
     if (el) open(el);
   };
+})();
+
+/* ============================================================
+ * V10 修复包（只修 bug，不动布局与原有交互）
+ * 1) 周报 / 月报：已保存的人工字段（目标·完成·欠款·客情·培训内容·下周/下月计划·业绩分析）
+ *    在切周切月、刷新汇总、打开面板时自动回填 —— 解决「保存了下次打开看不到」
+ * 2) 周报 / 月报「其他」：刷新汇总时保留手工补充的行（增量去重，不会复活已删内容）
+ * 3) 编辑历史记录弹窗：改动「目标 / 完成」时「差额」实时重算
+ *    （原来靠 innerHTML 注入 <script> 绑定，而 innerHTML 插入的脚本不会执行，
+ *     导致编辑周/月报后保存的差额是旧值）
+ * ============================================================ */
+(function () {
+  "use strict";
+  var K_WEEKLY = "sport_weekly_list";
+  var K_MONTHLY = "sport_monthly_list";
+
+  function arr(k) { try { return JSON.parse(localStorage.getItem(k) || "[]") || []; } catch (e) { return []; } }
+  function lines(v) { return String(v || "").split("\n").map(function (s) { return s.trim(); }).filter(Boolean); }
+  function mergeLines(baseText, extraLines) {
+    var out = lines(baseText);
+    (extraLines || []).forEach(function (l) { if (out.indexOf(l) < 0) out.push(l); });
+    return out.join("\n");
+  }
+  function setVal(id, v) {
+    var el = document.getElementById(id);
+    if (el && v !== undefined && v !== null && v !== "") el.value = v;
+  }
+  function updDiff(tid, fid, did) {
+    var t = document.getElementById(tid), f = document.getElementById(fid), d = document.getElementById(did);
+    if (t && f && d) d.value = ((Number(f.value) || 0) - (Number(t.value) || 0)).toFixed(2);
+  }
+
+  var WEEK_TEXT = [["w-target", "target"], ["w-finish", "finish"], ["w-debt", "debt"],
+    ["w-cusmanage", "cusmanage"], ["w-train-text", "trainText"], ["w-nextplan", "nextPlan"]];
+  var WEEK_OTHER = [["w-week-other-mon", "weekOtherMon"], ["w-week-other-tue", "weekOtherTue"],
+    ["w-week-other-wed", "weekOtherWed"], ["w-week-other-thu", "weekOtherThu"], ["w-week-other-fri", "weekOtherFri"]];
+  var MONTH_TEXT = [["m-target", "target"], ["m-finish", "finish"], ["m-debt", "debt"],
+    ["m-cusmanage", "cusmanage"], ["m-train-text", "trainText"], ["m-nextplan", "nextPlan"], ["m-analysis", "analysis"]];
+  var MONTH_OTHER = [["m-month-other-week1", "monthOtherWeek1"], ["m-month-other-week2", "monthOtherWeek2"],
+    ["m-month-other-week3", "monthOtherWeek3"], ["m-month-other-week4", "monthOtherWeek4"]];
+
+  function restoreWeek(manual) {
+    var wk = document.getElementById("w-week");
+    var weekStr = wk ? wk.value : "";
+    if (!weekStr) return;
+    var rec = arr(K_WEEKLY).filter(function (x) { return x.week === weekStr; })[0];
+    if (!rec) {
+      WEEK_OTHER.forEach(function (p) {
+        var el = document.getElementById(p[0]);
+        if (el && manual && manual[p[0]] && manual[p[0]].length) el.value = mergeLines(el.value, manual[p[0]]);
+      });
+      return;
+    }
+    WEEK_TEXT.forEach(function (p) { setVal(p[0], rec[p[1]]); });
+    WEEK_OTHER.forEach(function (p) {
+      var el = document.getElementById(p[0]);
+      if (el) el.value = mergeLines(rec[p[1]], manual && manual[p[0]]);
+    });
+    updDiff("w-target", "w-finish", "w-diff");
+  }
+
+  function restoreMonth(manual) {
+    var mk = document.getElementById("m-month");
+    var monthStr = mk ? mk.value : "";
+    if (!monthStr) return;
+    var rec = arr(K_MONTHLY).filter(function (x) { return x.month === monthStr; })[0];
+    if (!rec) {
+      MONTH_OTHER.forEach(function (p) {
+        var el = document.getElementById(p[0]);
+        if (el && manual && manual[p[0]] && manual[p[0]].length) el.value = mergeLines(el.value, manual[p[0]]);
+      });
+      return;
+    }
+    MONTH_TEXT.forEach(function (p) { setVal(p[0], rec[p[1]]); });
+    MONTH_OTHER.forEach(function (p) {
+      var el = document.getElementById(p[0]);
+      if (el) el.value = mergeLines(rec[p[1]], manual && manual[p[0]]);
+    });
+    updDiff("m-target", "m-finish", "m-diff");
+  }
+
+  // 包装原有「刷新汇总」：先保留手工补充行，再回填已保存内容
+  function wrapAuto(name, otherList, restore) {
+    var orig = window[name];
+    if (typeof orig !== "function" || orig.__fxWrapped) return;
+    var wrapped = function () {
+      var before = {};
+      otherList.forEach(function (p) {
+        var el = document.getElementById(p[0]);
+        before[p[0]] = el ? el.value : "";
+      });
+      var r;
+      try { r = orig.apply(this, arguments); } catch (e) { r = undefined; }
+      var manual = {};
+      otherList.forEach(function (p) {
+        var el = document.getElementById(p[0]);
+        var after = el ? el.value : "";
+        var a = lines(after);
+        manual[p[0]] = lines(before[p[0]]).filter(function (l) { return a.indexOf(l) < 0; });
+      });
+      try { restore(manual); } catch (e) {}
+      return r;
+    };
+    wrapped.__fxWrapped = true;
+    window[name] = wrapped;
+  }
+
+  // 勾选 / 取消勾选时记录「最后改动时间」，让多端同步能分辨哪次操作更新
+  // （否则云端合并只能取并集，导致「取消勾选」永远同步不出去）
+  function wrapTodoToggle() {
+    var orig = window.toggleTodo;
+    if (typeof orig !== "function" || orig.__fxStamp) return;
+    var wrapped = function (id) {
+      var r = orig.apply(this, arguments);
+      try {
+        var list = window.getTodos ? window.getTodos() : JSON.parse(localStorage.getItem("sport_todos") || "[]");
+        if (Array.isArray(list)) {
+          for (var i = 0; i < list.length; i++) {
+            if (String(list[i].id) === String(id)) { list[i].doneTs = Date.now(); break; }
+          }
+          if (window.setTodos) window.setTodos(list);
+          else localStorage.setItem("sport_todos", JSON.stringify(list));
+        }
+      } catch (e) {}
+      return r;
+    };
+    wrapped.__fxStamp = true;
+    window.toggleTodo = wrapped;
+  }
+
+  function start() {
+    wrapAuto("loadWeekAutoData", WEEK_OTHER, restoreWeek);
+    wrapAuto("loadMonthAutoData", MONTH_OTHER, restoreMonth);
+    wrapTodoToggle();
+
+    // 编辑历史记录弹窗：目标 / 完成 变化时实时重算差额
+    document.addEventListener("input", function (e) {
+      var id = e.target && e.target.id;
+      if (id === "edit-target" || id === "edit-finish") updDiff("edit-target", "edit-finish", "edit-diff");
+    });
+
+    // 进入周报 / 月报面板时立刻回填一次
+    var timer = setInterval(function () {
+      if (!document.getElementById("w-week")) return;
+      clearInterval(timer);
+      try { restoreWeek(null); } catch (e) {}
+      try { restoreMonth(null); } catch (e) {}
+    }, 800);
+  }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start);
+  else start();
 })();
 
 </script></body>
