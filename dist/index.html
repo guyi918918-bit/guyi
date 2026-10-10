@@ -11,7 +11,7 @@
   <link rel="icon" type="image/png" href="./icon-192.png" />
   <link rel="apple-touch-icon" href="./icon-192.png" />
   <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIuiupOecn+W3peS9nOWPsCIsCiAgInNob3J0X25hbWUiOiAi5bel5L2c5Y+wIiwKICAiZGVzY3JpcHRpb24iOiAi5Zub5bed5rS75Yqo5oOF5oql5pCc6ZuG5LiO5pS/5LyB5a6i5oi3566h55CGIiwKICAic3RhcnRfdXJsIjogIi4vIiwKICAic2NvcGUiOiAiLi8iLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJvcmllbnRhdGlvbiI6ICJwb3J0cmFpdCIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiI2Y1ZjVmNyIsCiAgInRoZW1lX2NvbG9yIjogIiMwMDY2Y2MiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24tMTkyLnBuZyIsCiAgICAgICJzaXplcyI6ICIxOTJ4MTkyIiwKICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIiwKICAgICAgInB1cnBvc2UiOiAiYW55IgogICAgfSwKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24tNTEyLnBuZyIsCiAgICAgICJzaXplcyI6ICI1MTJ4NTEyIiwKICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIiwKICAgICAgInB1cnBvc2UiOiAiYW55IgogICAgfSwKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24uc3ZnIiwKICAgICAgInNpemVzIjogImFueSIsCiAgICAgICJ0eXBlIjogImltYWdlL3N2Zyt4bWwiLAogICAgICAicHVycG9zZSI6ICJhbnkiCiAgICB9CiAgXQp9Cg==" />
-  <script>window.APP_VERSION = "build@1791604966";</script>
+  <script>window.APP_VERSION = "build@1791606124";</script>
   <title>DSC销售 · 项目管理工作台（完整版）</title>
   <script src="./xlsx.full.min.js"></script>
   <script>
@@ -2439,6 +2439,16 @@ body.dark-mode .zoom-btn.primary { background: var(--ui-primary); }
   .zoom-overlay { background: rgba(0, 0, 0, .6); }
 }
 
+/* ===== V11：项目等级/需求类型徽标 ===== */
+.tag-grade { background: rgba(0, 102, 204, .1); color: #0066cc; font-weight: 700; }
+.tag-aux { background: rgba(196, 92, 92, .12); color: #c45c5c; }
+.tag-own { background: rgba(0, 184, 148, .12); color: #00896f; }
+@media (prefers-color-scheme: dark) {
+  .tag-grade { background: rgba(10, 132, 255, .18); color: #6db2ff; }
+  .tag-aux { background: rgba(255, 120, 120, .15); color: #ff9f9f; }
+  .tag-own { background: rgba(0, 184, 148, .18); color: #5fd4b4; }
+}
+
     /* ==================================================================
        增强模块样式：云同步状态 / 历史折叠 / 草稿提示 / 移动端优化
        ================================================================== */
@@ -3513,8 +3523,20 @@ body.dark-mode .zoom-btn.primary { background: var(--ui-primary); }
       </select>
       <label>客户</label>
       <input type="text" id="proj-filter-client" placeholder="输入客户名" oninput="renderProjects()" />
-      <label>标签</label>
-      <input type="text" id="proj-filter-tag" placeholder="输入标签" oninput="renderProjects()" />
+      <label>等级</label>
+      <select id="proj-filter-grade" onchange="renderProjects()">
+        <option value="">全部</option>
+        <option value="A">A级</option>
+        <option value="B">B级</option>
+        <option value="C">C级</option>
+        <option value="__none">未分级</option>
+      </select>
+      <label>需求</label>
+      <select id="proj-filter-aux" onchange="renderProjects()">
+        <option value="">全部</option>
+        <option value="own">自己的需求</option>
+        <option value="aux">辅助需求</option>
+      </select>
       <button class="btn-sm" onclick="document.querySelectorAll('.filter-bar select,.filter-bar input').forEach(el=>el.value='');renderProjects()">清空</button>
     </div>
     <div id="project-list" class="project-grid"></div>
@@ -3836,7 +3858,7 @@ body.dark-mode .zoom-btn.primary { background: var(--ui-primary); }
       <button class="sub-tab" data-sub="annual">📅 年度</button>
       <button class="sub-tab" data-sub="stat">📊 看板</button>
       <button class="sub-tab" data-sub="history">📚 历史</button>
-      <button class="sub-tab" data-sub="perfmonth">📑 月度业绩</button>
+      <!-- 月度业绩按钮由 perfmonth.js 动态创建（避免重复） -->
     </div>
     <div id="workInner"></div>
   </section>
@@ -5255,6 +5277,8 @@ body.dark-mode .zoom-btn.primary { background: var(--ui-primary); }
         paidAmount: data.paidAmount || 0,
         unpaidAmount: data.unpaidAmount || 0,
         tags: data.tags || [],
+        grade: data.grade || '',
+        aux: data.aux || false,
         steps: STEP_TEMPLATE.map(s => ({ label: s, done: false, date: '' })),
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
@@ -5303,11 +5327,13 @@ body.dark-mode .zoom-btn.primary { background: var(--ui-primary); }
       const statusFilter = document.getElementById('proj-filter-status').value;
       const dealFilter = document.getElementById('proj-filter-deal').value;
       const clientFilter = document.getElementById('proj-filter-client').value.trim().toLowerCase();
-      const tagFilter = document.getElementById('proj-filter-tag').value.trim().toLowerCase();
+      const gradeFilter = document.getElementById('proj-filter-grade').value;
+      const auxFilter = document.getElementById('proj-filter-aux').value;
       if (statusFilter) filtered = filtered.filter(p => p.status === statusFilter);
       if (dealFilter !== '') filtered = filtered.filter(p => String(p.deal) === dealFilter);
       if (clientFilter) filtered = filtered.filter(p => p.client && p.client.toLowerCase().includes(clientFilter));
-      if (tagFilter) filtered = filtered.filter(p => p.tags && p.tags.some(t => t.toLowerCase().includes(tagFilter)));
+      if (gradeFilter) filtered = filtered.filter(p => gradeFilter === '__none' ? !p.grade : p.grade === gradeFilter);
+      if (auxFilter) filtered = filtered.filter(p => auxFilter === 'aux' ? !!p.aux : !p.aux);
       const now = new Date();
       filtered.sort((a, b) => {
         const daysA = calcCountdown(a);
@@ -5328,7 +5354,9 @@ body.dark-mode .zoom-btn.primary { background: var(--ui-primary); }
           'deadline-normal');
         const doneSteps = p.steps.filter(s => s.done).length;
         const totalSteps = p.steps.length;
-        const tagsHtml = (p.tags || []).map(t => `<span class="tag">${t}</span>`).join('');
+        const tagsHtml = (p.grade ? `<span class="tag tag-grade">${p.grade} 级</span>` : '') +
+          (p.aux ? `<span class="tag tag-aux">辅助需求</span>` : `<span class="tag tag-own">自己的需求</span>`) +
+          (p.tags || []).map(t => `<span class="tag">${t}</span>`).join('');
         const financeHtml = `
                   <div class="finance-row">
                       <span>💰 合同: ${p.contractAmount||0}</span>
@@ -5389,7 +5417,8 @@ body.dark-mode .zoom-btn.primary { background: var(--ui-primary); }
                       <div class="form-col"><label>未回款</label><input type="number" step="0.01" id="modal-p-unpaid" value="${p.unpaidAmount||0}" readonly></div>
                   </div>
                   <div class="form-row">
-                      <div class="form-col"><label>自定义标签（用逗号分隔）</label><input type="text" id="modal-p-tags" value="${tagsStr}" placeholder="重点客户, 大单, ..."></div>
+                      <div class="form-col"><label>ABC 等级</label><select id="modal-p-grade"><option value="">未分级</option><option ${p.grade==='A'?'selected':''}>A</option><option ${p.grade==='B'?'selected':''}>B</option><option ${p.grade==='C'?'selected':''}>C</option></select></div>
+                      <div class="form-col"><label>需求类型</label><select id="modal-p-aux"><option value="own" ${!p.aux?'selected':''}>自己的需求</option><option value="aux" ${p.aux?'selected':''}>辅助需求</option></select></div>
                   </div>
                   <label>跟进备注</label><textarea id="modal-p-followup">${p.followUp||''}</textarea>
               </div>
@@ -5501,8 +5530,8 @@ body.dark-mode .zoom-btn.primary { background: var(--ui-primary); }
       p.contractAmount = Number(document.getElementById('modal-p-contract').value) || 0;
       p.paidAmount = Number(document.getElementById('modal-p-paid').value) || 0;
       p.unpaidAmount = Number(document.getElementById('modal-p-unpaid').value) || 0;
-      const tagsStr = document.getElementById('modal-p-tags').value.trim();
-      p.tags = tagsStr ? tagsStr.split(',').map(s => s.trim()).filter(s => s) : [];
+      p.grade = document.getElementById('modal-p-grade').value;
+      p.aux = document.getElementById('modal-p-aux').value === 'aux';
       p.updatedAt = new Date().toISOString();
       if (p.client) syncClient(p.client);
       setProjects(projects);
@@ -5544,7 +5573,8 @@ body.dark-mode .zoom-btn.primary { background: var(--ui-primary); }
         '合同金额': p.contractAmount || 0,
         '已回款': p.paidAmount || 0,
         '未回款': p.unpaidAmount || 0,
-        '标签': (p.tags || []).join('; '),
+        '等级': p.grade || '',
+        '需求类型': p.aux ? '辅助需求' : '自己的需求',
         '进度': calcProgress(p) + '%',
         '跟进备注': p.followUp,
         '步骤完成': p.steps.filter(s => s.done).map(s => s.label).join('; ')
@@ -7623,7 +7653,7 @@ select to_regclass('public.wb_kv');</div>
         'wb_radar', 'wb_radar_kw', 'wb_radar_check', 'wb_cases',
         'wb_intel_links', 'wb_intel_link_order',
         'wb_insp_links', 'wb_insp_link_order',
-        'wb_nav_catalog', 'sport_perf_month'
+        'wb_nav_catalog', 'sport_perf_month', 'wb_work_tabs'
       ];
 
       function $(id) { return document.getElementById(id); }
@@ -16531,6 +16561,133 @@ select to_regclass('public.wb_kv');</div>
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();
+})();
+
+</script>
+<script>
+/* ===== 日常工作：子标签显隐设置 =====
+ * workBar 末尾加「⚙️」按钮，点开面板可勾选显示/隐藏各子标签。
+ * 隐藏只是不显示按钮，数据永不删除；设置存 localStorage 并云同步。
+ * 纯注入式 patch，不改动 base 原代码。
+ */
+(function () {
+  'use strict';
+
+  var KEY = 'wb_work_tabs';           // 值：隐藏的 sub id 数组
+  var LABELS = {
+    daily: '📋 日报', weekly: '📊 周报', monthly: '📈 月报', annual: '📅 年度',
+    stat: '📊 看板', history: '📚 历史', perfmonth: '📑 月度业绩'
+  };
+
+  function $(id) { return document.getElementById(id); }
+
+  function getHidden() {
+    try {
+      var v = JSON.parse(localStorage.getItem(KEY) || '[]');
+      return Array.isArray(v) ? v : [];
+    } catch (e) { return []; }
+  }
+  function saveHidden(arr) {
+    try { localStorage.setItem(KEY, JSON.stringify(arr)); } catch (e) {}
+    if (window.markDirty) { try { window.markDirty(KEY); } catch (e) {} }
+    if (window.setStorage) { try { window.setStorage(KEY, arr); } catch (e) {} }
+  }
+
+  function injectStyle() {
+    if ($('worktabs-style')) return;
+    var css = [
+      '#workBar{position:relative;}',
+      '#wtSettingsBtn{margin-left:auto;font-size:14px;opacity:.75;}',
+      '#wtSettingsBtn:hover{opacity:1;}',
+      '#wtPopover{position:absolute;top:calc(100% + 8px);right:0;z-index:60;min-width:220px;',
+      'background:var(--ui-card-bg,#fff);color:var(--ui-text,#1d1d1f);border:1px solid var(--ui-border,rgba(0,0,0,.1));',
+      'border-radius:14px;box-shadow:0 10px 32px rgba(0,0,0,.14);padding:14px 16px;display:none;}',
+      '#wtPopover.open{display:block;}',
+      '#wtPopover .wt-title{font-weight:700;font-size:14px;margin-bottom:6px;}',
+      '#wtPopover .wt-desc{font-size:12px;color:var(--ui-text-soft,#6e6e73);margin-bottom:10px;line-height:1.5;}',
+      '#wtPopover label.wt-item{display:flex;align-items:center;gap:8px;padding:5px 2px;font-size:14px;cursor:pointer;border-radius:8px;}',
+      '#wtPopover label.wt-item:hover{background:rgba(0,102,204,.06);}',
+      '@media (prefers-color-scheme: dark){ #wtPopover{background:#1c1c1e;border-color:rgba(255,255,255,.14);} }'
+    ].join('\n');
+    var st = document.createElement('style');
+    st.id = 'worktabs-style';
+    st.textContent = css;
+    document.head.appendChild(st);
+  }
+
+  function applyVisibility() {
+    var hidden = getHidden();
+    document.querySelectorAll('#workBar .sub-tab').forEach(function (b) {
+      b.style.display = hidden.indexOf(b.dataset.sub) >= 0 ? 'none' : '';
+    });
+  }
+
+  function buildPopover() {
+    if ($('wtPopover')) return;
+    var pop = document.createElement('div');
+    pop.id = 'wtPopover';
+    var subs = [];
+    document.querySelectorAll('#workBar .sub-tab').forEach(function (b) {
+      var id = b.dataset.sub;
+      if (id && subs.indexOf(id) < 0) subs.push(id);
+    });
+    var html = '<div class="wt-title">子标签显示设置</div>' +
+      '<div class="wt-desc">勾选 = 显示；取消勾选 = 隐藏（数据不会删除，随时可再打开）</div>';
+    subs.forEach(function (id) {
+      html += '<label class="wt-item"><input type="checkbox" data-wt="' + id + '"> ' + (LABELS[id] || id) + '</label>';
+    });
+    pop.innerHTML = html;
+    $('workBar').appendChild(pop);
+    pop.addEventListener('change', function (e) {
+      var cb = e.target.closest('input[data-wt]');
+      if (!cb) return;
+      var hidden = getHidden();
+      var id = cb.dataset.wt;
+      if (cb.checked) { hidden = hidden.filter(function (x) { return x !== id; }); }
+      else if (hidden.indexOf(id) < 0) { hidden.push(id); }
+      saveHidden(hidden);
+      applyVisibility();
+    });
+    document.addEventListener('click', function (e) {
+      if (!pop.contains(e.target) && e.target !== $('wtSettingsBtn') && !$('wtSettingsBtn').contains(e.target)) {
+        pop.classList.remove('open');
+      }
+    });
+  }
+
+  function syncPopoverChecks() {
+    var hidden = getHidden();
+    var pop = $('wtPopover'); if (!pop) return;
+    pop.querySelectorAll('input[data-wt]').forEach(function (cb) {
+      cb.checked = hidden.indexOf(cb.dataset.wt) < 0;
+    });
+  }
+
+  function init() {
+    var bar = $('workBar');
+    if (!bar || $('wtSettingsBtn')) return;
+    injectStyle();
+    var btn = document.createElement('button');
+    btn.className = 'sub-tab';
+    btn.id = 'wtSettingsBtn';
+    btn.type = 'button';
+    btn.title = '子标签显示设置';
+    btn.textContent = '⚙️';
+    bar.appendChild(btn);
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      syncPopoverChecks();
+      var pop = $('wtPopover');
+      if (pop) pop.classList.toggle('open');
+    });
+    buildPopover();
+    applyVisibility();
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+  // perfmonth 按钮是动态创建的，晚于本脚本时补一次可见性应用
+  setTimeout(function () { init(); applyVisibility(); }, 300);
 })();
 
 </script></body>
