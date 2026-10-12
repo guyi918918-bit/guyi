@@ -11,7 +11,7 @@
   <link rel="icon" type="image/png" href="./icon-192.png" />
   <link rel="apple-touch-icon" href="./icon-192.png" />
   <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIuiupOecn+W3peS9nOWPsCIsCiAgInNob3J0X25hbWUiOiAi5bel5L2c5Y+wIiwKICAiZGVzY3JpcHRpb24iOiAi5Zub5bed5rS75Yqo5oOF5oql5pCc6ZuG5LiO5pS/5LyB5a6i5oi3566h55CGIiwKICAic3RhcnRfdXJsIjogIi4vIiwKICAic2NvcGUiOiAiLi8iLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJvcmllbnRhdGlvbiI6ICJwb3J0cmFpdCIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiI2Y1ZjVmNyIsCiAgInRoZW1lX2NvbG9yIjogIiMwMDY2Y2MiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24tMTkyLnBuZyIsCiAgICAgICJzaXplcyI6ICIxOTJ4MTkyIiwKICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIiwKICAgICAgInB1cnBvc2UiOiAiYW55IgogICAgfSwKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24tNTEyLnBuZyIsCiAgICAgICJzaXplcyI6ICI1MTJ4NTEyIiwKICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIiwKICAgICAgInB1cnBvc2UiOiAiYW55IgogICAgfSwKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24uc3ZnIiwKICAgICAgInNpemVzIjogImFueSIsCiAgICAgICJ0eXBlIjogImltYWdlL3N2Zyt4bWwiLAogICAgICAicHVycG9zZSI6ICJhbnkiCiAgICB9CiAgXQp9Cg==" />
-  <script>window.APP_VERSION = "build@1791792042";</script>
+  <script>window.APP_VERSION = "build@1791794839";</script>
   <title>DSC销售 · 项目管理工作台（完整版）</title>
   <script src="./xlsx.full.min.js"></script>
   <script>
@@ -16541,7 +16541,14 @@ select to_regclass('public.wb_kv');</div>
       '#panel-perfmonth .pm-item .pm-grow{flex:1 1 220px;min-width:200px;}',
       '#panel-perfmonth .pm-ta{width:100%;min-height:60px;resize:vertical;font:inherit;padding:8px 10px;border:1px solid var(--ui-border);border-radius:10px;background:#fff;color:#1d1d1f;box-sizing:border-box;}',
       '#panel-perfmonth .pm-in{font:inherit;padding:7px 10px;border:1px solid var(--ui-border);border-radius:10px;background:#fff;color:#1d1d1f;box-sizing:border-box;}',
-      '#panel-perfmonth .pm-in.num{width:96px;text-align:right;}',
+      /* V23：数字居中 + 隐藏原生上下箭头（箭头叠字），改框外小按钮微调 */
+      '#panel-perfmonth .pm-in.num{width:96px;text-align:center;-moz-appearance:textfield;appearance:textfield;}',
+      '#panel-perfmonth .pm-in.num::-webkit-outer-spin-button,#panel-perfmonth .pm-in.num::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}',
+      '#panel-perfmonth .pm-num{display:inline-flex;align-items:center;gap:4px;}',
+      '#panel-perfmonth .pm-step{display:inline-flex;flex-direction:column;gap:2px;}',
+      '#panel-perfmonth .pm-step .pm-st{width:17px;height:13px;padding:0;font-size:9px;line-height:1;border:1px solid var(--ui-border);border-radius:5px;background:var(--ui-card-bg,#fff);color:var(--ui-text-soft,#6e6e73);cursor:pointer;display:flex;align-items:center;justify-content:center;}',
+      '#panel-perfmonth .pm-step .pm-st:hover{color:var(--ui-primary,#0066cc);border-color:var(--ui-primary,#0066cc);}',
+      '#panel-perfmonth .pm-step .pm-st:active{transform:scale(.92);}',
       '#panel-perfmonth .pm-perf-row{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:6px 0;}',
       '#panel-perfmonth .pm-perf-row .pm-pr-label{flex:0 0 76px;font-weight:600;}',
       '#panel-perfmonth .pm-diff{font-weight:700;min-width:84px;display:inline-block;}',
@@ -16549,10 +16556,11 @@ select to_regclass('public.wb_kv');</div>
       '#panel-perfmonth .pm-diff.minus{color:#0066cc;}',
       '#panel-perfmonth .pm-diff.zero{color:#6e6e73;}',
       '#panel-perfmonth .pm-inline{display:flex;align-items:center;gap:6px;}',
-      '@media (prefers-color-scheme: dark){ #panel-perfmonth .pm-doc{background:#1c1c1e;color:#f5f5f7;border-color:rgba(255,255,255,.12);} #panel-perfmonth .pm-doc .pm-sub{color:#98989d;} #panel-perfmonth .pm-ta,#panel-perfmonth .pm-in{background:#2c2c2e;color:#f5f5f7;border-color:rgba(255,255,255,.16);} #panel-perfmonth .pm-diff.zero{color:#98989d;} }',
+      '@media (prefers-color-scheme: dark){ #panel-perfmonth .pm-doc{background:#1c1c1e;color:#f5f5f7;border-color:rgba(255,255,255,.12);} #panel-perfmonth .pm-doc .pm-sub{color:#98989d;} #panel-perfmonth .pm-ta,#panel-perfmonth .pm-in{background:#2c2c2e;color:#f5f5f7;border-color:rgba(255,255,255,.16);} #panel-perfmonth .pm-step .pm-st{background:#2c2c2e;color:#98989d;border-color:rgba(255,255,255,.16);} #panel-perfmonth .pm-diff.zero{color:#98989d;} }',
       'body.dark-mode #panel-perfmonth .pm-doc{background:#1c1c1e;color:#f5f5f7;border-color:rgba(255,255,255,.12);}',
       'body.dark-mode #panel-perfmonth .pm-doc .pm-sub{color:#98989d;}',
       'body.dark-mode #panel-perfmonth .pm-ta,body.dark-mode #panel-perfmonth .pm-in{background:#2c2c2e;color:#f5f5f7;border-color:rgba(255,255,255,.16);}',
+      'body.dark-mode #panel-perfmonth .pm-step .pm-st{background:#2c2c2e;color:#98989d;border-color:rgba(255,255,255,.16);}',
       'body.dark-mode #panel-perfmonth .pm-diff.zero{color:#98989d;}'
     ].join('\n');
     var st = document.createElement('style');
@@ -16648,6 +16656,33 @@ select to_regclass('public.wb_kv');</div>
         '<div class="pm-item"><span class="pm-label">3、其他工作内容：</span><span class="pm-grow"><textarea class="pm-ta" id="pm_o_misc" placeholder="填写其他工作内容"></textarea></span></div>',
       '</div>'
     ].join('\n');
+    enhanceNumInputs(doc);
+  }
+
+  /* V23：把数字输入框包进 .pm-num，并在框外附加一对小 ▲▼ 微调按钮
+   * （原生 number spinner 叠在框内会挡住数字；隐藏原生箭头后用外部按钮替代） */
+  function enhanceNumInputs(root) {
+    if (!root) return;
+    root.querySelectorAll('input.pm-in.num').forEach(function (inp) {
+      if (inp.parentNode && inp.parentNode.classList && inp.parentNode.classList.contains('pm-num')) return;
+      var wrap = document.createElement('span');
+      wrap.className = 'pm-num';
+      inp.parentNode.insertBefore(wrap, inp);
+      wrap.appendChild(inp);
+      var step = document.createElement('span');
+      step.className = 'pm-step';
+      [['▲', 1], ['▼', -1]].forEach(function (p) {
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'pm-st';
+        b.textContent = p[0];
+        b.dataset.t = inp.id;
+        b.dataset.d = String(p[1]);
+        b.title = p[1] > 0 ? '加 1' : '减 1';
+        step.appendChild(b);
+      });
+      wrap.appendChild(step);
+    });
   }
 
   // ---------- 读取/写入 ----------
@@ -16827,6 +16862,16 @@ select to_regclass('public.wb_kv');</div>
     // 自动保存（防丢）：输入即写入
     var doc = $('pmDoc');
     if (doc) {
+      // V23：框外 ▲▼ 微调按钮（点一下 ±1，遵循输入框 step；走 input 事件复用自动保存/差额联动）
+      doc.addEventListener('click', function (e) {
+        var b = e.target && e.target.closest ? e.target.closest('.pm-st') : null;
+        if (!b) return;
+        var el = $(b.dataset.t); if (!el) return;
+        var st = Number(el.step) || 1;
+        var v = (Number(el.value) || 0) + st * Number(b.dataset.d);
+        el.value = Math.round(v * 100) / 100;
+        el.dispatchEvent(new Event('input', { bubbles: true }));
+      });
       doc.addEventListener('input', function () {
         updateDiffs();
         clearTimeout(_saveTimer);
