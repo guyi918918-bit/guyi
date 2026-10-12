@@ -11,7 +11,7 @@
   <link rel="icon" type="image/png" href="./icon-192.png" />
   <link rel="apple-touch-icon" href="./icon-192.png" />
   <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIuiupOecn+W3peS9nOWPsCIsCiAgInNob3J0X25hbWUiOiAi5bel5L2c5Y+wIiwKICAiZGVzY3JpcHRpb24iOiAi5Zub5bed5rS75Yqo5oOF5oql5pCc6ZuG5LiO5pS/5LyB5a6i5oi3566h55CGIiwKICAic3RhcnRfdXJsIjogIi4vIiwKICAic2NvcGUiOiAiLi8iLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJvcmllbnRhdGlvbiI6ICJwb3J0cmFpdCIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiI2Y1ZjVmNyIsCiAgInRoZW1lX2NvbG9yIjogIiMwMDY2Y2MiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24tMTkyLnBuZyIsCiAgICAgICJzaXplcyI6ICIxOTJ4MTkyIiwKICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIiwKICAgICAgInB1cnBvc2UiOiAiYW55IgogICAgfSwKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24tNTEyLnBuZyIsCiAgICAgICJzaXplcyI6ICI1MTJ4NTEyIiwKICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIiwKICAgICAgInB1cnBvc2UiOiAiYW55IgogICAgfSwKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24uc3ZnIiwKICAgICAgInNpemVzIjogImFueSIsCiAgICAgICJ0eXBlIjogImltYWdlL3N2Zyt4bWwiLAogICAgICAicHVycG9zZSI6ICJhbnkiCiAgICB9CiAgXQp9Cg==" />
-  <script>window.APP_VERSION = "build@1791772934";</script>
+  <script>window.APP_VERSION = "build@1791784351";</script>
   <title>DSC销售 · 项目管理工作台（完整版）</title>
   <script src="./xlsx.full.min.js"></script>
   <script>
@@ -16022,8 +16022,8 @@ select to_regclass('public.wb_kv');</div>
  *       以及弹窗里动态生成的编辑框（自动发现 + 动态绑定）
  * 排除：CSV 批量导入框、只读/禁用框、大框自身
  * 触发：所有输入框/文本域单击即可直接输入（从不劫持单击）；
- *       想要更大空间时，点标签旁「⤢ 放大」或双击输入框，才弹出大编辑器
- *       （内容自动带入，保存写回）（V17/V18 调整）
+ *       只有标签旁「⤢ 放大」按钮才弹出大编辑器（V19：双击已取消，避免误触）
+ *       （内容自动带入，保存写回）
  * 保存：写回原 textarea 并派发 input/change，原有草稿自动保存 / 汇总逻辑照常触发
  * 增强：大框底部实时字数行数统计；Ctrl/⌘ + Enter 保存；Esc 保存并关闭；
  *       标签识别兼容 <label> 与 .pm-label（月度工作汇总等自定义结构）
@@ -16189,12 +16189,11 @@ select to_regclass('public.wb_kv');</div>
   function bindOne(el) {
     if (!isTarget(el) || el.dataset.zoomBound === "1") return;
     el.dataset.zoomBound = "1";
-    // 文本域 / 单行输入框统一：单击直接输入（不劫持），双击弹出大编辑器
-    el.addEventListener("dblclick", function (e) { e.preventDefault(); open(el); });
+    // V19：只有「⤢ 放大」按钮才放大——双击不再触发（用户反馈双击误触很麻烦）
     if (el.tagName === "TEXTAREA") {
       el.classList.add("zoomable-ta");
     }
-    el.setAttribute("title", "单击直接输入；双击 或 点标签旁「⤢ 放大」可放大编辑");
+    el.setAttribute("title", "点标签旁「⤢ 放大」可放大编辑");
     // 标签旁加一颗「⤢ 放大」小按钮，方便发现（兼容 <label> 与 .pm-label）
     var lab = labelOf(el);
     if (lab && !lab.querySelector(".zoom-chip")) {
