@@ -11,7 +11,7 @@
   <link rel="icon" type="image/png" href="./icon-192.png" />
   <link rel="apple-touch-icon" href="./icon-192.png" />
   <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIuiupOecn+W3peS9nOWPsCIsCiAgInNob3J0X25hbWUiOiAi5bel5L2c5Y+wIiwKICAiZGVzY3JpcHRpb24iOiAi5Zub5bed5rS75Yqo5oOF5oql5pCc6ZuG5LiO5pS/5LyB5a6i5oi3566h55CGIiwKICAic3RhcnRfdXJsIjogIi4vIiwKICAic2NvcGUiOiAiLi8iLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJvcmllbnRhdGlvbiI6ICJwb3J0cmFpdCIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiI2Y1ZjVmNyIsCiAgInRoZW1lX2NvbG9yIjogIiMwMDY2Y2MiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24tMTkyLnBuZyIsCiAgICAgICJzaXplcyI6ICIxOTJ4MTkyIiwKICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIiwKICAgICAgInB1cnBvc2UiOiAiYW55IgogICAgfSwKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24tNTEyLnBuZyIsCiAgICAgICJzaXplcyI6ICI1MTJ4NTEyIiwKICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIiwKICAgICAgInB1cnBvc2UiOiAiYW55IgogICAgfSwKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24uc3ZnIiwKICAgICAgInNpemVzIjogImFueSIsCiAgICAgICJ0eXBlIjogImltYWdlL3N2Zyt4bWwiLAogICAgICAicHVycG9zZSI6ICJhbnkiCiAgICB9CiAgXQp9Cg==" />
-  <script>window.APP_VERSION = "build@1791789621";</script>
+  <script>window.APP_VERSION = "build@1791792042";</script>
   <title>DSC销售 · 项目管理工作台（完整版）</title>
   <script src="./xlsx.full.min.js"></script>
   <script>
@@ -17924,9 +17924,10 @@ select to_regclass('public.wb_kv');</div>
       '.proj-track-h { font-size:17px; color:var(--ui-text,#1d1d1f); margin:20px 0 4px; }',
       '.proj-track-tip { font-size:12.5px; color:var(--ui-text-soft,#6e6e73); margin:0 0 10px; }',
       '.proj-track-wrap { overflow-x:auto; border:1px solid var(--ui-border,rgba(0,0,0,.08)); border-radius:12px; background:var(--ui-card-bg,#fff); }',
-      '.proj-track { border-collapse:collapse; width:100%; min-width:1180px; font-size:13px; }',
-      '.proj-track th { position:sticky; top:0; background:var(--ui-bg-soft,#f5f5f7); color:var(--ui-text,#1d1d1f); font-weight:700; padding:8px 10px; text-align:left; white-space:nowrap; border-bottom:1px solid var(--ui-border,rgba(0,0,0,.08)); }',
-      '.proj-track td { padding:7px 10px; border-bottom:1px solid rgba(0,0,0,.05); color:var(--ui-text,#1d1d1f); vertical-align:top; }',
+      /* V22：文字缩小 + 单行不换行，紧凑排版 */
+      '.proj-track { border-collapse:collapse; width:100%; font-size:12px; }',
+      '.proj-track th { position:sticky; top:0; background:var(--ui-bg-soft,#f5f5f7); color:var(--ui-text,#1d1d1f); font-weight:700; padding:6px 8px; text-align:left; white-space:nowrap; border-bottom:1px solid var(--ui-border,rgba(0,0,0,.08)); }',
+      '.proj-track td { padding:5px 8px; border-bottom:1px solid rgba(0,0,0,.05); color:var(--ui-text,#1d1d1f); vertical-align:middle; white-space:nowrap; }',
       '.proj-track tr:hover td { background:rgba(0,102,204,.04); }',
       '.proj-track .num { text-align:right; white-space:nowrap; }',
       '.proj-track .yes { color:#00b894; font-weight:700; }',
@@ -18144,8 +18145,6 @@ select to_regclass('public.wb_kv');</div>
       var comm = Number(p.commission) || 0;
       var contract = Number(p.contractAmount) || 0;
       var rate = (comm > 0 && contract > 0) ? (comm / contract * 100).toFixed(1) + '%' : '';
-      var place = [p.province, p.city, p.district].filter(Boolean).join(' ');
-      if (p.address) place += (place ? ' ' : '') + p.address;
       return [
         i + 1,
         fmtDate(projDate(p)),
@@ -18158,12 +18157,12 @@ select to_regclass('public.wb_kv');</div>
         p.followStatus || '跟进中',
         contract,
         comm,
-        rate,
-        place
+        rate
       ];
     });
   }
-  var TRACK_HEAD = ['序号', '活动日期', '单位名称', '项目·培训·其他', '活动项目介绍', '等级', '需求类型', '是否成交', '跟进情况', '最终成交金额', '提成或利润', '利润率（实际）', '地点'];
+  // V22：地点列从看板移除（界面太挤）；Excel 同步精简
+  var TRACK_HEAD = ['序号', '活动日期', '单位名称', '项目·培训·其他', '活动项目介绍', '等级', '需求类型', '是否成交', '跟进情况', '最终成交金额', '提成或利润', '利润率（实际）'];
   var GRADE_COL = 5; // 等级列下标（渲染时加彩色圆点）
 
   function renderTrackTable() {
@@ -18196,7 +18195,6 @@ select to_regclass('public.wb_kv');</div>
         '<td class="num">' + r[9] + '</td>' +
         '<td class="num">' + r[10] + '</td>' +
         '<td class="num">' + esc(r[11]) + '</td>' +
-        '<td>' + esc(r[12]) + '</td>' +
         '</tr>');
     });
     html.push('</tbody></table>');
