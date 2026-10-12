@@ -11,7 +11,7 @@
   <link rel="icon" type="image/png" href="./icon-192.png" />
   <link rel="apple-touch-icon" href="./icon-192.png" />
   <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIuiupOecn+W3peS9nOWPsCIsCiAgInNob3J0X25hbWUiOiAi5bel5L2c5Y+wIiwKICAiZGVzY3JpcHRpb24iOiAi5Zub5bed5rS75Yqo5oOF5oql5pCc6ZuG5LiO5pS/5LyB5a6i5oi3566h55CGIiwKICAic3RhcnRfdXJsIjogIi4vIiwKICAic2NvcGUiOiAiLi8iLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJvcmllbnRhdGlvbiI6ICJwb3J0cmFpdCIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiI2Y1ZjVmNyIsCiAgInRoZW1lX2NvbG9yIjogIiMwMDY2Y2MiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24tMTkyLnBuZyIsCiAgICAgICJzaXplcyI6ICIxOTJ4MTkyIiwKICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIiwKICAgICAgInB1cnBvc2UiOiAiYW55IgogICAgfSwKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24tNTEyLnBuZyIsCiAgICAgICJzaXplcyI6ICI1MTJ4NTEyIiwKICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIiwKICAgICAgInB1cnBvc2UiOiAiYW55IgogICAgfSwKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24uc3ZnIiwKICAgICAgInNpemVzIjogImFueSIsCiAgICAgICJ0eXBlIjogImltYWdlL3N2Zyt4bWwiLAogICAgICAicHVycG9zZSI6ICJhbnkiCiAgICB9CiAgXQp9Cg==" />
-  <script>window.APP_VERSION = "build@1791786747";</script>
+  <script>window.APP_VERSION = "build@1791789621";</script>
   <title>DSC销售 · 项目管理工作台（完整版）</title>
   <script src="./xlsx.full.min.js"></script>
   <script>
@@ -2520,6 +2520,10 @@ body.dark-mode .annual-foot-row.foot-done td { background: transparent; }
   .fld-hint { color: #98989d; }
 }
 body.dark-mode .fld-hint { color: #98989d; }
+
+/* ===== V21：待办看板移入日常工作子标签（panel-todo 去双重卡片感） ===== */
+#panel-todo { padding: 0; background: transparent; box-shadow: none; }
+#panel-todo .todo-board { margin-bottom: 0; }
 
     /* ==================================================================
        增强模块样式：云同步状态 / 历史折叠 / 草稿提示 / 移动端优化
@@ -14914,7 +14918,7 @@ select to_regclass('public.wb_kv');</div>
   var FEED = SEED;
   var POLL_MS = 60000;
   var TOP = ["dash", "inspire", "work", "projects", "clients", "recycle"];
-  var WORK_SUBS = ["daily", "weekly", "monthly", "annual", "stat", "history", "perfmonth"];
+  var WORK_SUBS = ["daily", "weekly", "monthly", "annual", "stat", "history", "perfmonth", "todo"];
   var currentSub = null;
 
   var intelCfg = loadCfg("wb_intel_cfg", SEED.config && SEED.config.intel);
@@ -15470,8 +15474,10 @@ select to_regclass('public.wb_kv');</div>
       WORK_SUBS.forEach(function (s) { var p = $("panel-" + s); if (p) p.classList.remove("show"); });
     }
     var p = $("panel-" + tab); if (p) p.classList.add("show");
-    // V7：待办看板仅在「日常工作」板块显示，其他板块隐藏
-    var tb = $("todoBoard"); if (tb) tb.style.display = (tab === "work") ? "" : "none";
+    // V7/V21：待办看板已移入「日常工作 → ✅ 待办」子标签（panel-todo）；
+    // 若仍处于顶级（todotab.js 未注入成功的兜底），保持仅在日常工作板块显示
+    var tb = $("todoBoard");
+    if (tb && !tb.closest("#workInner")) tb.style.display = (tab === "work") ? "" : "none";
     document.querySelectorAll(".top-tab").forEach(function (b) { b.classList.toggle("active", b.dataset.tab === tab); });
     try {
       if (tab === "work") {
@@ -15481,7 +15487,7 @@ select to_regclass('public.wb_kv');</div>
         try { _order = JSON.parse(localStorage.getItem("wb_work_tabs_order") || "[]") || []; } catch (e) {}
         var _hidden = [];
         try { _hidden = JSON.parse(localStorage.getItem("wb_work_tabs") || "[]") || []; } catch (e) {}
-        var _ids = ["daily", "weekly", "monthly", "annual", "stat", "history", "perfmonth"];
+        var _ids = ["daily", "weekly", "monthly", "annual", "stat", "history", "perfmonth", "todo"];
         var _def = null;
         _order.forEach(function (id) { if (!_def && _hidden.indexOf(id) < 0 && _ids.indexOf(id) >= 0) _def = id; });
         if (!_def) _ids.forEach(function (id) { if (!_def && _hidden.indexOf(id) < 0) _def = id; });
@@ -15507,9 +15513,12 @@ select to_regclass('public.wb_kv');</div>
       if (sub === "weekly") { if (typeof loadWeekAutoData === "function") loadWeekAutoData(); if (typeof updateLevelStats === "function") updateLevelStats(); }
       if (sub === "monthly") { if (typeof loadMonthAutoData === "function") loadMonthAutoData(); if (typeof updateLevelStats === "function") updateLevelStats(); }
       if (sub === "perfmonth") { if (typeof renderPerfMonth === "function") renderPerfMonth(); }
+      if (sub === "todo") { if (typeof renderTodos === "function") renderTodos(); }
       if (sub === "recycle" && typeof renderRecycleBin === "function") renderRecycleBin();
     } catch (e) { /* 个别渲染异常不阻断导航 */ }
   }
+  // 供 todotab.js 等注入脚本复用同一套子标签切换逻辑
+  window.__wbShowSub = showSub;
 
   /* ===== 初始化 ===== */
   function init() {
@@ -17131,6 +17140,7 @@ select to_regclass('public.wb_kv');</div>
   var KEY = 'wb_work_tabs';           // 值：隐藏的 sub id 数组
   var ORDER_KEY = 'wb_work_tabs_order'; // 值：sub id 顺序数组（部分允许，缺省按 DOM 顺序补齐）
   var LABELS = {
+    todo: '✅ 待办',
     daily: '📋 日报', weekly: '📊 周报', monthly: '📈 月报', annual: '📅 年度',
     stat: '📊 看板', history: '📚 历史', perfmonth: '📑 月度工作汇总'
   };
@@ -17323,6 +17333,73 @@ select to_regclass('public.wb_kv');</div>
   else init();
   // perfmonth 按钮是动态创建的，晚于本脚本时补一次顺序与可见性应用
   setTimeout(function () { init(); applyOrder(); applyVisibility(); }, 300);
+  // 供 todotab.js 等注入脚本在新增子标签后重新应用顺序与可见性
+  window.__wbReapplyWorkTabs = function () {
+    try { init(); applyOrder(); applyVisibility(); } catch (e) {}
+  };
+})();
+
+</script>
+<script>
+/* ===== V21：待办看板移入「日常工作」子标签 =====
+ * 原todoBoard 顶级平铺、占一大块位置；改为日常工作里的「✅ 待办」子标签。
+ * - workBar 末尾（⚙️ 前）插入 <button class="sub-tab" data-sub="todo">✅ 待办</button>
+ * - 把 #todoBoard 包进 <div class="panel" id="panel-todo"> 并移入 #workInner
+ * - 数据/输入框/渲染逻辑全部复用 base 原代码，零数据迁移；默认子标签仍是「日报」
+ * 纯注入式 patch，不改动 base 原代码。
+ */
+(function () {
+  'use strict';
+
+  function $(id) { return document.getElementById(id); }
+
+  function tryInit(times) {
+    var bar = $('workBar');
+    var board = $('todoBoard');
+    var inner = $('workInner');
+    if (!bar || !board || !inner) { retry(times); return; }
+    if ($('panel-todo') && board.parentNode && board.parentNode.id === 'panel-todo') return; // 已就位
+
+    // 1) 子标签按钮（放末尾：待办不抢位置，日常仍默认「日报」）
+    if (!bar.querySelector('.sub-tab[data-sub="todo"]')) {
+      var btn = document.createElement('button');
+      btn.className = 'sub-tab';
+      btn.setAttribute('data-sub', 'todo');
+      btn.type = 'button';
+      btn.textContent = '✅ 待办';
+      var gear = $('wtSettingsBtn');
+      if (gear) bar.insertBefore(btn, gear);
+      else bar.appendChild(btn);
+      // dash.js init 只给当时已存在的 .sub-tab 绑点击；本按钮后创建，补绑一次
+      // （__wbShowSub 与 dash.js 内部 showSub 同一函数，幂等不冲突）
+      btn.addEventListener('click', function () {
+        if (typeof window.__wbShowSub === 'function') window.__wbShowSub('todo');
+        else btn.classList.add('active');
+      });
+    }
+
+    // 2) 包 panel 并移入 workInner
+    var panel = $('panel-todo');
+    if (!panel) {
+      panel = document.createElement('div');
+      panel.className = 'panel';
+      panel.id = 'panel-todo';
+      inner.appendChild(panel);
+    }
+    if (board.parentNode !== panel) panel.appendChild(board);
+
+    // worktabs.js（⚙️ 弹层）重排/显隐时把新标签纳入管理
+    setTimeout(function () {
+      if (typeof window.__wbReapplyWorkTabs === 'function') { try { window.__wbReapplyWorkTabs(); } catch (e) {} }
+    }, 350);
+  }
+  function retry(times) {
+    if (times > 0) setTimeout(function () { tryInit(times - 1); }, 300);
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { tryInit(20); });
+  else tryInit(20);
+  setTimeout(function () { tryInit(20); }, 600);
 })();
 
 </script>
@@ -17855,8 +17932,15 @@ select to_regclass('public.wb_kv');</div>
       '.proj-track .yes { color:#00b894; font-weight:700; }',
       '.proj-track .no { color:#c45c5c; font-weight:700; }',
       '.proj-track-empty { padding:20px; text-align:center; color:var(--ui-text-soft,#6e6e73); font-size:13px; }',
-      /* 看板筛选条（V20） */
+      /* 看板筛选条（V20；V21 默认收起 + 🔎 切换按钮） */
+      '.pvk-bar { display:flex; margin:0 0 10px; }',
       '.pvk-filter { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin:0 0 10px; }',
+      '.pvk-filter.pvk-collapsed { display:none; }',
+      '.pvk-toggle { display:inline-flex; align-items:center; gap:6px; padding:7px 16px; border-radius:999px; border:1px solid var(--ui-border,rgba(0,0,0,.12)); background:transparent; color:var(--ui-text-soft,#6e6e73); font-size:13px; cursor:pointer; }',
+      '.pvk-toggle:hover { color:var(--ui-primary,#0066cc); border-color:var(--ui-primary,#0066cc); background:rgba(0,102,204,.06); }',
+      '.pvk-toggle.open { background:var(--ui-primary,#0066cc); border-color:var(--ui-primary,#0066cc); color:#fff; font-weight:600; }',
+      '.pvk-toggle .pvk-arrow { font-size:11px; transform:translateY(-1px); }',
+      '.pvk-toggle.open .pvk-arrow { transform:translateY(-1px) rotate(180deg); }',
       '.pvk-filter label { font-size:13px; color:var(--ui-text-soft,#6e6e73); }',
       '.pvk-filter select, .pvk-filter input { padding:6px 8px; border-radius:8px; border:1px solid var(--ui-border,rgba(0,0,0,.12)); background:var(--ui-card-bg,#fff); color:var(--ui-text,#1d1d1f); font-size:13px; }',
       '.pvk-filter input { min-width:140px; flex:0 1 180px; }',
@@ -18172,7 +18256,8 @@ select to_regclass('public.wb_kv');</div>
       var track = document.createElement('div');
       track.innerHTML = '<h3 class="proj-track-h">📅 全年项目跟进（重点信息）</h3>' +
         '<p class="proj-track-tip">按活动日期排序，一屏看清全年项目等级 / 需求 / 成交 / 跟进 / 回款情况；点上方「导出看板表格」可导出 Excel（含本表）。</p>' +
-        '<div class="pvk-filter">' +
+        '<div class="pvk-bar"><button type="button" class="pvk-toggle" id="pvkToggle">🔎 筛选<span class="pvk-arrow">▾</span></button></div>' +
+        '<div class="pvk-filter pvk-collapsed" id="pvkFilterBar">' +
           '<label>跟进情况</label><select id="pvk-follow"><option value="">全部</option><option>跟进中</option><option>成交执行交付中</option><option>丢单</option><option>取消</option><option>延期</option><option>交付完成</option></select>' +
           '<label>成交</label><select id="pvk-deal"><option value="">全部</option><option value="true">已成交</option><option value="false">未成交</option></select>' +
           '<label>等级</label><select id="pvk-grade"><option value="">全部</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="__none">未分级</option></select>' +
@@ -18182,6 +18267,13 @@ select to_regclass('public.wb_kv');</div>
         '</div>' +
         '<div class="proj-track-wrap" id="projTrackBox"></div>';
       kanbanWrap.appendChild(track);
+      // V21：筛选条默认收起，点「🔎 筛选」展开/收起；偏好记本地
+      function applyPvkOpen(open) {
+        var fb = $('pvkFilterBar'), tg = $('pvkToggle');
+        if (fb) fb.classList.toggle('pvk-collapsed', !open);
+        if (tg) tg.classList.toggle('open', !!open);
+        try { localStorage.setItem('wb_pvk_open', open ? '1' : '0'); } catch (e) {}
+      }
       track.addEventListener('change', function (e) {
         if (e.target && e.target.id && e.target.id.indexOf('pvk-') === 0) renderTrackTable();
       });
@@ -18189,6 +18281,12 @@ select to_regclass('public.wb_kv');</div>
         if (e.target && e.target.id === 'pvk-client') renderTrackTable();
       });
       track.addEventListener('click', function (e) {
+        var tgl = e.target && e.target.closest ? e.target.closest('#pvkToggle') : null;
+        if (tgl) {
+          var fbNow = $('pvkFilterBar');
+          applyPvkOpen(!(fbNow && !fbNow.classList.contains('pvk-collapsed')));
+          return;
+        }
         if (e.target && e.target.classList && e.target.classList.contains('pvk-clear')) {
           ['pvk-follow', 'pvk-deal', 'pvk-grade', 'pvk-aux', 'pvk-client'].forEach(function (id) {
             var el = $(id); if (el) el.value = '';
@@ -18196,6 +18294,12 @@ select to_regclass('public.wb_kv');</div>
           renderTrackTable();
         }
       });
+      // 初始状态：默认收起；若上次会话手动展开过（wb_pvk_open=1）则保持展开
+      (function () {
+        var open = false;
+        try { open = localStorage.getItem('wb_pvk_open') === '1'; } catch (e) {}
+        applyPvkOpen(open);
+      })();
     }
 
     // 子目录栏（排最前）
