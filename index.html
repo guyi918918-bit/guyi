@@ -11,7 +11,7 @@
   <link rel="icon" type="image/png" href="./icon-192.png" />
   <link rel="apple-touch-icon" href="./icon-192.png" />
   <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIuiupOecn+W3peS9nOWPsCIsCiAgInNob3J0X25hbWUiOiAi5bel5L2c5Y+wIiwKICAiZGVzY3JpcHRpb24iOiAi5Zub5bed5rS75Yqo5oOF5oql5pCc6ZuG5LiO5pS/5LyB5a6i5oi3566h55CGIiwKICAic3RhcnRfdXJsIjogIi4vIiwKICAic2NvcGUiOiAiLi8iLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJvcmllbnRhdGlvbiI6ICJwb3J0cmFpdCIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiI2Y1ZjVmNyIsCiAgInRoZW1lX2NvbG9yIjogIiMwMDY2Y2MiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24tMTkyLnBuZyIsCiAgICAgICJzaXplcyI6ICIxOTJ4MTkyIiwKICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIiwKICAgICAgInB1cnBvc2UiOiAiYW55IgogICAgfSwKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24tNTEyLnBuZyIsCiAgICAgICJzaXplcyI6ICI1MTJ4NTEyIiwKICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIiwKICAgICAgInB1cnBvc2UiOiAiYW55IgogICAgfSwKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24uc3ZnIiwKICAgICAgInNpemVzIjogImFueSIsCiAgICAgICJ0eXBlIjogImltYWdlL3N2Zyt4bWwiLAogICAgICAicHVycG9zZSI6ICJhbnkiCiAgICB9CiAgXQp9Cg==" />
-  <script>window.APP_VERSION = "build@1789959037";</script>
+  <script>window.APP_VERSION = "build@1791772934";</script>
   <title>DSC销售 · 项目管理工作台（完整版）</title>
   <script src="./xlsx.full.min.js"></script>
   <script>
@@ -2011,7 +2011,7 @@ label.cfg-chk.on { background: var(--ui-primary-ghost); border-color: var(--ui-p
   --btn-refresh: #0066cc;
   --btn-export: #5B7AFF;
   --btn-reset: #6e6e73;
-  --star-active: #00b894;
+  --star-active: #f59e0b;
   --sync-bg: rgba(0, 102, 204, 0.08);
   --sync-border: rgba(0, 102, 204, 0.25);
   --tag-bg: rgba(0, 102, 204, 0.08);
@@ -2381,8 +2381,8 @@ body.dark-mode .client-card { background: var(--ui-card-bg); border-color: var(-
 body.dark-mode *::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, .18); border: 2px solid transparent; background-clip: content-box; }
 body.dark-mode *::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, .30); background-clip: content-box; }
 
-/* ===== V8：日报 / 周报 / 月报「其他」框 —— 平时小框，点击放大编辑 ===== */
-textarea.zoomable-ta { cursor: zoom-in; }
+/* ===== V8：日报 / 周报 / 月报「其他」框 —— 单击直接输入；双击/⤢ 放大编辑 ===== */
+textarea.zoomable-ta { cursor: text; }
 .zoom-chip {
   margin-left: 8px; font-size: 11px; line-height: 1; padding: 3px 9px;
   border-radius: 999px; border: 1px solid var(--ui-border);
@@ -2438,6 +2438,78 @@ body.dark-mode .zoom-btn.primary { background: var(--ui-primary); }
 @media (prefers-color-scheme: dark) {
   .zoom-overlay { background: rgba(0, 0, 0, .6); }
 }
+body.dark-mode .zoom-overlay { background: rgba(0, 0, 0, .6); }
+
+/* ===== V11：项目等级/需求类型徽标 ===== */
+.tag-grade { background: rgba(0, 102, 204, .1); color: #0066cc; font-weight: 700; }
+.tag-aux { background: rgba(196, 92, 92, .12); color: #c45c5c; }
+.tag-own { background: rgba(0, 184, 148, .12); color: #00896f; }
+@media (prefers-color-scheme: dark) {
+  .tag-grade { background: rgba(10, 132, 255, .18); color: #6db2ff; }
+  .tag-aux { background: rgba(255, 120, 120, .15); color: #ff9f9f; }
+  .tag-own { background: rgba(0, 184, 148, .18); color: #5fd4b4; }
+}
+body.dark-mode .tag-grade { background: rgba(10, 132, 255, .18); color: #6db2ff; }
+body.dark-mode .tag-aux { background: rgba(255, 120, 120, .15); color: #ff9f9f; }
+body.dark-mode .tag-own { background: rgba(0, 184, 148, .18); color: #5fd4b4; }
+.sub-tab { white-space: nowrap; }
+#workBar { max-width: 100%; }
+
+/* ===== V13：待办标签 / 筛选条 / 标签弹层 / 历史扩展 ===== */
+#todoFilterBar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 14px; }
+#todoFilterBar .tf-title { font-size: 13px; color: var(--ui-text-soft, #6e6e73); font-weight: 600; }
+#todoFilterBar .tf-chip { font: inherit; font-size: 13px; padding: 4px 12px; border-radius: 999px; border: 1px solid var(--ui-border, rgba(0,0,0,.12)); background: var(--ui-card-bg, #fff); color: var(--ui-text, #1d1d1f); cursor: pointer; }
+#todoFilterBar .tf-chip:hover { color: var(--ui-primary, #0066cc); border-color: var(--ui-primary, #0066cc); }
+#todoFilterBar .tf-chip.active { background: var(--ui-primary, #0066cc); color: #fff; border-color: var(--ui-primary, #0066cc); }
+#todoFilterBar .tf-sort { margin-left: auto; }
+.todo-labels { display: inline-flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+.todo-label-chip { font-size: 11px; padding: 2px 8px; border-radius: 999px; background: rgba(0, 102, 204, .1); color: #0066cc; white-space: nowrap; }
+.todo-tag-btn { font-size: 12px; padding: 2px 5px; border: none; background: transparent; cursor: pointer; opacity: .6; border-radius: 6px; }
+.todo-tag-btn:hover { opacity: 1; background: rgba(0, 102, 204, .08); }
+#todoTagPop { position: fixed; z-index: 999; min-width: 170px; background: var(--ui-card-bg, #fff); color: var(--ui-text, #1d1d1f); border: 1px solid var(--ui-border, rgba(0,0,0,.1)); border-radius: 12px; box-shadow: 0 10px 32px rgba(0,0,0,.16); padding: 10px 12px; }
+#todoTagPop .tp-title { font-size: 12px; font-weight: 700; color: var(--ui-text-soft, #6e6e73); margin-bottom: 6px; }
+#todoTagPop .tp-item { display: flex; align-items: center; gap: 8px; padding: 5px 2px; font-size: 14px; cursor: pointer; border-radius: 8px; }
+#todoTagPop .tp-item:hover { background: rgba(0, 102, 204, .06); }
+#todoTagPop input[type=checkbox] { width: 16px; height: 16px; min-width: 16px; flex: 0 0 auto; padding: 0; margin: 0; accent-color: var(--ui-primary, #0066cc); }
+.td-sub { font-size: 12px; font-weight: 400; color: var(--ui-text-soft, #6e6e73); margin-left: 10px; }
+.td-log-line { padding: 6px 0; border-bottom: 1px dashed var(--ui-border, rgba(0,0,0,.08)); font-size: 14px; line-height: 1.6; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.td-log-line:last-child { border-bottom: none; }
+.td-stars { color: #f59e0b; letter-spacing: 2px; font-size: 13px; }
+.td-type { font-size: 11px; color: var(--ui-text-soft, #6e6e73); margin-left: auto; }
+.td-tip { font-size: 12px; color: var(--ui-text-soft, #6e6e73); }
+@media (prefers-color-scheme: dark) {
+  .todo-label-chip { background: rgba(10, 132, 255, .18); color: #6db2ff; }
+  .td-log-line { border-bottom-color: rgba(255, 255, 255, .1); }
+  #todoTagPop { background: #1c1c1e; border-color: rgba(255, 255, 255, .14); }
+}
+body.dark-mode .todo-label-chip { background: rgba(10, 132, 255, .18); color: #6db2ff; }
+body.dark-mode .td-log-line { border-bottom-color: rgba(255, 255, 255, .1); }
+body.dark-mode #todoTagPop { background: #1c1c1e; border-color: rgba(255, 255, 255, .14); }
+
+/* ===== R5：项目回款提醒 + 项目看板 ===== */
+.pay-alert { background: #fff0f0; color: #c0392b; border: 1px solid #f3b5b5; border-radius: 10px; padding: 8px 10px; font-size: 13px; font-weight: 700; margin: 8px 0; }
+.pay-tip { color: var(--ui-text-soft, #6e6e73); font-size: 12px; margin: 6px 0; }
+.project-stats { margin: 4px 0 18px; }
+.project-stats h3 { font-size: 15px; font-weight: 700; }
+.project-stats .stat-card.stat-danger { background: #fff0f0; border-color: #f3b5b5; }
+.project-stats .stat-card.stat-danger .stat-num { color: #c0392b; }
+@media (prefers-color-scheme: dark) {
+  .pay-alert { background: #3a1d1d; color: #ff9f9f; border-color: #6b2b2b; }
+  .project-stats .stat-card.stat-danger { background: #3a1d1d; border-color: #6b2b2b; }
+  .project-stats .stat-card.stat-danger .stat-num { color: #ff9f9f; }
+}
+body.dark-mode .pay-alert { background: #3a1d1d; color: #ff9f9f; border-color: #6b2b2b; }
+body.dark-mode .project-stats .stat-card.stat-danger { background: #3a1d1d; border-color: #6b2b2b; }
+body.dark-mode .project-stats .stat-card.stat-danger .stat-num { color: #ff9f9f; }
+
+/* ===== V17：年度表底部 5 行汇总 ===== */
+.annual-foot-row td { background: var(--ui-bg-soft, #f5f5f7); font-weight: 700; }
+.annual-foot-row.foot-target td,
+.annual-foot-row.foot-done td { background: transparent; }
+.annual-foot-row input.editable { font-weight: 700; }
+body.dark-mode .annual-foot-row td { background: #2c2c2e; }
+body.dark-mode .annual-foot-row.foot-target td,
+body.dark-mode .annual-foot-row.foot-done td { background: transparent; }
 
     /* ==================================================================
        增强模块样式：云同步状态 / 历史折叠 / 草稿提示 / 移动端优化
@@ -3498,12 +3570,15 @@ body.dark-mode .zoom-btn.primary { background: var(--ui-primary); }
       <button class="btn-export" onclick="exportProjectsExcel()">📤 导出项目</button>
     </div>
     <div class="filter-bar">
-      <label>状态</label>
-      <select id="proj-filter-status" onchange="renderProjects()">
+      <label>跟进情况</label>
+      <select id="proj-filter-follow" onchange="renderProjects()">
         <option value="">全部</option>
-        <option value="进行中">进行中</option>
+        <option value="跟进中">跟进中</option>
+        <option value="成交执行交付中">成交执行交付中</option>
+        <option value="丢单">丢单</option>
+        <option value="取消">取消</option>
         <option value="延期">延期</option>
-        <option value="已完成">已完成</option>
+        <option value="交付完成">交付完成</option>
       </select>
       <label>成交</label>
       <select id="proj-filter-deal" onchange="renderProjects()">
@@ -3513,10 +3588,23 @@ body.dark-mode .zoom-btn.primary { background: var(--ui-primary); }
       </select>
       <label>客户</label>
       <input type="text" id="proj-filter-client" placeholder="输入客户名" oninput="renderProjects()" />
-      <label>标签</label>
-      <input type="text" id="proj-filter-tag" placeholder="输入标签" oninput="renderProjects()" />
+      <label>等级</label>
+      <select id="proj-filter-grade" onchange="renderProjects()">
+        <option value="">全部</option>
+        <option value="A">A级</option>
+        <option value="B">B级</option>
+        <option value="C">C级</option>
+        <option value="__none">未分级</option>
+      </select>
+      <label>需求</label>
+      <select id="proj-filter-aux" onchange="renderProjects()">
+        <option value="">全部</option>
+        <option value="own">自己的需求</option>
+        <option value="aux">辅助需求</option>
+      </select>
       <button class="btn-sm" onclick="document.querySelectorAll('.filter-bar select,.filter-bar input').forEach(el=>el.value='');renderProjects()">清空</button>
     </div>
+    <div class="stat-wrap project-stats" id="project-stats"></div>
     <div id="project-list" class="project-grid"></div>
   </div>
 
@@ -3644,7 +3732,7 @@ body.dark-mode .zoom-btn.primary { background: var(--ui-primary); }
     </div>
     <div class="table-wrap">
       <table class="annual-table" id="annual-table">
-        <thead><tr><th>维度</th><th>跟进</th><th>面谈</th><th>新增</th><th>丢单</th><th>成交</th><th>电话</th><th>新客</th><th>拜访</th><th>培训</th><th>目标</th><th>完成</th><th>完成率</th><th>差额</th></tr></thead>
+        <thead><tr><th>月份</th><th>开发电话</th><th>新增客户</th><th>投标搜集</th><th>参与投标</th><th>客户营销</th><th>客户拜访</th><th>客情维护</th><th>参与培训</th></tr></thead>
         <tbody id="annual-table-body"></tbody>
       </table>
     </div>
@@ -3655,6 +3743,9 @@ body.dark-mode .zoom-btn.primary { background: var(--ui-primary); }
     <div class="search-box">
       <input type="text" id="history-search" placeholder="🔍 搜索客户、项目..." oninput="renderAllHistory()" />
       <button class="btn-refresh-stat" onclick="renderAllHistory()">🔄 刷新</button>
+    </div>
+    <div class="history-filter-bar" style="margin-top:10px;">
+      <span class="td-tip">各板块（日报 / 周报 / 月报 / 月度工作汇总 / 待办记录）标题右侧 ▲▼ 可调整显示顺序，排最前的板块展示在最上方。</span>
     </div>
     <h3 style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
       <span>📅 日报</span>
@@ -3836,6 +3927,7 @@ body.dark-mode .zoom-btn.primary { background: var(--ui-primary); }
       <button class="sub-tab" data-sub="annual">📅 年度</button>
       <button class="sub-tab" data-sub="stat">📊 看板</button>
       <button class="sub-tab" data-sub="history">📚 历史</button>
+      <!-- 月度工作汇总按钮由 perfmonth.js 动态创建（避免重复） -->
     </div>
     <div id="workInner"></div>
   </section>
@@ -5247,15 +5339,19 @@ body.dark-mode .zoom-btn.primary { background: var(--ui-primary); }
         type: data.type || '',
         startDate: data.startDate || '',
         endDate: data.endDate || '',
-        status: data.status || '进行中',
+        followStatus: data.followStatus || '跟进中',
         deal: data.deal || false,
         followUp: data.followUp || '',
         contractAmount: data.contractAmount || 0,
         paidAmount: data.paidAmount || 0,
         unpaidAmount: data.unpaidAmount || 0,
+        projectPerformance: data.projectPerformance || 0,
+        commission: data.commission || 0,
         tags: data.tags || [],
+        grade: data.grade || '',
+        aux: data.aux || false,
         steps: STEP_TEMPLATE.map(s => ({ label: s, done: false, date: '' })),
-        createdAt: new Date().toISOString(),
+        createdAt: data.createdAt || new Date().toISOString(),
         updatedAt: new Date().toISOString()
       };
       projects.push(newProj);
@@ -5299,14 +5395,16 @@ body.dark-mode .zoom-btn.primary { background: var(--ui-primary); }
         const y = p.startDate ? parseInt(p.startDate.split('-')[0]) : null;
         return y === year || y === null;
       });
-      const statusFilter = document.getElementById('proj-filter-status').value;
+      const followFilter = document.getElementById('proj-filter-follow').value;
       const dealFilter = document.getElementById('proj-filter-deal').value;
       const clientFilter = document.getElementById('proj-filter-client').value.trim().toLowerCase();
-      const tagFilter = document.getElementById('proj-filter-tag').value.trim().toLowerCase();
-      if (statusFilter) filtered = filtered.filter(p => p.status === statusFilter);
+      const gradeFilter = document.getElementById('proj-filter-grade').value;
+      const auxFilter = document.getElementById('proj-filter-aux').value;
+      if (followFilter) filtered = filtered.filter(p => (p.followStatus || '跟进中') === followFilter);
       if (dealFilter !== '') filtered = filtered.filter(p => String(p.deal) === dealFilter);
       if (clientFilter) filtered = filtered.filter(p => p.client && p.client.toLowerCase().includes(clientFilter));
-      if (tagFilter) filtered = filtered.filter(p => p.tags && p.tags.some(t => t.toLowerCase().includes(tagFilter)));
+      if (gradeFilter) filtered = filtered.filter(p => gradeFilter === '__none' ? !p.grade : p.grade === gradeFilter);
+      if (auxFilter) filtered = filtered.filter(p => auxFilter === 'aux' ? !!p.aux : !p.aux);
       const now = new Date();
       filtered.sort((a, b) => {
         const daysA = calcCountdown(a);
@@ -5318,21 +5416,41 @@ body.dark-mode .zoom-btn.primary { background: var(--ui-primary); }
         if (a.endDate && b.endDate) return a.endDate.localeCompare(b.endDate);
         return 0;
       });
-      if (!filtered.length) { container.innerHTML = '<div class="empty-tip">暂无项目匹配筛选条件</div>'; return; }
+      if (!filtered.length) { container.innerHTML = '<div class="empty-tip">暂无项目匹配筛选条件</div>'; renderProjectStats(); return; }
       container.innerHTML = filtered.map((p, index) => {
         const progress = calcProgress(p);
         const days = calcCountdown(p);
         const isUrgent = (days !== null && days !== '已结束' && days < 7);
-        const statusClass = p.status === '已完成' ? 'deadline-safe' : (isUrgent ? 'deadline-urgent' :
+        const followDone = (p.followStatus === '交付完成' || p.followStatus === '丢单' || p.followStatus === '取消');
+        const statusClass = followDone ? 'deadline-safe' : (isUrgent ? 'deadline-urgent' :
           'deadline-normal');
         const doneSteps = p.steps.filter(s => s.done).length;
         const totalSteps = p.steps.length;
-        const tagsHtml = (p.tags || []).map(t => `<span class="tag">${t}</span>`).join('');
+        const tagsHtml = (p.grade ? `<span class="tag tag-grade">${p.grade} 级</span>` : '') +
+          (p.aux ? `<span class="tag tag-aux">辅助需求</span>` : `<span class="tag tag-own">自己的需求</span>`) +
+          (p.tags || []).map(t => `<span class="tag">${t}</span>`).join('');
+        const createdText = p.createdAt ? formatDateCN(new Date(p.createdAt)) : '—';
+        let payAlert = '';
+        if (p.endDate && (p.unpaidAmount || 0) > 0) {
+          const end = new Date(p.endDate);
+          const diffDays = Math.floor((new Date() - end) / (1000 * 60 * 60 * 24));
+          if (diffDays > 90) {
+            const overdue = diffDays - 90;
+            payAlert = `<div class="pay-alert">⚠️ 回款追踪：活动日期 ${formatDateCN(end)} 已超 3 个月（${overdue} 天），仍有未回款 ¥${p.unpaidAmount}，请尽快跟进！</div>`;
+          } else {
+            const due = new Date(end); due.setDate(due.getDate() + 90);
+            payAlert = `<div class="pay-tip">📅 应在 ${formatDateCN(due)} 前回款（未回款 ¥${p.unpaidAmount}）</div>`;
+          }
+        }
         const financeHtml = `
                   <div class="finance-row">
                       <span>💰 合同: ${p.contractAmount||0}</span>
                       <span>✅ 已回款: ${p.paidAmount||0}</span>
                       <span>📌 未回款: ${p.unpaidAmount||0}</span>
+                  </div>
+                  <div class="finance-row">
+                      <span>📊 项目业绩: ${p.projectPerformance||0}</span>
+                      <span>💎 个人提成: ${p.commission||0}</span>
                   </div>
               `;
         const urgentBadge = isUrgent ? ' ⚠️' : '';
@@ -5340,11 +5458,13 @@ body.dark-mode .zoom-btn.primary { background: var(--ui-primary); }
                   <div class="project-card ${isUrgent ? 'urgent' : ''}" onclick="openProjectModal('${p.id}')">
                       <div class="header-row">
                           <span class="project-name">${p.name}${urgentBadge}</span>
-                          <span class="project-status">${p.status}</span>
+                          <span class="project-status">${p.followStatus || '跟进中'}</span>
                       </div>
-                      <div class="project-meta">客户：${p.client||'未指定'} ｜ 类型：${p.type||'-'}</div>
+                      <div class="project-meta">客户：${p.client||'未指定'} ｜ 类型：${p.type||'-'} ｜ 跟进：${p.followStatus||'跟进中'}</div>
                       ${financeHtml}
+                      ${payAlert}
                       <div class="project-tags">${tagsHtml}</div>
+                      <div class="project-meta">建立时间：${createdText}</div>
                       <div class="project-meta">${p.startDate?formatDateCN(new Date(p.startDate)):''} ~ ${p.endDate?formatDateCN(new Date(p.endDate)):''}</div>
                       <div class="progress-bar"><div class="fill" style="width:${progress}%"></div></div>
                       <div style="display:flex;justify-content:space-between;font-size:13px;">
@@ -5359,6 +5479,46 @@ body.dark-mode .zoom-btn.primary { background: var(--ui-primary); }
                   </div>
               `;
       }).join('');
+      renderProjectStats();
+    }
+
+    // ===== 项目看板统计（R5）=====
+    function renderProjectStats() {
+      const el = document.getElementById('project-stats');
+      if (!el) return;
+      const projects = getProjects();
+      const total = projects.length;
+      const byStatus = {}, byGrade = {};
+      let unpaidSum = 0, contractSum = 0, paidSum = 0, perfSum = 0, commSum = 0;
+      const now = new Date();
+      const ym = now.getFullYear() + '-' + ('0' + (now.getMonth() + 1)).slice(-2);
+      let thisMonthNew = 0;
+      const escS = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      projects.forEach(p => {
+        const st = p.followStatus || '跟进中';
+        byStatus[st] = (byStatus[st] || 0) + 1;
+        const g = p.grade || '未分级';
+        byGrade[g] = (byGrade[g] || 0) + 1;
+        unpaidSum += (p.unpaidAmount || 0);
+        contractSum += (p.contractAmount || 0);
+        paidSum += (p.paidAmount || 0);
+        perfSum += (p.projectPerformance || 0);
+        commSum += (p.commission || 0);
+        if (p.createdAt && p.createdAt.substring(0, 7) === ym) thisMonthNew++;
+      });
+      const statusCards = Object.keys(byStatus).map(s => `<div class="stat-card"><div>${escS(s)}</div><div class="stat-num">${byStatus[s]}</div></div>`).join('');
+      const gradeCards = Object.keys(byGrade).map(g => `<div class="stat-card"><div>${escS(g)}</div><div class="stat-num">${byGrade[g]}</div></div>`).join('');
+      el.innerHTML = '<h3 style="margin:0 0 8px;width:100%;">📊 项目看板（基础信息统计）</h3>' +
+        `<div class="stat-card"><div>项目总数</div><div class="stat-num">${total}</div></div>` +
+        `<div class="stat-card"><div>本月新建</div><div class="stat-num">${thisMonthNew}</div></div>` +
+        statusCards +
+        `<div class="stat-card"><div>合同总额</div><div class="stat-num">¥${contractSum.toFixed(2)}</div></div>` +
+        `<div class="stat-card"><div>已回款</div><div class="stat-num">¥${paidSum.toFixed(2)}</div></div>` +
+        `<div class="stat-card ${unpaidSum > 0 ? 'stat-danger' : ''}"><div>待回款</div><div class="stat-num">¥${unpaidSum.toFixed(2)}</div></div>` +
+        `<div class="stat-card"><div>项目业绩合计</div><div class="stat-num">¥${perfSum.toFixed(2)}</div></div>` +
+        `<div class="stat-card"><div>个人提成合计</div><div class="stat-num">¥${commSum.toFixed(2)}</div></div>` +
+        gradeCards;
+      window.__projStats = { total: total, thisMonthNew: thisMonthNew, byStatus: byStatus, byGrade: byGrade, contractSum: contractSum, paidSum: paidSum, unpaidSum: unpaidSum, perfSum: perfSum, commSum: commSum };
     }
 
     // ===== 项目详情：步骤编辑与合同联动 =====
@@ -5375,7 +5535,9 @@ body.dark-mode .zoom-btn.primary { background: var(--ui-primary); }
                   <div class="form-row">
                       <div class="form-col"><label>客户</label><input type="text" id="modal-p-client" value="${p.client||''}"></div>
                       <div class="form-col"><label>类型</label><input type="text" id="modal-p-type" value="${p.type||''}"></div>
-                      <div class="form-col"><label>状态</label><select id="modal-p-status"><option ${p.status==='进行中'?'selected':''}>进行中</option><option ${p.status==='延期'?'selected':''}>延期</option><option ${p.status==='已完成'?'selected':''}>已完成</option></select></div>
+                  </div>
+                  <div class="form-row">
+                      <div class="form-col"><label>跟进情况</label><select id="modal-p-follow"><option ${(!p.followStatus||p.followStatus==='跟进中')?'selected':''}>跟进中</option><option ${p.followStatus==='成交执行交付中'?'selected':''}>成交执行交付中</option><option ${p.followStatus==='丢单'?'selected':''}>丢单</option><option ${p.followStatus==='取消'?'selected':''}>取消</option><option ${p.followStatus==='延期'?'selected':''}>延期</option><option ${p.followStatus==='交付完成'?'selected':''}>交付完成</option></select></div>
                   </div>
                   <div class="form-row">
                       <div class="form-col"><label>开始日期</label><input type="date" id="modal-p-start" value="${p.startDate||''}"></div>
@@ -5388,7 +5550,13 @@ body.dark-mode .zoom-btn.primary { background: var(--ui-primary); }
                       <div class="form-col"><label>未回款</label><input type="number" step="0.01" id="modal-p-unpaid" value="${p.unpaidAmount||0}" readonly></div>
                   </div>
                   <div class="form-row">
-                      <div class="form-col"><label>自定义标签（用逗号分隔）</label><input type="text" id="modal-p-tags" value="${tagsStr}" placeholder="重点客户, 大单, ..."></div>
+                      <div class="form-col"><label>项目业绩(元)</label><input type="number" step="0.01" id="modal-p-perf" value="${p.projectPerformance||0}"></div>
+                      <div class="form-col"><label>最终个人提成(元)</label><input type="number" step="0.01" id="modal-p-comm" value="${p.commission||0}"></div>
+                      <div class="form-col"><label>建立新项目时间（默认实际建立，可修改）</label><input type="date" id="modal-p-created" value="${p.createdAt ? p.createdAt.substring(0, 10) : ''}" title="延迟补录项目时，可改为实际立项时间"></div>
+                  </div>
+                  <div class="form-row">
+                      <div class="form-col"><label>ABC 等级</label><select id="modal-p-grade"><option value="">未分级</option><option ${p.grade==='A'?'selected':''}>A</option><option ${p.grade==='B'?'selected':''}>B</option><option ${p.grade==='C'?'selected':''}>C</option></select></div>
+                      <div class="form-col"><label>需求类型</label><select id="modal-p-aux"><option value="own" ${!p.aux?'selected':''}>自己的需求</option><option value="aux" ${p.aux?'selected':''}>辅助需求</option></select></div>
                   </div>
                   <label>跟进备注</label><textarea id="modal-p-followup">${p.followUp||''}</textarea>
               </div>
@@ -5492,7 +5660,7 @@ body.dark-mode .zoom-btn.primary { background: var(--ui-primary); }
       p.name = document.getElementById('modal-p-name').value.trim() || p.name;
       p.client = document.getElementById('modal-p-client').value.trim();
       p.type = document.getElementById('modal-p-type').value.trim();
-      p.status = document.getElementById('modal-p-status').value;
+      p.followStatus = document.getElementById('modal-p-follow').value;
       p.startDate = document.getElementById('modal-p-start').value;
       p.endDate = document.getElementById('modal-p-end').value;
       p.deal = document.getElementById('modal-p-deal').checked;
@@ -5500,8 +5668,12 @@ body.dark-mode .zoom-btn.primary { background: var(--ui-primary); }
       p.contractAmount = Number(document.getElementById('modal-p-contract').value) || 0;
       p.paidAmount = Number(document.getElementById('modal-p-paid').value) || 0;
       p.unpaidAmount = Number(document.getElementById('modal-p-unpaid').value) || 0;
-      const tagsStr = document.getElementById('modal-p-tags').value.trim();
-      p.tags = tagsStr ? tagsStr.split(',').map(s => s.trim()).filter(s => s) : [];
+      p.projectPerformance = Number(document.getElementById('modal-p-perf').value) || 0;
+      p.commission = Number(document.getElementById('modal-p-comm').value) || 0;
+      const _created = document.getElementById('modal-p-created').value;
+      if (_created) p.createdAt = _created + 'T00:00:00';
+      p.grade = document.getElementById('modal-p-grade').value;
+      p.aux = document.getElementById('modal-p-aux').value === 'aux';
       p.updatedAt = new Date().toISOString();
       if (p.client) syncClient(p.client);
       setProjects(projects);
@@ -5536,14 +5708,18 @@ body.dark-mode .zoom-btn.primary { background: var(--ui-primary); }
         '项目名称': p.name,
         '客户': p.client,
         '类型': p.type,
-        '状态': p.status,
+        '跟进情况': p.followStatus || '跟进中',
         '开始日期': p.startDate,
         '结束日期': p.endDate,
         '成交': p.deal ? '是' : '否',
         '合同金额': p.contractAmount || 0,
         '已回款': p.paidAmount || 0,
         '未回款': p.unpaidAmount || 0,
-        '标签': (p.tags || []).join('; '),
+        '项目业绩': p.projectPerformance || 0,
+        '个人提成': p.commission || 0,
+        '建立时间': p.createdAt ? formatDateCN(new Date(p.createdAt)) : '',
+        '等级': p.grade || '',
+        '需求类型': p.aux ? '辅助需求' : '自己的需求',
         '进度': calcProgress(p) + '%',
         '跟进备注': p.followUp,
         '步骤完成': p.steps.filter(s => s.done).map(s => s.label).join('; ')
@@ -6509,8 +6685,8 @@ body.dark-mode .zoom-btn.primary { background: var(--ui-primary); }
       const monthlyData = Array.from({ length: 12 }, (_, i) => {
         const monthStr = year + '-' + pad(i + 1);
         return { month: monthStr, monthName: (i + 1) + '月', follow: 0, interview: 0, newdemand: 0,
-          lost: 0, deal: 0, call: 0, newcus: 0, visit: 0, trainNum: 0, target: 0, finish: 0,
-          rate: '0%', diff: 0 };
+          lost: 0, deal: 0, call: 0, newcus: 0, bidcollect: 0, bidjoin: 0, marketing: 0,
+          relation: 0, visit: 0, trainNum: 0, target: 0, finish: 0, rate: '0%', diff: 0 };
       });
       allDaily.forEach(d => { const idx = parseInt(d.month.split('-')[1]) - 1; if (idx < 0 || idx > 11) return;
         monthlyData[idx].follow += d.follow || 0;
@@ -6530,7 +6706,9 @@ body.dark-mode .zoom-btn.primary { background: var(--ui-primary); }
         monthlyData[idx].rate = m.target > 0 ? ((m.finish / m.target) * 100).toFixed(2) + '%' : '0%'; });
       const stored = getStorage(KEY_ANNUAL_STAT);
       setStorage(KEY_ANNUAL_STAT, { autoData: monthlyData, manualData: stored ? stored.manualData : null,
-        totalTarget: stored ? stored.totalTarget : 0 });
+        totalTarget: stored ? stored.totalTarget : 0,
+        annualTargets: stored ? (stored.annualTargets || null) : null,
+        annualDone: stored ? (stored.annualDone || null) : null });
       renderAnnualTable();
       calcAnnualTotal();
       alert('✅ 年度自动汇总刷新 (' + year + '年)');
@@ -6547,19 +6725,14 @@ body.dark-mode .zoom-btn.primary { background: var(--ui-primary); }
         const tr = document.createElement('tr');
         tr.className = 'month-row';
         tr.innerHTML =
-          `<td>${month.monthName}</td><td><input type="number" class="editable" value="${month.follow}" data-month="${idx}" data-field="follow"></td>
-                  <td><input type="number" class="editable" value="${month.interview}" data-month="${idx}" data-field="interview"></td>
-                  <td><input type="number" class="editable" value="${month.newdemand}" data-month="${idx}" data-field="newdemand"></td>
-                  <td><input type="number" class="editable" value="${month.lost}" data-month="${idx}" data-field="lost"></td>
-                  <td><input type="number" class="editable" value="${month.deal}" data-month="${idx}" data-field="deal"></td>
-                  <td><input type="number" class="editable" value="${month.call}" data-month="${idx}" data-field="call"></td>
+          `<td>${month.monthName}</td><td><input type="number" class="editable" value="${month.call}" data-month="${idx}" data-field="call"></td>
                   <td><input type="number" class="editable" value="${month.newcus}" data-month="${idx}" data-field="newcus"></td>
+                  <td><input type="number" class="editable" value="${month.bidcollect||0}" data-month="${idx}" data-field="bidcollect"></td>
+                  <td><input type="number" class="editable" value="${month.bidjoin||0}" data-month="${idx}" data-field="bidjoin"></td>
+                  <td><input type="number" class="editable" value="${month.marketing||0}" data-month="${idx}" data-field="marketing"></td>
                   <td><input type="number" class="editable" value="${month.visit}" data-month="${idx}" data-field="visit"></td>
-                  <td><input type="number" class="editable" value="${month.trainNum}" data-month="${idx}" data-field="trainNum"></td>
-                  <td><input type="number" class="editable" value="${month.target}" data-month="${idx}" data-field="target" step="0.01"></td>
-                  <td><input type="number" class="editable" value="${month.finish}" data-month="${idx}" data-field="finish" step="0.01"></td>
-                  <td><input type="text" class="readonly" value="${month.rate}" readonly data-month="${idx}" data-field="rate"></td>
-                  <td><input type="text" class="readonly" value="${month.diff}" readonly data-month="${idx}" data-field="diff"></td>`;
+                  <td><input type="number" class="editable" value="${month.relation||0}" data-month="${idx}" data-field="relation"></td>
+                  <td><input type="number" class="editable" value="${month.trainNum}" data-month="${idx}" data-field="trainNum"></td>`;
         tableBody.appendChild(tr);
       });
       const quarters = [{ name: 'Q1', months: [0, 1, 2] }, { name: 'Q2', months: [3, 4, 5] }, { name: 'Q3',
@@ -6567,45 +6740,62 @@ body.dark-mode .zoom-btn.primary { background: var(--ui-primary); }
       quarters.forEach(q => {
         const tr = document.createElement('tr');
         tr.className = 'quarter-row';
-        const qData = q.months.reduce((acc, idx) => { const m = finalData[idx]; return { follow: acc
-              .follow + m.follow, interview: acc.interview + m.interview, newdemand: acc
-              .newdemand + m.newdemand, lost: acc.lost + m.lost, deal: acc.deal + m.deal,
-            call: acc.call + m.call, newcus: acc.newcus + m.newcus, visit: acc.visit + m
-              .visit, trainNum: acc.trainNum + m.trainNum, target: acc.target + m.target,
-            finish: acc.finish + m.finish, diff: acc.diff + m.diff }; }, { follow: 0,
-          interview: 0, newdemand: 0, lost: 0, deal: 0, call: 0, newcus: 0, visit: 0,
-          trainNum: 0, target: 0, finish: 0, diff: 0 });
-        qData.rate = qData.target > 0 ? ((qData.finish / qData.target) * 100).toFixed(2) + '%' :
-          '0%';
+        const qData = q.months.reduce((acc, idx) => { const m = finalData[idx]; return {
+            call: acc.call + m.call, newcus: acc.newcus + m.newcus,
+            bidcollect: acc.bidcollect + (m.bidcollect||0), bidjoin: acc.bidjoin + (m.bidjoin||0),
+            marketing: acc.marketing + (m.marketing||0), visit: acc.visit + m
+              .visit, relation: acc.relation + (m.relation||0), trainNum: acc.trainNum + m.trainNum }; }, {
+          call: 0, newcus: 0, bidcollect: 0, bidjoin: 0, marketing: 0, visit: 0, relation: 0,
+          trainNum: 0 });
         tr.innerHTML =
-          `<td>${q.name}</td><td>${qData.follow}</td><td>${qData.interview}</td><td>${qData.newdemand}</td><td>${qData.lost}</td><td>${qData.deal}</td><td>${qData.call}</td><td>${qData.newcus}</td><td>${qData.visit}</td><td>${qData.trainNum}</td><td>${qData.target}</td><td>${qData.finish}</td><td>${qData.rate}</td><td>${qData.diff}</td>`;
+          `<td>${q.name}</td><td>${qData.call}</td><td>${qData.newcus}</td><td>${qData.bidcollect}</td><td>${qData.bidjoin}</td><td>${qData.marketing}</td><td>${qData.visit}</td><td>${qData.relation}</td><td>${qData.trainNum}</td>`;
         tableBody.appendChild(tr);
       });
-      const yearData = finalData.reduce((acc, m) => ({ follow: acc.follow + m.follow, interview: acc
-            .interview + m.interview, newdemand: acc.newdemand + m.newdemand, lost: acc.lost + m
-            .lost, deal: acc.deal + m.deal, call: acc.call + m.call, newcus: acc.newcus + m
-            .newcus, visit: acc.visit + m.visit, trainNum: acc.trainNum + m.trainNum,
-          target: acc.target + m.target, finish: acc.finish + m.finish, diff: acc.diff + m.diff }),
-        { follow: 0, interview: 0, newdemand: 0, lost: 0, deal: 0, call: 0, newcus: 0, visit: 0,
-          trainNum: 0, target: 0, finish: 0, diff: 0 });
-      yearData.rate = yearData.target > 0 ? ((yearData.finish / yearData.target) * 100).toFixed(2) + '%' :
-        '0%';
+      const yearData = finalData.reduce((acc, m) => ({
+            call: acc.call + m.call, newcus: acc.newcus + m.newcus,
+            bidcollect: acc.bidcollect + (m.bidcollect||0), bidjoin: acc.bidjoin + (m.bidjoin||0),
+            marketing: acc.marketing + (m.marketing||0), visit: acc.visit + m
+            .visit, relation: acc.relation + (m.relation||0), trainNum: acc.trainNum + m.trainNum }),
+        { call: 0, newcus: 0, bidcollect: 0, bidjoin: 0, marketing: 0, visit: 0, relation: 0,
+          trainNum: 0 });
       const yr = document.createElement('tr');
       yr.className = 'year-row';
       yr.innerHTML =
-        `<td>年度总计</td><td>${yearData.follow}</td><td>${yearData.interview}</td><td>${yearData.newdemand}</td><td>${yearData.lost}</td><td>${yearData.deal}</td><td>${yearData.call}</td><td>${yearData.newcus}</td><td>${yearData.visit}</td><td>${yearData.trainNum}</td><td>${yearData.target}</td><td>${yearData.finish}</td><td>${yearData.rate}</td><td>${yearData.diff}</td>`;
+        `<td>年度总计</td><td>${yearData.call}</td><td>${yearData.newcus}</td><td>${yearData.bidcollect}</td><td>${yearData.bidjoin}</td><td>${yearData.marketing}</td><td>${yearData.visit}</td><td>${yearData.relation}</td><td>${yearData.trainNum}</td>`;
       tableBody.appendChild(yr);
+      const FIELDS = [['call', '开发电话'], ['newcus', '新增客户'], ['bidcollect', '投标搜集'], ['bidjoin', '参与投标'],
+        ['marketing', '客户营销'], ['visit', '客户拜访'], ['relation', '客情维护'], ['trainNum', '参与培训']];
+      const sum8 = {};
+      FIELDS.forEach(f => { sum8[f[0]] = finalData.reduce((s, m) => s + (Number(m[f[0]]) || 0), 0); });
+      const aTargets = stored.annualTargets || {};
+      function footRow(label, cls, cells) {
+        const tr = document.createElement('tr');
+        tr.className = 'annual-foot-row ' + cls;
+        tr.innerHTML = '<td>' + label + '</td>' + cells.map(c => '<td>' + c + '</td>').join('');
+        tableBody.appendChild(tr);
+      }
+      footRow('全年目标', 'foot-target', FIELDS.map(f => `<input type="number" class="editable" value="${Number(aTargets[f[0]]) || 0}" data-row="ayear" data-field="${f[0]}">`));
+      footRow('合计', 'foot-sum', FIELDS.map(f => sum8[f[0]]));
+      footRow('完成率', 'foot-rate', FIELDS.map(f => { const t = Number(aTargets[f[0]]) || 0, d = sum8[f[0]]; return t > 0 ? ((d / t) * 100).toFixed(2) + '%' : '0%'; }));
+      footRow('差额', 'foot-diff', FIELDS.map(f => (sum8[f[0]] - (Number(aTargets[f[0]]) || 0)).toFixed(2)));
       bindAnnualTableEvents();
     }
 
     function bindAnnualTableEvents() {
       document.querySelectorAll('#annual-table .editable').forEach(input => {
         input.oninput = function() {
+          const stored = getStorage(KEY_ANNUAL_STAT);
+          if (!stored || !stored.autoData) return;
+          if (this.dataset.row) {
+            if (!stored.annualTargets) stored.annualTargets = {};
+            stored.annualTargets[this.dataset.field] = Number(this.value) || 0;
+            setStorage(KEY_ANNUAL_STAT, stored);
+            renderAnnualTable();
+            return;
+          }
           const monthIdx = parseInt(this.dataset.month);
           const field = this.dataset.field;
           const value = Number(this.value) || 0;
-          const stored = getStorage(KEY_ANNUAL_STAT);
-          if (!stored || !stored.autoData) return;
           if (!stored.manualData) stored.manualData = {};
           if (!stored.manualData[monthIdx]) stored.manualData[monthIdx] = {};
           stored.manualData[monthIdx][field] = value;
@@ -6647,6 +6837,8 @@ body.dark-mode .zoom-btn.primary { background: var(--ui-primary); }
       if (!stored) return;
       stored.manualData = null;
       stored.totalTarget = 0;
+      stored.annualTargets = null;
+      stored.annualDone = null;
       setStorage(KEY_ANNUAL_STAT, stored);
       document.getElementById('annual-total-target').value = 0;
       loadAnnualAutoData();
@@ -6672,41 +6864,52 @@ body.dark-mode .zoom-btn.primary { background: var(--ui-primary); }
       if (!stored || !stored.autoData) { alert('无数据'); return; }
       const finalData = stored.autoData.map((m, idx) => (stored.manualData && stored.manualData[idx]) ? { ...m,
         ...stored.manualData[idx] } : m);
-      const rows = finalData.map(m => ({ '月份': m.monthName, '跟进': m.follow, '面谈': m.interview, '新增': m
-          .newdemand, '丢单': m.lost, '成交': m.deal, '开发电话': m.call, '新增客户': m.newcus,
-        '拜访': m.visit, '培训': m.trainNum, '目标': m.target, '完成': m.finish, '完成率': m.rate,
-        '差额': m.diff }));
+      const rows = finalData.map(m => ({ '月份': m.monthName, '开发电话': m.call, '新增客户': m.newcus,
+        '投标搜集': m.bidcollect||0, '参与投标': m.bidjoin||0, '客户营销': m.marketing||0,
+        '客户拜访': m.visit, '客情维护': m.relation||0, '参与培训': m.trainNum }));
       const quarters = [{ name: 'Q1', months: [0, 1, 2] }, { name: 'Q2', months: [3, 4, 5] }, { name: 'Q3',
           months: [6, 7, 8] }, { name: 'Q4', months: [9, 10, 11] }];
       quarters.forEach(q => {
-        const qData = q.months.reduce((acc, idx) => { const m = finalData[idx]; return { follow: acc
-              .follow + m.follow, interview: acc.interview + m.interview, newdemand: acc
-              .newdemand + m.newdemand, lost: acc.lost + m.lost, deal: acc.deal + m.deal,
-            call: acc.call + m.call, newcus: acc.newcus + m.newcus, visit: acc.visit + m
-              .visit, trainNum: acc.trainNum + m.trainNum, target: acc.target + m.target,
-            finish: acc.finish + m.finish, diff: acc.diff + m.diff }; }, { follow: 0,
-          interview: 0, newdemand: 0, lost: 0, deal: 0, call: 0, newcus: 0, visit: 0,
-          trainNum: 0, target: 0, finish: 0, diff: 0 });
-        qData.rate = qData.target > 0 ? ((qData.finish / qData.target) * 100).toFixed(2) + '%' :
-          '0%';
-        rows.push({ '月份': q.name, '跟进': qData.follow, '面谈': qData.interview, '新增': qData
-            .newdemand, '丢单': qData.lost, '成交': qData.deal, '开发电话': qData.call,
-          '新增客户': qData.newcus, '拜访': qData.visit, '培训': qData.trainNum, '目标': qData
-            .target, '完成': qData.finish, '完成率': qData.rate, '差额': qData.diff });
+        const qData = q.months.reduce((acc, idx) => { const m = finalData[idx]; return {
+            call: acc.call + m.call, newcus: acc.newcus + m.newcus,
+            bidcollect: acc.bidcollect + (m.bidcollect||0), bidjoin: acc.bidjoin + (m.bidjoin||0),
+            marketing: acc.marketing + (m.marketing||0), visit: acc.visit + m
+              .visit, relation: acc.relation + (m.relation||0), trainNum: acc.trainNum + m.trainNum }; }, {
+          call: 0, newcus: 0, bidcollect: 0, bidjoin: 0, marketing: 0, visit: 0, relation: 0,
+          trainNum: 0 });
+        rows.push({ '月份': q.name, '开发电话': qData.call,
+          '新增客户': qData.newcus, '投标搜集': qData.bidcollect, '参与投标': qData.bidjoin,
+          '客户营销': qData.marketing, '客户拜访': qData.visit, '客情维护': qData.relation,
+          '参与培训': qData.trainNum });
       });
-      const yearData = finalData.reduce((acc, m) => ({ follow: acc.follow + m.follow, interview: acc
-            .interview + m.interview, newdemand: acc.newdemand + m.newdemand, lost: acc.lost + m
-            .lost, deal: acc.deal + m.deal, call: acc.call + m.call, newcus: acc.newcus + m
-            .newcus, visit: acc.visit + m.visit, trainNum: acc.trainNum + m.trainNum,
-          target: acc.target + m.target, finish: acc.finish + m.finish, diff: acc.diff + m.diff }),
-        { follow: 0, interview: 0, newdemand: 0, lost: 0, deal: 0, call: 0, newcus: 0, visit: 0,
-          trainNum: 0, target: 0, finish: 0, diff: 0 });
-      yearData.rate = yearData.target > 0 ? ((yearData.finish / yearData.target) * 100).toFixed(2) + '%' :
-        '0%';
-      rows.push({ '月份': '年度总计', '跟进': yearData.follow, '面谈': yearData.interview, '新增': yearData
-          .newdemand, '丢单': yearData.lost, '成交': yearData.deal, '开发电话': yearData.call,
-        '新增客户': yearData.newcus, '拜访': yearData.visit, '培训': yearData.trainNum, '目标': yearData
-          .target, '完成': yearData.finish, '完成率': yearData.rate, '差额': yearData.diff });
+      const yearData = finalData.reduce((acc, m) => ({
+            call: acc.call + m.call, newcus: acc.newcus + m.newcus,
+            bidcollect: acc.bidcollect + (m.bidcollect||0), bidjoin: acc.bidjoin + (m.bidjoin||0),
+            marketing: acc.marketing + (m.marketing||0), visit: acc.visit + m
+            .visit, relation: acc.relation + (m.relation||0), trainNum: acc.trainNum + m.trainNum }),
+        { call: 0, newcus: 0, bidcollect: 0, bidjoin: 0, marketing: 0, visit: 0, relation: 0,
+          trainNum: 0 });
+      rows.push({ '月份': '年度总计', '开发电话': yearData.call,
+        '新增客户': yearData.newcus, '投标搜集': yearData.bidcollect, '参与投标': yearData.bidjoin,
+        '客户营销': yearData.marketing, '客户拜访': yearData.visit, '客情维护': yearData.relation,
+        '参与培训': yearData.trainNum });
+      const FIELDS = [['call', '开发电话'], ['newcus', '新增客户'], ['bidcollect', '投标搜集'], ['bidjoin', '参与投标'],
+        ['marketing', '客户营销'], ['visit', '客户拜访'], ['relation', '客情维护'], ['trainNum', '参与培训']];
+      const aTargets = stored.annualTargets || {};
+      const tRow = { '月份': '全年目标' };
+      const rRow = { '月份': '完成率' }; const dfRow = { '月份': '差额' };
+      FIELDS.forEach(f => {
+        const t = Number(aTargets[f[0]]) || 0, d = yearData[f[0]] || 0;
+        tRow[f[1]] = t;
+        rRow[f[1]] = t > 0 ? ((d / t) * 100).toFixed(2) + '%' : '0%';
+        dfRow[f[1]] = (d - t).toFixed(2);
+      });
+      rows.push(tRow);
+      rows.push({ '月份': '合计', '开发电话': yearData.call, '新增客户': yearData.newcus,
+        '投标搜集': yearData.bidcollect, '参与投标': yearData.bidjoin, '客户营销': yearData.marketing,
+        '客户拜访': yearData.visit, '客情维护': yearData.relation, '参与培训': yearData.trainNum });
+      rows.push(rRow);
+      rows.push(dfRow);
       const wb = XLSX.utils.book_new();
       const ws = XLSX.utils.json_to_sheet(rows);
       XLSX.utils.book_append_sheet(wb, ws, getGlobalYear() + '年度统计');
@@ -7031,7 +7234,8 @@ body.dark-mode .zoom-btn.primary { background: var(--ui-primary); }
           (item.projectList || []).some(row => row.some(c => String(c).toLowerCase().includes(searchVal)));
       }
 
-      const dFiltered = dailyList.filter(filterItem).reverse();
+      const dFiltered = dailyList.filter(filterItem);
+      dFiltered.reverse();
       let dHtml = '';
       if (dFiltered.length === 0) {
         dHtml = '<div class="empty-tip">无匹配日报</div>';
@@ -7056,7 +7260,8 @@ body.dark-mode .zoom-btn.primary { background: var(--ui-primary); }
       }
       document.getElementById('history-daily').innerHTML = dHtml;
 
-      const wFiltered = weeklyList.filter(filterItem).reverse();
+      const wFiltered = weeklyList.filter(filterItem);
+      wFiltered.reverse();
       let wHtml = '';
       if (wFiltered.length === 0) {
         wHtml = '<div class="empty-tip">无匹配周报</div>';
@@ -7087,7 +7292,8 @@ body.dark-mode .zoom-btn.primary { background: var(--ui-primary); }
       }
       document.getElementById('history-weekly').innerHTML = wHtml;
 
-      const mFiltered = monthlyList.filter(filterItem).reverse();
+      const mFiltered = monthlyList.filter(filterItem);
+      mFiltered.reverse();
       let mHtml = '';
       if (mFiltered.length === 0) {
         mHtml = '<div class="empty-tip">无匹配月报</div>';
@@ -7587,7 +7793,7 @@ select to_regclass('public.wb_kv');</div>
 
       <div class="settings-section">
         <h3>📑 导航排序与显示（目录）</h3>
-        <p class="hint">拖拽或点击 ↑↓ 调整顶部导航顺序；取消勾选可隐藏该板块（仍可通过快捷键或设置进入）。</p>
+        <p class="hint">拖拽或点击 ↑↓ 调整顶部导航顺序：排第一的板块 = 打开工作台时的首页显示；取消勾选可隐藏该板块（仍可通过设置进入）。</p>
         <div class="nav-catalog-list" id="navCatalogList"></div>
       </div>
 
@@ -7622,7 +7828,9 @@ select to_regclass('public.wb_kv');</div>
         'wb_radar', 'wb_radar_kw', 'wb_radar_check', 'wb_cases',
         'wb_intel_links', 'wb_intel_link_order',
         'wb_insp_links', 'wb_insp_link_order',
-        'wb_nav_catalog'
+        'wb_nav_catalog', 'sport_perf_month', 'wb_work_tabs',
+        'wb_work_tabs_order', 'sport_todo_done_log', 'wb_todo_autosort',
+        'wb_history_order', 'wb_proj_tabs', 'wb_proj_tabs_order'
       ];
 
       function $(id) { return document.getElementById(id); }
@@ -14630,7 +14838,7 @@ select to_regclass('public.wb_kv');</div>
   var FEED = SEED;
   var POLL_MS = 60000;
   var TOP = ["dash", "inspire", "work", "projects", "clients", "recycle"];
-  var WORK_SUBS = ["daily", "weekly", "monthly", "annual", "stat", "history"];
+  var WORK_SUBS = ["daily", "weekly", "monthly", "annual", "stat", "history", "perfmonth"];
   var currentSub = null;
 
   var intelCfg = loadCfg("wb_intel_cfg", SEED.config && SEED.config.intel);
@@ -15190,7 +15398,20 @@ select to_regclass('public.wb_kv');</div>
     var tb = $("todoBoard"); if (tb) tb.style.display = (tab === "work") ? "" : "none";
     document.querySelectorAll(".top-tab").forEach(function (b) { b.classList.toggle("active", b.dataset.tab === tab); });
     try {
-      if (tab === "work") { if (!currentSub) showSub("daily"); }
+      if (tab === "work") {
+        if (!currentSub) {
+          // R1：日常工作首页 = 子标签排序中的第一个（且未被隐藏）的子标签
+          var _order = [];
+          try { _order = JSON.parse(localStorage.getItem("wb_work_tabs_order") || "[]") || []; } catch (e) {}
+          var _hidden = [];
+          try { _hidden = JSON.parse(localStorage.getItem("wb_work_tabs") || "[]") || []; } catch (e) {}
+          var _ids = ["daily", "weekly", "monthly", "annual", "stat", "history", "perfmonth"];
+          var _def = null;
+          _order.forEach(function (id) { if (!_def && _hidden.indexOf(id) < 0 && _ids.indexOf(id) >= 0) _def = id; });
+          if (!_def) _ids.forEach(function (id) { if (!_def && _hidden.indexOf(id) < 0) _def = id; });
+          showSub(_def || "daily");
+        }
+      }
       if (tab === "projects" && typeof renderProjects === "function") renderProjects();
       if (tab === "clients" && typeof renderClients === "function") renderClients();
       if (tab === "dash") loadAll();
@@ -15210,6 +15431,7 @@ select to_regclass('public.wb_kv');</div>
       if (sub === "daily") { if (typeof initDailyDate === "function") initDailyDate(); if (typeof updateLevelStats === "function") updateLevelStats(); }
       if (sub === "weekly") { if (typeof loadWeekAutoData === "function") loadWeekAutoData(); if (typeof updateLevelStats === "function") updateLevelStats(); }
       if (sub === "monthly") { if (typeof loadMonthAutoData === "function") loadMonthAutoData(); if (typeof updateLevelStats === "function") updateLevelStats(); }
+      if (sub === "perfmonth") { if (typeof renderPerfMonth === "function") renderPerfMonth(); }
       if (sub === "recycle" && typeof renderRecycleBin === "function") renderRecycleBin();
     } catch (e) { /* 个别渲染异常不阻断导航 */ }
   }
@@ -15275,8 +15497,20 @@ select to_regclass('public.wb_kv');</div>
     setUpdated(SEED);
     renderIntel();
     renderInspire();
-    // V8：进入页面默认显示「日常工作」板块（原为情报搜集）
-    showTop("work");
+    // V8：进入页面默认显示「导航排序第一」的板块（wb_nav_catalog 第一且未隐藏项）
+    // 延迟到下一 tick，确保 perfmonth 等动态面板已注入后再选定首页子标签
+    setTimeout(function () {
+      var _first = "work";
+      try {
+        var _nav = JSON.parse(localStorage.getItem("wb_nav_catalog") || "[]");
+        if (Array.isArray(_nav)) {
+          for (var _i = 0; _i < _nav.length; _i++) {
+            if (_nav[_i] && _nav[_i].id && _nav[_i].visible !== false) { _first = _nav[_i].id; break; }
+          }
+        }
+      } catch (e) {}
+      showTop(_first);
+    }, 0);
     loadAll();
     setInterval(loadAll, POLL_MS);
   }
@@ -15787,9 +16021,12 @@ select to_regclass('public.wb_kv');</div>
  * 覆盖：日报/周报/月报 的 其他·计划·欠款·业绩分析、客户历史/跟进、
  *       以及弹窗里动态生成的编辑框（自动发现 + 动态绑定）
  * 排除：CSV 批量导入框、只读/禁用框、大框自身
- * 触发：小框（高度 < 120px）单击放大；任何框都可双击 或 点标签旁「⤢ 放大」
+ * 触发：所有输入框/文本域单击即可直接输入（从不劫持单击）；
+ *       想要更大空间时，点标签旁「⤢ 放大」或双击输入框，才弹出大编辑器
+ *       （内容自动带入，保存写回）（V17/V18 调整）
  * 保存：写回原 textarea 并派发 input/change，原有草稿自动保存 / 汇总逻辑照常触发
- * 增强：大框底部实时字数行数统计；Ctrl/⌘ + Enter 保存；Esc 保存并关闭
+ * 增强：大框底部实时字数行数统计；Ctrl/⌘ + Enter 保存；Esc 保存并关闭；
+ *       标签识别兼容 <label> 与 .pm-label（月度工作汇总等自定义结构）
  * ============================================================ */
 (function () {
   "use strict";
@@ -15803,8 +16040,21 @@ select to_regclass('public.wb_kv');</div>
   var curEl = null, origVal = "";
 
   function hasLabel(el) {
+    return !!labelOf(el);
+  }
+
+  // 找字段旁的「标签」：<label> 或 月度工作汇总等自定义结构里的 .pm-label
+  function labelOf(el) {
     var lab = el.previousElementSibling;
-    return !!(lab && /^LABEL$/i.test(lab.tagName));
+    if (lab && (/^LABEL$/i.test(lab.tagName) || (lab.classList && lab.classList.contains("pm-label")))) return lab;
+    // 结构为 <span class="pm-label">…</span><span class="pm-grow"><textarea/></span> 时，
+    // 从父级容器（.pm-item）里找标签
+    var item = el.closest ? el.closest(".pm-item") : null;
+    if (item) {
+      var pl = item.querySelector(".pm-label");
+      if (pl) return pl;
+    }
+    return null;
   }
 
   // 是否纳入放大：textarea 全部（除排除项）；单行 input 只收「有标签的表单字段」
@@ -15826,8 +16076,8 @@ select to_regclass('public.wb_kv');</div>
 
   // 取一个好认的名字：label > placeholder > aria-label > id
   function titleOf(el) {
-    var lab = el.previousElementSibling;
-    if (lab && /^LABEL$/i.test(lab.tagName)) {
+    var lab = labelOf(el);
+    if (lab) {
       try {
         var c = lab.cloneNode(true);
         var chips = c.querySelectorAll(".zoom-chip");
@@ -15939,24 +16189,15 @@ select to_regclass('public.wb_kv');</div>
   function bindOne(el) {
     if (!isTarget(el) || el.dataset.zoomBound === "1") return;
     el.dataset.zoomBound = "1";
-    var isTa = el.tagName === "TEXTAREA";
-    if (isTa) {
+    // 文本域 / 单行输入框统一：单击直接输入（不劫持），双击弹出大编辑器
+    el.addEventListener("dblclick", function (e) { e.preventDefault(); open(el); });
+    if (el.tagName === "TEXTAREA") {
       el.classList.add("zoomable-ta");
-      el.setAttribute("title", "点击 / 双击 放大编辑");
-      // 小框：单击直接放大（看得不全，正需要）；大框：不劫持单击，交给 ⤢ / 双击
-      el.addEventListener("click", function (e) {
-        var h = el.offsetHeight || 0;
-        if (h && h > SMALL_LIMIT) return;
-        e.preventDefault();
-        open(el);
-      });
-      el.addEventListener("dblclick", function (e) { e.preventDefault(); open(el); });
-    } else {
-      el.setAttribute("title", "点标签旁「⤢ 放大」可放大编辑");
     }
-    // 标签旁加一颗「⤢ 放大」小按钮，方便发现
-    var lab = el.previousElementSibling;
-    if (lab && /^LABEL$/i.test(lab.tagName) && !lab.querySelector(".zoom-chip")) {
+    el.setAttribute("title", "单击直接输入；双击 或 点标签旁「⤢ 放大」可放大编辑");
+    // 标签旁加一颗「⤢ 放大」小按钮，方便发现（兼容 <label> 与 .pm-label）
+    var lab = labelOf(el);
+    if (lab && !lab.querySelector(".zoom-chip")) {
       var chip = document.createElement("button");
       chip.type = "button";
       chip.className = "zoom-chip";
@@ -16149,6 +16390,1789 @@ select to_regclass('public.wb_kv');</div>
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start);
   else start();
+})();
+
+</script>
+<script>
+/* ===== 月度工作汇总（战术/战略/其他）=====
+ * 挂在「日常工作」二级子标签，Word 式排版、按月存储、可一键复制为纯文本。
+ * 纯注入式 patch，不改动 base 原代码。
+ */
+(function () {
+  'use strict';
+
+  var KEY = 'sport_perf_month';
+
+  function $(id) { return document.getElementById(id); }
+  function getStore(k) {
+    try { var s = localStorage.getItem(k); if (!s) return null; var v = JSON.parse(s); return v; }
+    catch (e) { return null; }
+  }
+  function setStore(k, v) {
+    try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {}
+    if (window.markDirty) window.markDirty(k);          // 触发 Supabase 云同步
+    if (window.setStorage) { try { window.setStorage(k, v); } catch (e) {} }
+  }
+  function esc(s) {
+    s = (s == null ? '' : String(s));
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+  function pad2(n) { return (n < 10 ? '0' : '') + n; }
+  function curYM() { var d = new Date(); return d.getFullYear() + '-' + pad2(d.getMonth() + 1); }
+  function num(v) { v = (v == null ? '' : String(v)).trim(); if (v === '' || isNaN(Number(v))) return ''; return v; }
+
+  // 当前表单字段定义
+  var FIELDS = [
+    't_demand', 't_aux', 't_analysis', 't_forecast',
+    'p_year_t', 'p_year_d', 'p_q_t', 'p_q_d', 'p_m_t', 'p_m_d',
+    's_call', 's_new31', 's_bidcollect', 's_bidjoin', 's_marketing', 's_visit', 's_relation', 's_train',
+    'o_train', 'o_sharing', 'o_misc'
+  ];
+
+  // ---------- 样式（Word 式文档） ----------
+  function injectStyle() {
+    if ($('perfmonth-style')) return;
+    var css = [
+      '#panel-perfmonth .pm-toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;}',
+      '#panel-perfmonth .pm-month-wrap{display:flex;align-items:center;gap:8px;font-weight:600;color:var(--ui-text);}',
+      '#panel-perfmonth .pm-month-wrap input[type=month]{font:inherit;padding:6px 10px;border:1px solid var(--ui-border);border-radius:10px;background:var(--ui-card-bg);color:var(--ui-text);}',
+      '#panel-perfmonth .pm-hint{font-size:13px;color:var(--ui-text-soft);}',
+      '#panel-perfmonth .pm-actions{display:flex;gap:8px;margin-left:auto;flex-wrap:wrap;}',
+      '#panel-perfmonth .pm-btn{font:inherit;padding:7px 12px;border-radius:10px;border:1px solid var(--ui-border);background:var(--ui-card-bg);color:var(--ui-text);cursor:pointer;}',
+      '#panel-perfmonth .pm-btn.primary{background:var(--ui-primary);color:#fff;border-color:var(--ui-primary);font-weight:700;}',
+      '#panel-perfmonth .pm-btn:hover{filter:brightness(.98);}',
+      '#panel-perfmonth .pm-btn:active{transform:scale(.97);}',
+      '#panel-perfmonth .pm-saved{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;}',
+      '#panel-perfmonth .pm-chip{font:inherit;font-size:13px;padding:5px 11px;border-radius:999px;border:1px solid var(--ui-border);background:var(--ui-card-bg);color:var(--ui-text-soft);cursor:pointer;}',
+      '#panel-perfmonth .pm-chip.active{background:var(--ui-primary);color:#fff;border-color:var(--ui-primary);}',
+      '#panel-perfmonth .pm-chip:hover{color:var(--ui-primary);}',
+      '#panel-perfmonth .pm-chip.active:hover{color:#fff;}',
+      '#panel-perfmonth .pm-doc{max-width:880px;margin:0 auto;background:#fff;color:#1d1d1f;border:1px solid rgba(0,0,0,.08);border-radius:14px;padding:32px 38px;box-shadow:0 6px 24px rgba(0,0,0,.06);}',
+      '#panel-perfmonth .pm-doc h2.pm-title{text-align:center;font-size:22px;font-weight:800;margin:0 0 4px;}',
+      '#panel-perfmonth .pm-doc .pm-sub{text-align:center;color:#6e6e73;font-size:13px;margin-bottom:18px;}',
+      '#panel-perfmonth .pm-sec{margin-top:18px;}',
+      '#panel-perfmonth .pm-sec-h{font-size:17px;font-weight:800;margin:0 0 8px;padding-left:2px;}',
+      '#panel-perfmonth .pm-item{display:flex;flex-wrap:wrap;align-items:flex-start;gap:8px;margin:8px 0;line-height:1.7;}',
+      '#panel-perfmonth .pm-item .pm-label{flex:0 0 auto;font-weight:600;min-width:96px;}',
+      '#panel-perfmonth .pm-item .pm-grow{flex:1 1 220px;min-width:200px;}',
+      '#panel-perfmonth .pm-ta{width:100%;min-height:60px;resize:vertical;font:inherit;padding:8px 10px;border:1px solid var(--ui-border);border-radius:10px;background:#fff;color:#1d1d1f;box-sizing:border-box;}',
+      '#panel-perfmonth .pm-in{font:inherit;padding:7px 10px;border:1px solid var(--ui-border);border-radius:10px;background:#fff;color:#1d1d1f;box-sizing:border-box;}',
+      '#panel-perfmonth .pm-in.num{width:96px;text-align:right;}',
+      '#panel-perfmonth .pm-perf-row{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:6px 0;}',
+      '#panel-perfmonth .pm-perf-row .pm-pr-label{flex:0 0 76px;font-weight:600;}',
+      '#panel-perfmonth .pm-diff{font-weight:700;min-width:84px;display:inline-block;}',
+      '#panel-perfmonth .pm-diff.plus{color:#c45c5c;}',
+      '#panel-perfmonth .pm-diff.minus{color:#0066cc;}',
+      '#panel-perfmonth .pm-diff.zero{color:#6e6e73;}',
+      '#panel-perfmonth .pm-inline{display:flex;align-items:center;gap:6px;}',
+      '@media (prefers-color-scheme: dark){ #panel-perfmonth .pm-doc{background:#1c1c1e;color:#f5f5f7;border-color:rgba(255,255,255,.12);} #panel-perfmonth .pm-doc .pm-sub{color:#98989d;} #panel-perfmonth .pm-ta,#panel-perfmonth .pm-in{background:#2c2c2e;color:#f5f5f7;border-color:rgba(255,255,255,.16);} #panel-perfmonth .pm-diff.zero{color:#98989d;} }',
+      'body.dark-mode #panel-perfmonth .pm-doc{background:#1c1c1e;color:#f5f5f7;border-color:rgba(255,255,255,.12);}',
+      'body.dark-mode #panel-perfmonth .pm-doc .pm-sub{color:#98989d;}',
+      'body.dark-mode #panel-perfmonth .pm-ta,body.dark-mode #panel-perfmonth .pm-in{background:#2c2c2e;color:#f5f5f7;border-color:rgba(255,255,255,.16);}',
+      'body.dark-mode #panel-perfmonth .pm-diff.zero{color:#98989d;}'
+    ].join('\n');
+    var st = document.createElement('style');
+    st.id = 'perfmonth-style';
+    st.textContent = css;
+    document.head.appendChild(st);
+  }
+
+  // ---------- 构建面板与子标签 ----------
+  function buildShell() {
+    // 1) 子标签按钮
+    var bar = $('workBar');
+    if (bar && !$('pmTabBtn')) {
+      var btn = document.createElement('button');
+      btn.className = 'sub-tab';
+      btn.id = 'pmTabBtn';
+      btn.dataset.sub = 'perfmonth';
+      btn.textContent = '📑 月度工作汇总';
+      bar.appendChild(btn);
+      btn.addEventListener('click', showPerfMonth);
+    }
+    // 2) 面板
+    var inner = $('workInner');
+    if (inner && !$('panel-perfmonth')) {
+      var sec = document.createElement('section');
+      sec.className = 'panel';
+      sec.id = 'panel-perfmonth';
+      sec.innerHTML = [
+        '<div class="pm-toolbar">',
+        '  <div class="pm-month-wrap"><label>月份：<input type="month" id="pmMonth"></label></div>',
+        '  <span class="pm-hint" id="pmHint"></span>',
+        '  <div class="pm-actions">',
+        '    <button class="pm-btn primary" id="pmSave">💾 保存当月</button>',
+        '    <button class="pm-btn" id="pmCopy">📋 复制为文本</button>',
+        '    <button class="pm-btn" id="pmDownload">⬇️ 下载 .txt</button>',
+        '    <button class="pm-btn" id="pmClear">🗑️ 清空当月</button>',
+        '  </div>',
+        '</div>',
+        '<div class="pm-saved" id="pmSaved"></div>',
+        '<article class="pm-doc" id="pmDoc"></article>'
+      ].join('\n');
+      inner.appendChild(sec);
+      buildForm();
+      bindPanel();
+    }
+  }
+
+  // ---------- 表单内容 ----------
+  function buildForm() {
+    var doc = $('pmDoc');
+    if (!doc) return;
+    function perfRow(label, tId, dId, diffId) {
+      return '<div class="pm-perf-row">' +
+        '<span class="pm-pr-label">' + label + '</span>' +
+        '<span class="pm-inline">目标：<input class="pm-in num" type="number" id="' + tId + '" data-num="1"></span>' +
+        '<span class="pm-inline">已完成：<input class="pm-in num" type="number" id="' + dId + '" data-num="1"></span>' +
+        '<span class="pm-inline">超额（+）/差额（-）：<span class="pm-diff zero" id="' + diffId + '">—</span></span>' +
+      '</div>';
+    }
+    function strat(label, id) {
+      return '<div class="pm-item"><span class="pm-label">' + label + '</span>' +
+        '<span class="pm-grow"><input class="pm-in num" type="number" id="' + id + '" data-num="1"></span></div>';
+    }
+    doc.innerHTML = [
+      '<h2 class="pm-title">月度工作汇总</h2>',
+      '<div class="pm-sub" id="pmDocSub"></div>',
+
+      '<div class="pm-sec"><h3 class="pm-sec-h">一、战术工作</h3>',
+        '<div class="pm-item"><span class="pm-label">1、需求跟进：</span><span class="pm-grow"><textarea class="pm-ta" id="pm_t_demand" placeholder="填写需求跟进情况"></textarea></span></div>',
+        '<div class="pm-item"><span class="pm-label">2、辅助需求跟进：</span><span class="pm-grow"><textarea class="pm-ta" id="pm_t_aux" placeholder="填写辅助需求跟进情况"></textarea></span></div>',
+        '<div class="pm-item"><span class="pm-label">3、业绩情况：</span><span class="pm-grow"></span></div>',
+        perfRow('全年任务', 'pm_p_year_t', 'pm_p_year_d', 'pm_diff_year'),
+        perfRow('季度任务', 'pm_p_q_t', 'pm_p_q_d', 'pm_diff_q'),
+        perfRow('月度任务', 'pm_p_m_t', 'pm_p_m_d', 'pm_diff_m'),
+        '<div class="pm-item"><span class="pm-label">4、业绩情况分析：</span><span class="pm-grow"><textarea class="pm-ta" id="pm_t_analysis" placeholder="本月业绩复盘、丢单原因、问题总结、改进措施"></textarea></span></div>',
+        '<div class="pm-item"><span class="pm-label">5、下三月业绩预判：</span><span class="pm-grow"><textarea class="pm-ta" id="pm_t_forecast" placeholder="预计有消费动作客户、预计产生业绩金额、跟进计划"></textarea></span></div>',
+      '</div>',
+
+      '<div class="pm-sec"><h3 class="pm-sec-h">二、战略工作</h3>',
+        strat('1、开发电话拨打（个）：', 'pm_s_call'),
+        strat('2、新增31客户（个）：', 'pm_s_new31'),
+        strat('3、投标数据搜集（条）：', 'pm_s_bidcollect'),
+        strat('4、参与投标（个）：', 'pm_s_bidjoin'),
+        strat('5、客户营销（发资料/需求询问）：', 'pm_s_marketing'),
+        strat('6、客户拜访（去客户单位/活动现场/投标）：', 'pm_s_visit'),
+        strat('7、客情维护（客情活动邀请）：', 'pm_s_relation'),
+        strat('8、参与培训（个）：', 'pm_s_train'),
+      '</div>',
+
+      '<div class="pm-sec"><h3 class="pm-sec-h">三、其他工作</h3>',
+        '<div class="pm-item"><span class="pm-label">1、参与培训：</span><span class="pm-grow"><textarea class="pm-ta" id="pm_o_train" placeholder="填写参与培训内容"></textarea></span></div>',
+        '<div class="pm-item"><span class="pm-label">2、方案分享会：</span><span class="pm-grow"><textarea class="pm-ta" id="pm_o_sharing" placeholder="填写方案分享会内容"></textarea></span></div>',
+        '<div class="pm-item"><span class="pm-label">3、其他工作内容：</span><span class="pm-grow"><textarea class="pm-ta" id="pm_o_misc" placeholder="填写其他工作内容"></textarea></span></div>',
+      '</div>'
+    ].join('\n');
+  }
+
+  // ---------- 读取/写入 ----------
+  function allData() { var d = getStore(KEY); if (!d || Array.isArray(d)) d = {}; return d; }
+
+  function collect() {
+    var o = {};
+    FIELDS.forEach(function (f) {
+      var el = $('pm_' + f);
+      if (!el) return;
+      o[f] = el.type === 'number' ? num(el.value) : el.value;
+    });
+    return o;
+  }
+
+  function applyData(rec) {
+    rec = rec || {};
+    FIELDS.forEach(function (f) {
+      var el = $('pm_' + f);
+      if (el) el.value = (rec[f] == null ? '' : rec[f]);
+    });
+    updateDiffs();
+  }
+
+  function updateDiff(id, tVal, dVal) {
+    var el = $(id); if (!el) return;
+    if (tVal === '' || dVal === '') { el.textContent = '—'; el.className = 'pm-diff zero'; return; }
+    var diff = Number(dVal) - Number(tVal);
+    el.textContent = (diff > 0 ? '+' : '') + diff;
+    el.className = 'pm-diff ' + (diff > 0 ? 'plus' : (diff < 0 ? 'minus' : 'zero'));
+  }
+  function updateDiffs() {
+    updateDiff('pm_diff_year', num($('pm_p_year_t').value), num($('pm_p_year_d').value));
+    updateDiff('pm_diff_q', num($('pm_p_q_t').value), num($('pm_p_q_d').value));
+    updateDiff('pm_diff_m', num($('pm_p_m_t').value), num($('pm_p_m_d').value));
+  }
+
+  // ---------- 当前月份渲染 ----------
+  function currentYM() { var m = $('pmMonth'); return m ? m.value : curYM(); }
+
+  function renderMonth() {
+    var ym = currentYM();
+    var data = allData();
+    var rec = data[ym] || null;
+    applyData(rec);
+    var sub = $('pmDocSub'); if (sub) sub.textContent = (ym || '') + ' · 战术/战略/其他工作月报';
+    var hint = $('pmHint');
+    if (hint) hint.textContent = rec && rec.savedAt ? ('上次提交：' + rec.savedAt) : '本月尚未提交';
+    renderSavedList(ym);
+  }
+
+  function renderSavedList(activeYM) {
+    var box = $('pmSaved'); if (!box) return;
+    var data = allData();
+    var yms = Object.keys(data).filter(function (k) { return data[k] && data[k].savedAt; })
+      .sort(function (a, b) { return a < b ? 1 : -1; });
+    if (!yms.length) { box.innerHTML = ''; return; }
+    box.innerHTML = yms.map(function (k) {
+      return '<button class="pm-chip' + (k === activeYM ? ' active' : '') + '" data-ym="' + k + '">' + k + '</button>';
+    }).join('');
+    box.querySelectorAll('.pm-chip').forEach(function (c) {
+      c.addEventListener('click', function () {
+        var m = $('pmMonth'); if (m) m.value = c.dataset.ym;
+        renderMonth();
+      });
+    });
+  }
+
+  // ---------- 保存 ----------
+  function saveMonth(silent) {
+    var ym = currentYM();
+    if (!ym) { if (!silent) alert('请先选择月份'); return; }
+    var data = allData();
+    var rec = collect();
+    rec.savedAt = fmtNow();
+    data[ym] = rec;
+    setStore(KEY, data);
+    var hint = $('pmHint'); if (hint) hint.textContent = '已提交：' + rec.savedAt;
+    renderSavedList(ym);
+    if (!silent && window.toast) window.toast('已保存 ' + ym + ' 月度工作汇总', 'ok');
+    else if (!silent) alert('已保存 ' + ym + ' 月度工作汇总');
+  }
+  function fmtNow() {
+    var d = new Date();
+    return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate()) +
+      ' ' + pad2(d.getHours()) + ':' + pad2(d.getMinutes());
+  }
+
+  // ---------- 复制为纯文本（Word 式） ----------
+  function buildText(ym) {
+    var rec = allData()[ym] || collect();
+    function g(f) { return (rec[f] == null ? '' : String(rec[f])).trim(); }
+    function diff(t, d) {
+      t = num(t); d = num(d);
+      if (t === '' || d === '') return '—';
+      var x = Number(d) - Number(t);
+      return (x > 0 ? '+' : '') + x;
+    }
+    var L = [];
+    L.push('月度工作汇总（' + ym + '）');
+    L.push('');
+    L.push('一、战术工作');
+    L.push('1、需求跟进：' + g('t_demand'));
+    L.push('2、辅助需求跟进：' + g('t_aux'));
+    L.push('3、业绩情况：');
+    L.push('全年任务：目标：' + g('p_year_t') + '        已完成：' + g('p_year_d') + '        超额（+）/差额（-）：' + diff(g('p_year_t'), g('p_year_d')));
+    L.push('季度任务：目标：' + g('p_q_t') + '        已完成：' + g('p_q_d') + '        超额（+）/差额（-）：' + diff(g('p_q_t'), g('p_q_d')));
+    L.push('月度任务：目标：' + g('p_m_t') + '        已完成：' + g('p_m_d') + '        超额（+）/差额（-）：' + diff(g('p_m_t'), g('p_m_d')));
+    L.push('4、业绩情况分析（本月业绩复盘、丢单原因、问题总结、改进措施）：');
+    L.push(g('t_analysis'));
+    L.push('5、下三月业绩预判（预计有消费动作客户、预计产生业绩金额、跟进计划）：');
+    L.push(g('t_forecast'));
+    L.push('');
+    L.push('二、战略工作');
+    L.push('1、开发电话拨打（个）：' + g('s_call'));
+    L.push('2、新增31客户（个）：' + g('s_new31'));
+    L.push('3、投标数据搜集（条）：' + g('s_bidcollect'));
+    L.push('4、参与投标（个）：' + g('s_bidjoin'));
+    L.push('5、客户营销（发资料/需求询问）：' + g('s_marketing'));
+    L.push('6、客户拜访（去客户单位/活动现场/投标）：' + g('s_visit'));
+    L.push('7、客情维护（客情活动邀请）：' + g('s_relation'));
+    L.push('8、参与培训（个）：' + g('s_train'));
+    L.push('');
+    L.push('三、其他工作');
+    L.push('1、参与培训：' + g('o_train'));
+    L.push('2、方案分享会：' + g('o_sharing'));
+    L.push('3、其他工作内容：' + g('o_misc'));
+    return L.join('\n');
+  }
+
+  function copyText() {
+    var ym = currentYM();
+    var txt = buildText(ym);
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(txt).then(function () {
+        if (window.toast) window.toast('已复制为文本，可直接粘贴到 Word', 'ok'); else alert('已复制');
+      }, function () { fallbackCopy(txt); });
+    } else { fallbackCopy(txt); }
+  }
+  function fallbackCopy(txt) {
+    var ta = document.createElement('textarea');
+    ta.value = txt; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); if (window.toast) window.toast('已复制为文本', 'ok'); } catch (e) { alert(txt); }
+    ta.remove();
+  }
+  function downloadTxt() {
+    var ym = currentYM();
+    var txt = buildText(ym);
+    var blob = new Blob([txt], { type: 'text/plain;charset=utf-8' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = '月度工作汇总_' + ym + '.txt';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
+  }
+  function clearMonth() {
+    var ym = currentYM();
+    if (!confirm('确定清空 ' + ym + ' 的月度工作汇总内容？此操作不可撤销。')) return;
+    var data = allData();
+    delete data[ym];
+    setStore(KEY, data);
+    applyData({});
+    var hint = $('pmHint'); if (hint) hint.textContent = '本月尚未提交';
+    renderSavedList(ym);
+    if (window.toast) window.toast('已清空 ' + ym, 'ok');
+  }
+
+  // ---------- 事件绑定 ----------
+  var _saveTimer = null;
+  function bindPanel() {
+    var m = $('pmMonth'); if (m) { m.value = curYM(); m.addEventListener('change', renderMonth); }
+    var save = $('pmSave'); if (save) save.addEventListener('click', function () { saveMonth(false); });
+    var copy = $('pmCopy'); if (copy) copy.addEventListener('click', copyText);
+    var dl = $('pmDownload'); if (dl) dl.addEventListener('click', downloadTxt);
+    var clr = $('pmClear'); if (clr) clr.addEventListener('click', clearMonth);
+    // 自动保存（防丢）：输入即写入
+    var doc = $('pmDoc');
+    if (doc) {
+      doc.addEventListener('input', function () {
+        updateDiffs();
+        clearTimeout(_saveTimer);
+        _saveTimer = setTimeout(function () { saveMonth(true); }, 800);
+      });
+      doc.addEventListener('change', function () { updateDiffs(); clearTimeout(_saveTimer); _saveTimer = setTimeout(function () { saveMonth(true); }, 400); });
+    }
+  }
+
+  // ---------- 显示该面板 ----------
+  function showPerfMonth() {
+    var inner = $('workInner');
+    if (inner) inner.querySelectorAll('.panel').forEach(function (p) { p.classList.remove('show'); });
+    var panel = $('panel-perfmonth'); if (panel) panel.classList.add('show');
+    var bar = $('workBar');
+    if (bar) bar.querySelectorAll('.sub-tab').forEach(function (b) {
+      b.classList.toggle('active', b.dataset.sub === 'perfmonth');
+    });
+    renderMonth();
+  }
+  // 暴露给 dash.js 的 showSub（若其已绑定该子标签）
+  window.renderPerfMonth = renderMonth;
+
+  // ---------- 初始化 ----------
+  function init() {
+    injectStyle();
+    buildShell();
+    // 若已进入日常工作板块并默认显示，确保面板就绪
+    if ($('panel-perfmonth')) renderMonth();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+})();
+
+</script>
+<script>
+/* ===== 月度工作汇总 ⇄ 年度/看板 联动 =====
+ * 月度工作汇总（sport_perf_month）保存后，自动同步到：
+ *   1) 年度表 sport_annual_stat：月度目标/完成、开发电话、新增31客户、客户拜访、客户营销
+ *      —— 写入 manualData 覆盖层（perfSync 标记可回滚，幂等；不改日报/周报原始数据）
+ *   2) 看板 calcAllStat：总目标/总完成（取全年任务）、开发电话/新增客户/客户营销/客户拜访（取各月合计）
+ * 名字不同的指标以月度工作汇总的数据为准；月度工作汇总未填的指标保持原自动汇总。
+ * 纯注入式 patch，不改动 base 原代码。
+ */
+(function () {
+  'use strict';
+
+  var PERF_KEY = 'sport_perf_month';
+  var ANNUAL_KEY = 'sport_annual_stat';
+  // 月度工作汇总字段 → 年度表字段（名字不同的以月度工作汇总为准）
+  // 说明：跟进/面谈/新增/丢单/成交 在月度工作汇总中无对应数字字段，仍由日报/周报自动汇总。
+  var FIELD_MAP = {
+    p_m_t: 'target', p_m_d: 'finish',
+    s_call: 'call', s_new31: 'newcus', s_bidcollect: 'bidcollect', s_bidjoin: 'bidjoin',
+    s_marketing: 'marketing', s_visit: 'visit', s_relation: 'relation', s_train: 'trainNum'
+  };
+  // 看板卡片：月度工作汇总字段 → 卡片标签
+  var STAT_SUM = [
+    ['s_call', 'call', '开发电话', 'stat-cus'],
+    ['s_new31', 'newcus', '新增客户', 'stat-cus'],
+    ['s_marketing', 'marketing', '客户营销', 'stat-cus'],
+    ['s_visit', 'visit', '客户拜访', 'stat-cus'],
+    ['s_train', 'train', '培训总次', 'stat-cus']
+  ];
+
+  function $(id) { return document.getElementById(id); }
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  function num(v) { v = (v == null ? '' : String(v)).trim(); if (v === '' || isNaN(Number(v))) return ''; return v; }
+  function getJSON(k) { try { var s = localStorage.getItem(k); return s ? JSON.parse(s) : null; } catch (e) { return null; } }
+  function putJSON(k, v) {
+    try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {}
+    if (window.markDirty) { try { window.markDirty(k); } catch (e) {} }
+    if (_setStorageChain) { try { _setStorageChain.call(window, k, v); } catch (e) {} }
+  }
+  function curYear() {
+    try { return String(window.getGlobalYear ? window.getGlobalYear() : new Date().getFullYear()); }
+    catch (e) { return String(new Date().getFullYear()); }
+  }
+
+  // ---------- 汇总当年月度工作汇总 ----------
+  function perfYearAgg() {
+    var year = curYear();
+    var perf = getJSON(PERF_KEY) || {};
+    var sums = {}, any = {}, yt = null, yd = null;
+    STAT_SUM.forEach(function (s) { sums[s[1]] = 0; any[s[1]] = false; });
+    Object.keys(perf).sort().forEach(function (ym) {
+      if (ym.indexOf(year + '-') !== 0) return;
+      var r = perf[ym] || {};
+      STAT_SUM.forEach(function (s) {
+        var v = num(r[s[0]]);
+        if (v !== '') { sums[s[1]] += Number(v); any[s[1]] = true; }
+      });
+      var t = num(r.p_year_t); if (t !== '') yt = Number(t);   // 同年越晚的月份优先（最新填写为准）
+      var d = num(r.p_year_d); if (d !== '') yd = Number(d);
+    });
+    return { sums: sums, any: any, yearTarget: yt, yearFinish: yd };
+  }
+
+  // ---------- 写入年度表覆盖层 ----------
+  function applyPerfToAnnual() {
+    var year = curYear();
+    var perf = getJSON(PERF_KEY) || {};
+    var stored = getJSON(ANNUAL_KEY);
+    if (!stored || !Array.isArray(stored.autoData) || !stored.autoData.length) {
+      stored = { autoData: [], manualData: null, totalTarget: 0 };
+      for (var i = 0; i < 12; i++) {
+        stored.autoData.push({ month: year + '-' + pad(i + 1), monthName: (i + 1) + '月',
+          follow: 0, interview: 0, newdemand: 0, lost: 0, deal: 0, call: 0, newcus: 0,
+          bidcollect: 0, bidjoin: 0, marketing: 0, relation: 0,
+          visit: 0, trainNum: 0, target: 0, finish: 0, rate: '0%', diff: 0 });
+      }
+    }
+    stored.manualData = stored.manualData || {};
+
+    // 1) 回滚上次同步写入的字段（幂等）
+    var prev = stored.perfSync || {};
+    Object.keys(prev).forEach(function (k) {
+      var md = stored.manualData[k];
+      if (!md) return;
+      prev[k].forEach(function (f) { delete md[f]; });
+      if (!Object.keys(md).length) delete stored.manualData[k];
+    });
+
+    // 2) 收集本年各月覆盖值
+    var next = {};
+    Object.keys(perf).forEach(function (ym) {
+      if (ym.indexOf(year + '-') !== 0) return;
+      var idx = parseInt(ym.split('-')[1], 10) - 1;
+      if (!(idx >= 0 && idx < 12)) return;
+      var rec = perf[ym] || {};
+      var vals = {};
+      for (var src in FIELD_MAP) {
+        var v = num(rec[src]);
+        if (v !== '') vals[FIELD_MAP[src]] = Number(v);
+      }
+      if (Object.keys(vals).length) next[idx] = vals;
+    });
+
+    // 3) 写入 manualData，重算该月完成率/差额
+    Object.keys(next).forEach(function (k) {
+      var idx = +k, vals = next[k];
+      var md = stored.manualData[idx] = stored.manualData[idx] || {};
+      for (var f in vals) md[f] = vals[f];
+      var touches = Object.keys(vals);
+      if (vals.target != null || vals.finish != null) {
+        var t = (md.target != null ? md.target : stored.autoData[idx].target) || 0;
+        var fi = (md.finish != null ? md.finish : stored.autoData[idx].finish) || 0;
+        md.rate = t > 0 ? ((fi / t) * 100).toFixed(2) + '%' : '0%';
+        md.diff = +(fi - t).toFixed(2);
+        touches.push('rate', 'diff');
+      }
+      next[k] = touches;
+    });
+
+    if (!Object.keys(stored.manualData).length) stored.manualData = null;
+    stored.perfSync = next;
+    putJSON(ANNUAL_KEY, stored);
+
+    // 4) 年度面板可见则立即重渲染
+    try {
+      var pn = $('panel-annual');
+      if (pn && pn.classList.contains('show')) {
+        if (typeof window.renderAnnualTable === 'function') window.renderAnnualTable();
+        if (typeof window.calcAnnualTotal === 'function') window.calcAnnualTotal();
+      }
+    } catch (e) {}
+  }
+
+  // ---------- 看板卡片覆盖 ----------
+  function setStatNum(containerId, label, val) {
+    var wrap = $(containerId); if (!wrap) return;
+    wrap.querySelectorAll('.stat-card').forEach(function (card) {
+      var lab = card.querySelector('div');
+      var numEl = card.querySelector('.stat-num');
+      if (lab && numEl && lab.textContent.trim() === label) numEl.textContent = val;
+    });
+  }
+  function overrideStatCards() {
+    var agg = perfYearAgg();
+    STAT_SUM.forEach(function (s) {
+      if (agg.any[s[1]]) setStatNum(s[3], s[2], agg.sums[s[1]]);
+    });
+    if (agg.yearTarget != null) setStatNum('stat-year', '总目标', agg.yearTarget.toFixed(2));
+    if (agg.yearFinish != null) setStatNum('stat-year', '总完成', agg.yearFinish.toFixed(2));
+  }
+
+  // ---------- 年度顶部累计（全年任务以月度工作汇总为准） ----------
+  function overrideAnnualTotal() {
+    var agg = perfYearAgg();
+    if (agg.yearTarget == null && agg.yearFinish == null) return;
+    var t = agg.yearTarget != null ? agg.yearTarget : 0;
+    var f = agg.yearFinish != null ? agg.yearFinish : 0;
+    var elT = $('annual-total-target'); if (elT && agg.yearTarget != null) elT.value = t;
+    var elF = $('annual-total-finish'); if (elF) elF.value = f.toFixed(2);
+    var elR = $('annual-total-rate'); if (elR) elR.value = t > 0 ? ((f / t) * 100).toFixed(2) + '%' : '0%';
+    var elD = $('annual-total-diff'); if (elD) elD.value = (f - t).toFixed(2);
+  }
+
+  // ---------- 看板升级：本月经营速览（与年度表区隔的当月视角） ----------
+  var MONTH_NUMS = [
+    ['s_call', '📞 电话'], ['s_new31', '🆕 新增31'], ['s_bidcollect', '📥 投标搜集'],
+    ['s_bidjoin', '📮 参与投标'], ['s_marketing', '📣 客户营销'], ['s_visit', '🚗 客户拜访'],
+    ['s_relation', '🤝 客情维护'], ['s_train', '🎓 参与培训']
+  ];
+  function pickMonthRec() {
+    var perf = getJSON(PERF_KEY) || {};
+    var nowYM = (function () { var d = new Date(); return d.getFullYear() + '-' + pad(d.getMonth() + 1); })();
+    if (perf[nowYM] && perf[nowYM].savedAt) return { ym: nowYM, rec: perf[nowYM] };
+    var yms = Object.keys(perf).filter(function (k) { return perf[k] && perf[k].savedAt; }).sort();
+    if (yms.length) { var ym = yms[yms.length - 1]; return { ym: ym, rec: perf[ym] }; }
+    return { ym: nowYM, rec: null };
+  }
+  function ensureMonthBizSection() {
+    var panel = $('panel-stat');
+    if (!panel || $('stat-month-biz')) return;
+    var h3s = panel.querySelectorAll('h3');
+    var anchor = h3s.length ? h3s[0] : panel.firstChild;
+    var frag = document.createElement('div');
+    frag.innerHTML = '<h3>🗓️ 本月经营（月度工作汇总）</h3><div class="stat-wrap" id="stat-month-biz"></div>';
+    var sec = frag.firstElementChild, wrap = frag.lastElementChild;
+    if (anchor && anchor.parentNode) anchor.parentNode.insertBefore(sec, anchor);
+    else panel.appendChild(sec);
+    if (anchor && anchor.parentNode) anchor.parentNode.insertBefore(wrap, anchor);
+    sec.style.marginTop = '18px';
+  }
+  function renderMonthBiz() {
+    ensureMonthBizSection();
+    var wrap = $('stat-month-biz'); if (!wrap) return;
+    var pick = pickMonthRec();
+    var r = pick.rec || {};
+    function g(f) { var v = num(r[f]); return v === '' ? '—' : v; }
+    var t = num(r.p_m_t), d = num(r.p_m_d);
+    var rate = '—', diff = '—';
+    if (t !== '' && d !== '') {
+      diff = (Number(d) - Number(t)); diff = (diff > 0 ? '+' : '') + diff;
+      rate = Number(t) > 0 ? ((Number(d) / Number(t)) * 100).toFixed(1) + '%' : '0%';
+    }
+    var cards = [];
+    cards.push('<div class="stat-card"><div>📊 ' + pick.ym + ' 目标</div><div class="stat-num">' + (t === '' ? '—' : Number(t).toFixed(2)) + '</div></div>');
+    cards.push('<div class="stat-card"><div>📊 ' + pick.ym + ' 完成</div><div class="stat-num">' + (d === '' ? '—' : Number(d).toFixed(2)) + '</div></div>');
+    cards.push('<div class="stat-card"><div>完成率</div><div class="stat-num">' + rate + '</div></div>');
+    cards.push('<div class="stat-card"><div>超额（+）/差额（-）</div><div class="stat-num">' + diff + '</div></div>');
+    MONTH_NUMS.forEach(function (m) {
+      cards.push('<div class="stat-card"><div>' + m[1] + '</div><div class="stat-num">' + g(m[0]) + '</div></div>');
+    });
+    wrap.innerHTML = cards.join('');
+  }
+
+  // ---------- 通用包装（幂等） ----------
+  function wrapFn(name, after) {
+    var orig = window[name];
+    if (typeof orig !== 'function' || orig.__perfSyncWrapped) return;
+    var wrapped = function () {
+      var r = orig.apply(this, arguments);
+      try { after.apply(this, arguments); } catch (e) {}
+      return r;
+    };
+    wrapped.__perfSyncWrapped = true;
+    window[name] = wrapped;
+  }
+
+  // ---------- 保存触发（防抖） ----------
+  var _setStorageChain = null;
+  var _syncTimer = null;
+  function scheduleSync() {
+    clearTimeout(_syncTimer);
+    _syncTimer = setTimeout(function () {
+      applyPerfToAnnual();
+      try {
+        var ps = $('panel-stat');
+        if (ps && ps.classList.contains('show') && typeof window.calcAllStat === 'function') window.calcAllStat();
+        else renderMonthBiz();
+      } catch (e) {}
+    }, 600);
+  }
+
+  function init() {
+    if (window.__perfSyncInit) return;
+    window.__perfSyncInit = true;
+    // 包装存储入口：月度工作汇总任何写入（含自动保存）都触发联动
+    _setStorageChain = window.setStorage;
+    window.setStorage = function (k, v) {
+      var r;
+      if (_setStorageChain) { try { r = _setStorageChain.apply(this, arguments); } catch (e) {} }
+      if (k === PERF_KEY) scheduleSync();
+      return r;
+    };
+    window.setStorage.__perfSyncWrapped = true;
+    // 包装年度/看板刷新入口
+    wrapFn('loadAnnualAutoData', function () { applyPerfToAnnual(); });
+    wrapFn('calcAnnualTotal', function () { overrideAnnualTotal(); });
+    wrapFn('calcAllStat', function () { overrideStatCards(); renderMonthBiz(); });
+    // 首次加载先对齐一次
+    setTimeout(function () { applyPerfToAnnual(); }, 800);
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+})();
+
+</script>
+<script>
+/* ===== 日常工作：子标签显隐设置 =====
+ * workBar 末尾加「⚙️」按钮，点开面板可勾选显示/隐藏各子标签。
+ * 隐藏只是不显示按钮，数据永不删除；设置存 localStorage 并云同步。
+ * 纯注入式 patch，不改动 base 原代码。
+ */
+(function () {
+  'use strict';
+
+  var KEY = 'wb_work_tabs';           // 值：隐藏的 sub id 数组
+  var ORDER_KEY = 'wb_work_tabs_order'; // 值：sub id 顺序数组（部分允许，缺省按 DOM 顺序补齐）
+  var LABELS = {
+    daily: '📋 日报', weekly: '📊 周报', monthly: '📈 月报', annual: '📅 年度',
+    stat: '📊 看板', history: '📚 历史', perfmonth: '📑 月度工作汇总'
+  };
+
+  function $(id) { return document.getElementById(id); }
+
+  function getHidden() {
+    try {
+      var v = JSON.parse(localStorage.getItem(KEY) || '[]');
+      return Array.isArray(v) ? v : [];
+    } catch (e) { return []; }
+  }
+  function saveHidden(arr) {
+    try { localStorage.setItem(KEY, JSON.stringify(arr)); } catch (e) {}
+    if (window.markDirty) { try { window.markDirty(KEY); } catch (e) {} }
+    if (window.setStorage) { try { window.setStorage(KEY, arr); } catch (e) {} }
+  }
+  function getOrder() {
+    try {
+      var v = JSON.parse(localStorage.getItem(ORDER_KEY) || '[]');
+      return Array.isArray(v) ? v : [];
+    } catch (e) { return []; }
+  }
+  function saveOrder(arr) {
+    try { localStorage.setItem(ORDER_KEY, JSON.stringify(arr)); } catch (e) {}
+    if (window.markDirty) { try { window.markDirty(ORDER_KEY); } catch (e) {} }
+    if (window.setStorage) { try { window.setStorage(ORDER_KEY, arr); } catch (e) {} }
+  }
+
+  // 当前全部 sub id（按 workBar DOM 顺序）
+  function allSubIds() {
+    var ids = [];
+    document.querySelectorAll('#workBar .sub-tab[data-sub]').forEach(function (b) {
+      var id = b.dataset.sub;
+      if (id && ids.indexOf(id) < 0) ids.push(id);
+    });
+    return ids;
+  }
+
+  // 按 ORDER_KEY 把 workBar 里的子标签按钮排到 ⚙️ 之前
+  function applyOrder() {
+    var bar = $('workBar'); if (!bar) return;
+    var settingsBtn = $('wtSettingsBtn');
+    var order = getOrder();
+    var ids = allSubIds();
+    // 缺省 id 追加到末尾（保持 DOM 顺序），并剔除已不存在的 id
+    order = order.filter(function (id) { return ids.indexOf(id) >= 0; });
+    ids.forEach(function (id) { if (order.indexOf(id) < 0) order.push(id); });
+    for (var i = 0; i < order.length; i++) {
+      var btn = bar.querySelector('.sub-tab[data-sub="' + order[i] + '"]');
+      if (btn && settingsBtn) bar.insertBefore(btn, settingsBtn);
+    }
+  }
+
+  function injectStyle() {
+    if ($('worktabs-style')) return;
+    var css = [
+      '#workBar{position:relative;}',
+      '#wtSettingsBtn{margin-left:auto;font-size:14px;opacity:.75;}',
+      '#wtSettingsBtn:hover{opacity:1;}',
+      '#wtPopover{position:absolute;top:calc(100% + 8px);right:0;z-index:60;min-width:220px;',
+      'background:var(--ui-card-bg,#fff);color:var(--ui-text,#1d1d1f);border:1px solid var(--ui-border,rgba(0,0,0,.1));',
+      'border-radius:14px;box-shadow:0 10px 32px rgba(0,0,0,.14);padding:14px 16px;display:none;}',
+      '#wtPopover.open{display:block;}',
+      '#wtPopover .wt-title{font-weight:700;font-size:14px;margin-bottom:6px;}',
+      '#wtPopover .wt-desc{font-size:12px;color:var(--ui-text-soft,#6e6e73);margin-bottom:10px;line-height:1.5;}',
+      '#wtPopover label.wt-item{display:flex;align-items:center;gap:10px;padding:6px 4px;font-size:14px;cursor:pointer;border-radius:8px;}',
+      '#wtPopover label.wt-item:hover{background:rgba(0,102,204,.06);}',
+      '#wtPopover input[data-wt]{width:18px;height:18px;min-width:18px;flex:0 0 auto;padding:0;margin:0;accent-color:var(--ui-primary,#0066cc);cursor:pointer;}',
+      '#wtPopover .wt-item .wt-label{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}',
+      '#wtPopover .wt-ops{display:flex;gap:2px;flex:0 0 auto;}',
+      '#wtPopover .wt-ops button{font-size:11px;line-height:1;padding:4px 6px;border-radius:6px;border:1px solid var(--ui-border,rgba(0,0,0,.12));background:transparent;color:var(--ui-text-soft,#6e6e73);cursor:pointer;}',
+      '#wtPopover .wt-ops button:hover{background:rgba(0,102,204,.1);color:var(--ui-primary,#0066cc);border-color:var(--ui-primary,#0066cc);}',
+      '#wtPopover .wt-ops button:disabled{opacity:.25;cursor:default;background:transparent;color:var(--ui-text-soft,#6e6e73);border-color:var(--ui-border,rgba(0,0,0,.12));}',
+      '#wtPopover .wt-sort-hint{font-size:11px;color:var(--ui-text-soft,#6e6e73);margin-top:8px;}',
+      '@media (prefers-color-scheme: dark){ #wtPopover{background:#1c1c1e;border-color:rgba(255,255,255,.14);} }',
+      'body.dark-mode #wtPopover{background:#1c1c1e;border-color:rgba(255,255,255,.14);}'
+    ].join('\n');
+    var st = document.createElement('style');
+    st.id = 'worktabs-style';
+    st.textContent = css;
+    document.head.appendChild(st);
+  }
+
+  function applyVisibility() {
+    var hidden = getHidden();
+    document.querySelectorAll('#workBar .sub-tab').forEach(function (b) {
+      b.style.display = hidden.indexOf(b.dataset.sub) >= 0 ? 'none' : '';
+    });
+  }
+
+  function buildPopover() {
+    if ($('wtPopover')) return;
+    var pop = document.createElement('div');
+    pop.id = 'wtPopover';
+    pop.innerHTML = '<div class="wt-title">子标签显示设置</div>' +
+      '<div class="wt-desc">勾选 = 显示；取消勾选 = 隐藏（数据不会删除，随时可再打开）<br>▲▼ = 调整标签排列顺序</div>' +
+      '<div class="wt-rows"></div>' +
+      '<div class="wt-sort-hint">顺序调整后立即生效，并同步到其他设备。</div>';
+    $('workBar').appendChild(pop);
+    renderPopoverRows();
+    pop.addEventListener('change', function (e) {
+      var cb = e.target.closest('input[data-wt]');
+      if (!cb) return;
+      var hidden = getHidden();
+      var id = cb.dataset.wt;
+      if (cb.checked) { hidden = hidden.filter(function (x) { return x !== id; }); }
+      else if (hidden.indexOf(id) < 0) { hidden.push(id); }
+      saveHidden(hidden);
+      applyVisibility();
+    });
+    pop.addEventListener('click', function (e) {
+      var up = e.target.closest('.wt-ops button[data-dir]');
+      if (!up) return;
+      var id = up.dataset.id;
+      var dir = parseInt(up.dataset.dir, 10);
+      var order = getOrder();
+      var ids = allSubIds();
+      order = order.filter(function (x) { return ids.indexOf(x) >= 0; });
+      ids.forEach(function (x) { if (order.indexOf(x) < 0) order.push(x); });
+      var i = order.indexOf(id);
+      var j = i + dir;
+      if (i < 0 || j < 0 || j >= order.length) return;
+      var tmp = order[i]; order[i] = order[j]; order[j] = tmp;
+      saveOrder(order);
+      applyOrder();
+      renderPopoverRows();
+    });
+    document.addEventListener('click', function (e) {
+      if (!pop.contains(e.target) && e.target !== $('wtSettingsBtn') && !$('wtSettingsBtn').contains(e.target)) {
+        pop.classList.remove('open');
+      }
+    });
+  }
+
+  // 渲染弹层行（勾选 + ▲▼），顺序与当前 workBar 一致
+  function renderPopoverRows() {
+    var pop = $('wtPopover'); if (!pop) return;
+    var rows = pop.querySelector('.wt-rows'); if (!rows) return;
+    var order = getOrder();
+    var ids = allSubIds();
+    order = order.filter(function (x) { return ids.indexOf(x) >= 0; });
+    ids.forEach(function (x) { if (order.indexOf(x) < 0) order.push(x); });
+    var hidden = getHidden();
+    rows.innerHTML = order.map(function (id, i) {
+      var checked = hidden.indexOf(id) < 0 ? ' checked' : '';
+      return '<label class="wt-item">' +
+        '<input type="checkbox" data-wt="' + id + '"' + checked + '>' +
+        '<span class="wt-label">' + (LABELS[id] || id) + '</span>' +
+        '<span class="wt-ops">' +
+        '<button type="button" data-id="' + id + '" data-dir="-1" title="上移"' + (i === 0 ? ' disabled' : '') + '>▲</button>' +
+        '<button type="button" data-id="' + id + '" data-dir="1" title="下移"' + (i === order.length - 1 ? ' disabled' : '') + '>▼</button>' +
+        '</span></label>';
+    }).join('');
+  }
+
+  function syncPopoverChecks() {
+    var hidden = getHidden();
+    var pop = $('wtPopover'); if (!pop) return;
+    pop.querySelectorAll('input[data-wt]').forEach(function (cb) {
+      cb.checked = hidden.indexOf(cb.dataset.wt) < 0;
+    });
+  }
+
+  function init() {
+    var bar = $('workBar');
+    if (!bar || $('wtSettingsBtn')) return;
+    injectStyle();
+    var btn = document.createElement('button');
+    btn.className = 'sub-tab';
+    btn.id = 'wtSettingsBtn';
+    btn.type = 'button';
+    btn.title = '子标签显示设置';
+    btn.textContent = '⚙️';
+    bar.appendChild(btn);
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      renderPopoverRows();
+      syncPopoverChecks();
+      applyOrder();
+      var pop = $('wtPopover');
+      if (pop) pop.classList.toggle('open');
+    });
+    buildPopover();
+    applyOrder();
+    applyVisibility();
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+  // perfmonth 按钮是动态创建的，晚于本脚本时补一次顺序与可见性应用
+  setTimeout(function () { init(); applyOrder(); applyVisibility(); }, 300);
+})();
+
+</script>
+<script>
+/* ===== V13：待办升级 + 历史面板扩展 =====
+ * 一、待办看板升级：
+ *   1. 条目可选文字标签（临时插入/项目类/客户对接/资料报送，多选，🏷️ 按钮切换）
+ *   2. 列内按星级自动排序（可开关，默认开；手动 ↑↓ 在同星级内仍然有效）
+ *   3. 顶部筛选条：全部 / ⭐5 高优 / 各标签
+ *   4. 勾选完成的待办写入「完成日志」（sport_todo_done_log，云同步），
+ *      即使日后清空待办，历史仍可查。
+ * 二、历史面板扩展：
+ *   1. 「📑 月度工作汇总（历史）」：按月列出已提交月度工作汇总摘要，可跳转查看/编辑
+ *   2. 「✅ 待办完成记录」：按 日/周/月 查看已完成待办
+ * 纯注入式 patch，不改动 base 原代码。
+ */
+(function () {
+  'use strict';
+
+  var TODO_KEY = 'sport_todos';
+  var DONE_LOG_KEY = 'sport_todo_done_log';
+  var AUTOSORT_KEY = 'wb_todo_autosort';
+  var FILTER_KEY = 'wb_todo_filter';
+  var PERF_KEY = 'sport_perf_month';
+  var LABELS = ['临时插入', '项目类', '客户对接', '资料报送'];
+  var TYPE_NAMES = { daily: '今日', weekly: '本周', monthly: '本月' };
+
+  function $(id) { return document.getElementById(id); }
+  function getJSON(k) { try { var s = localStorage.getItem(k); return s ? JSON.parse(s) : null; } catch (e) { return null; } }
+  function putJSON(k, v) {
+    try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {}
+    if (window.markDirty) { try { window.markDirty(k); } catch (e) {} }
+    if (window.setStorage) { try { window.setStorage(k, v); } catch (e) {} }
+  }
+  function pad2(n) { return (n < 10 ? '0' : '') + n; }
+  function todayStr() { var d = new Date(); return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate()); }
+  function isoWeek(dateStr) {
+    var dt = new Date(dateStr + 'T00:00:00');
+    if (isNaN(dt)) return '';
+    var day = (dt.getDay() + 6) % 7;
+    dt.setDate(dt.getDate() - day + 3);
+    var ft = new Date(dt.getFullYear(), 0, 4);
+    var fd = (ft.getDay() + 6) % 7;
+    ft.setDate(ft.getDate() - fd + 3);
+    var week = 1 + Math.round((dt - ft) / (7 * 864e5));
+    return dt.getFullYear() + '-W' + pad2(week);
+  }
+  function esc(s) {
+    s = (s == null ? '' : String(s));
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  function getTodos() { var v = getJSON(TODO_KEY); return Array.isArray(v) ? v : []; }
+  function saveTodos(a) { putJSON(TODO_KEY, a); }
+
+  /* ============================================================
+   * 1) 星级自动排序（开启时：星级高的在前，同星级按手工顺序）
+   * ============================================================ */
+  function autosortOn() { return localStorage.getItem(AUTOSORT_KEY) !== '0'; }
+  function applyAutoSort() {
+    if (!autosortOn()) return false;
+    var todos = getTodos(), changed = false;
+    ['daily', 'weekly', 'monthly'].forEach(function (type) {
+      var items = todos.filter(function (t) { return t.type === type; })
+        .sort(function (a, b) {
+          return ((b.important || 0) - (a.important || 0)) || ((a.order || 0) - (b.order || 0));
+        });
+      items.forEach(function (t, i) { if (t.order !== i + 1) { t.order = i + 1; changed = true; } });
+    });
+    if (changed) saveTodos(todos);
+    return changed;
+  }
+
+  /* 筛选条已按需求移除（R4）：保留星级自动排序与标签展示，仅去掉顶部筛选 chips */
+
+
+  /* ============================================================
+   * 3) 标签（多选）
+   * ============================================================ */
+  function labelChipsHtml(t) {
+    var chips = (t.labels || []).map(function (l) {
+      return '<span class="todo-label-chip">' + esc(l) + '</span>';
+    }).join('');
+    return chips + '<button type="button" class="todo-tag-btn" data-id="' + t.id + '" title="设置标签">🏷️</button>';
+  }
+  var tagPop = null;
+  function closeTagPop() { if (tagPop) { tagPop.remove(); tagPop = null; } }
+  function openTagPop(btn, todoId) {
+    closeTagPop();
+    var todos = getTodos(), t = null;
+    todos.forEach(function (x) { if (x.id === todoId) t = x; });
+    if (!t) return;
+    tagPop = document.createElement('div');
+    tagPop.id = 'todoTagPop';
+    tagPop.innerHTML = '<div class="tp-title">标签（可多选）</div>' + LABELS.map(function (l) {
+      var on = (t.labels || []).indexOf(l) >= 0;
+      return '<label class="tp-item"><input type="checkbox" value="' + l + '"' + (on ? ' checked' : '') + '><span>' + l + '</span></label>';
+    }).join('');
+    document.body.appendChild(tagPop);
+    var r = btn.getBoundingClientRect();
+    tagPop.style.left = Math.min(r.left, window.innerWidth - 190) + 'px';
+    tagPop.style.top = Math.min(r.bottom + 6, window.innerHeight - 190) + 'px';
+    tagPop.addEventListener('change', function (e) {
+      var cb = e.target;
+      if (cb.tagName !== 'INPUT') return;
+      var todos = getTodos();
+      var it = null;
+      todos.forEach(function (x) { if (x.id === todoId) it = x; });
+      if (!it) return;
+      it.labels = it.labels || [];
+      var i = it.labels.indexOf(cb.value);
+      if (cb.checked && i < 0) it.labels.push(cb.value);
+      if (!cb.checked && i >= 0) it.labels.splice(i, 1);
+      saveTodos(todos);
+      if (window.renderTodos) window.renderTodos();
+    });
+    setTimeout(function () {
+      document.addEventListener('click', function onDoc(e) {
+        if (tagPop && !tagPop.contains(e.target) && e.target !== btn) { closeTagPop(); document.removeEventListener('click', onDoc); }
+      });
+    }, 0);
+  }
+  function decorateLabels() {
+    var todos = getTodos(), byId = {};
+    todos.forEach(function (t) { byId[t.id] = t; });
+    document.querySelectorAll('#todoBoard li.todo-item').forEach(function (li) {
+      var t = byId[li.dataset.id];
+      if (!t) return;
+      if (li.querySelector('.todo-tag-btn')) return; // 已加过
+      var holder = document.createElement('span');
+      holder.className = 'todo-labels';
+      holder.innerHTML = labelChipsHtml(t);
+      var acts = li.querySelector('.todo-actions');
+      if (acts) li.insertBefore(holder, acts); else li.appendChild(holder);
+      holder.querySelector('.todo-tag-btn').addEventListener('click', function (e) {
+        e.stopPropagation();
+        openTagPop(e.currentTarget, t.id);
+      });
+    });
+  }
+
+  /* ============================================================
+   * 4) 完成日志（供历史查看，清空待办不影响）
+   * ============================================================ */
+  function getLog() { var v = getJSON(DONE_LOG_KEY); return Array.isArray(v) ? v : []; }
+  function logDone(t, whenIso) {
+    if (!t || !t.id) return;
+    var iso = whenIso || t.doneAt || new Date().toISOString();
+    var d = new Date(iso);
+    if (isNaN(d)) { d = new Date(); iso = d.toISOString(); }
+    var date = d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate());
+    var log = getLog();
+    if (log.some(function (x) { return x.id === t.id && x.date === date; })) return;
+    log.push({ id: t.id, text: t.text || '(图片)', labels: (t.labels || []).slice(), important: t.important || 0, type: t.type || 'daily', date: date, at: iso });
+    putJSON(DONE_LOG_KEY, log);
+  }
+  function backfillDoneLog() {
+    var changed = false;
+    getTodos().forEach(function (t) {
+      if (t.done && t.doneAt) { var before = getLog().length; logDone(t); if (getLog().length > before) changed = true; }
+    });
+    return changed;
+  }
+
+  /* ============================================================
+   * 5) 历史面板：月度工作汇总 + 待办完成记录
+   * ============================================================ */
+  function ensureHistorySections() {
+    var panel = $('panel-history');
+    if (!panel || $('history-perf')) return;
+    var frag = document.createElement('div');
+    frag.innerHTML =
+      '<h3 style="margin-top:24px;">📑 月度工作汇总（历史）</h3>' +
+      '<div class="history-filter-bar"><span class="td-tip">在「日常工作 → 📑 月度工作汇总」中按月提交，这里按月归档展示。</span></div>' +
+      '<div id="history-perf"></div>' +
+      '<h3 style="margin-top:24px;">✅ 待办完成记录</h3>' +
+      '<div class="history-filter-bar">' +
+      '  <select id="td-mode"><option value="day">按日</option><option value="week">按周</option><option value="month">按月</option></select>' +
+      '  <input type="date" id="td-day" value="" />' +
+      '  <input type="week" id="td-week" value="" style="display:none" />' +
+      '  <input type="month" id="td-month" value="" style="display:none" />' +
+      '</div>' +
+      '<div id="history-tododone"></div>';
+    while (frag.firstChild) panel.appendChild(frag.firstChild);
+    var mode = $('td-mode');
+    mode.addEventListener('change', function () {
+      $('td-day').style.display = mode.value === 'day' ? '' : 'none';
+      $('td-week').style.display = mode.value === 'week' ? '' : 'none';
+      $('td-month').style.display = mode.value === 'month' ? '' : 'none';
+      renderTodoDoneHistory();
+    });
+    ['td-day', 'td-week', 'td-month'].forEach(function (id) {
+      $(id).addEventListener('change', renderTodoDoneHistory);
+    });
+    $('td-day').value = todayStr();
+    $('td-month').value = todayStr().substring(0, 7);
+    // week input 需要形如 2026-W41
+    $('td-week').value = isoWeek(todayStr());
+  }
+
+  function openPerfMonth(ym) {
+    try {
+      if (window.showTop) window.showTop('work');
+      var m = $('pmMonth');
+      if (m) m.value = ym;
+      var btn = $('pmTabBtn');
+      if (btn) { btn.click(); return; }
+      if (typeof window.renderPerfMonth === 'function') window.renderPerfMonth();
+    } catch (e) { console.warn('[openPerfMonth]', e); }
+  }
+
+  function renderPerfHistory() {
+    ensureHistorySections();
+    var box = $('history-perf'); if (!box) return;
+    var perf = getJSON(PERF_KEY) || {};
+    var yms = Object.keys(perf).filter(function (k) { return perf[k] && perf[k].savedAt; }).sort().reverse();
+    if (!yms.length) { box.innerHTML = '<div class="empty-tip">暂无月度工作汇总记录</div>'; return; }
+    var html = yms.map(function (ym) {
+      var r = perf[ym] || {};
+      function g(f) { var v = r[f]; return (v == null || v === '') ? null : String(v); }
+      var t = g('p_m_t'), d = g('p_m_d');
+      var rate = '—';
+      if (t != null && d != null && Number(t) > 0) rate = ((Number(d) / Number(t)) * 100).toFixed(1) + '%';
+      var nums = [];
+      if (g('s_call') != null) nums.push('电话' + g('s_call'));
+      if (g('s_new31') != null) nums.push('新增31' + g('s_new31'));
+      if (g('s_bidcollect') != null) nums.push('投标搜集' + g('s_bidcollect'));
+      if (g('s_bidjoin') != null) nums.push('参与投标' + g('s_bidjoin'));
+      if (g('s_marketing') != null) nums.push('营销' + g('s_marketing'));
+      if (g('s_visit') != null) nums.push('拜访' + g('s_visit'));
+      if (g('s_relation') != null) nums.push('客情' + g('s_relation'));
+      if (g('s_train') != null) nums.push('培训' + g('s_train'));
+      return '<div class="history-item">' +
+        '<h4>📑 ' + ym + '<span class="td-sub">提交于 ' + esc(r.savedAt || '') + '</span></h4>' +
+        '<div class="history-detail">' +
+        '月度目标 ' + (t == null ? '—' : esc(t)) + '｜完成 ' + (d == null ? '—' : esc(d)) + '｜完成率 ' + rate +
+        (nums.length ? '<br>战略：' + nums.join('｜') : '') +
+        '</div>' +
+        '<div class="history-actions"><button class="btn-edit" data-ym="' + ym + '">✎ 查看 / 编辑</button></div>' +
+        '</div>';
+    }).join('');
+    box.innerHTML = html;
+    box.querySelectorAll('button[data-ym]').forEach(function (b) {
+      b.addEventListener('click', function () { openPerfMonth(b.dataset.ym); });
+    });
+  }
+
+  function renderTodoDoneHistory() {
+    ensureHistorySections();
+    var box = $('history-tododone'); if (!box) return;
+    var mode = $('td-mode') ? $('td-mode').value : 'day';
+    var log = getLog();
+    if (!log.length) { box.innerHTML = '<div class="empty-tip">暂无完成记录（勾选待办后自动记录）</div>'; return; }
+    var key;
+    if (mode === 'day') { var dv = $('td-day') ? $('td-day').value : ''; key = dv; }
+    else if (mode === 'week') { var wv = $('td-week') ? $('td-week').value : ''; key = wv; }
+    else { var mv = $('td-month') ? $('td-month').value : ''; key = mv; }
+    if (!key) { box.innerHTML = '<div class="empty-tip">请先选择要查看的日期</div>'; return; }
+    var filtered = log.filter(function (x) {
+      if (mode === 'day') return x.date === key;
+      if (mode === 'week') return isoWeek(x.date) === key;
+      return x.date.substring(0, 7) === key;
+    });
+    if (!filtered.length) { box.innerHTML = '<div class="empty-tip">该时间段无完成记录</div>'; return; }
+    var byDate = {}, order = [];
+    filtered.forEach(function (x) {
+      if (!byDate[x.date]) { byDate[x.date] = []; order.push(x.date); }
+      byDate[x.date].push(x);
+    });
+    order.sort().reverse();
+    box.innerHTML = order.map(function (date) {
+      var items = byDate[date];
+      return '<div class="history-item"><h4>📅 ' + date + '（' + items.length + '）</h4>' +
+        items.map(function (x) {
+          var stars = '★★★★★'.substring(0, x.important || 0) || '☆';
+          var labels = (x.labels || []).map(function (l) { return '<span class="todo-label-chip">' + esc(l) + '</span>'; }).join('');
+          return '<div class="td-log-line"><span class="td-stars">' + stars + '</span> ' + esc(x.text) + ' ' + labels +
+            '<span class="td-type">来自' + (TYPE_NAMES[x.type] || '') + '待办</span></div>';
+        }).join('') + '</div>';
+    }).join('');
+  }
+
+  /* ============================================================
+   * 包装入口
+   * ============================================================ */
+  function wrapFn(name, before, after) {
+    var orig = window[name];
+    if (typeof orig !== 'function' || orig.__v13Wrapped) return;
+    var wrapped = function () {
+      if (before) { try { before.apply(this, arguments); } catch (e) {} }
+      var r = orig.apply(this, arguments);
+      if (after) { try { after.apply(this, arguments); } catch (e) {} }
+      return r;
+    };
+    wrapped.__v13Wrapped = true;
+    window[name] = wrapped;
+  }
+
+  var _toggleChain = null;
+  function init() {
+    if (window.__v13Init) return;
+    window.__v13Init = true;
+
+    // 待办渲染：排序 → 原渲染（含已完成折叠） → 标签装饰 → 筛选
+    wrapFn('renderTodos', function () { applyAutoSort(); }, function () {
+      decorateLabels();
+    });
+
+    // 勾选完成 → 写日志（链在 enhance 的 doneAt 包装之后）
+    _toggleChain = window.toggleTodo;
+    if (typeof _toggleChain === 'function') {
+      window.toggleTodo = function (id) {
+        var r = _toggleChain.apply(this, arguments);
+        try {
+          var todos = getTodos(), t = null;
+          todos.forEach(function (x) { if (x.id === id) t = x; });
+          if (t && t.done) logDone(t);
+        } catch (e) {}
+        return r;
+      };
+      window.toggleTodo.__v13Wrapped = true;
+    }
+
+    // 历史：renderAllHistory 后补渲染两个新区块
+    wrapFn('renderAllHistory', null, function () { renderPerfHistory(); renderTodoDoneHistory(); });
+
+    // 初始化：补建历史区块 + 回填历史完成数据
+    setTimeout(function () {
+      try { ensureHistorySections(); } catch (e) {}
+      try { if (backfillDoneLog()) { /* 回填后刷新历史（若可见） */ } } catch (e) {}
+      try {
+        var ph = $('panel-history');
+        if (ph && ph.classList.contains('show') && typeof window.renderAllHistory === 'function') window.renderAllHistory();
+      } catch (e) {}
+    }, 600);
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+})();
+
+</script>
+<script>
+/* ===== 历史面板：板块分组排序（▲▼） =====
+ * 日报 / 周报 / 月报 / 月度工作汇总 / 待办记录 五段各自包裹为 .history-section，
+ * 标题右侧 ▲▼ 调整显示顺序，排最前的板块展示在最上方。
+ * 顺序存 localStorage('wb_history_order')，经 setStorage/markDirty 云同步。
+ * 纯注入式 patch：包裹与按钮均在运行时完成，不改动 base 原代码结构。
+ */
+(function () {
+  'use strict';
+
+  var KEY = 'wb_history_order';
+  var IDS = ['daily', 'weekly', 'monthly', 'perf', 'tododone'];
+
+  function $(id) { return document.getElementById(id); }
+
+  function getOrder() {
+    try {
+      var v = JSON.parse(localStorage.getItem(KEY) || '[]');
+      return Array.isArray(v) ? v : [];
+    } catch (e) { return []; }
+  }
+  function saveOrder(arr) {
+    try { localStorage.setItem(KEY, JSON.stringify(arr)); } catch (e) {}
+    if (window.markDirty) { try { window.markDirty(KEY); } catch (e) {} }
+    if (window.setStorage) { try { window.setStorage(KEY, arr); } catch (e) {} }
+  }
+
+  function injectStyle() {
+    if ($('historyorder-style')) return;
+    var st = document.createElement('style');
+    st.id = 'historyorder-style';
+    st.textContent = [
+      '.history-section h3 { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-top:24px; }',
+      '.hsec-ops { display:flex; gap:4px; margin-left:auto; flex:0 0 auto; }',
+      '.hsec-ops button { font-size:11px; line-height:1; padding:4px 7px; border-radius:6px; border:1px solid var(--ui-border,rgba(0,0,0,.12)); background:transparent; color:var(--ui-text-soft,#6e6e73); cursor:pointer; }',
+      '.hsec-ops button:hover { background:rgba(0,102,204,.1); color:var(--ui-primary,#0066cc); border-color:var(--ui-primary,#0066cc); }',
+      '.hsec-ops button:disabled { opacity:.25; cursor:default; }'
+    ].join('\n');
+    document.head.appendChild(st);
+  }
+
+  // 把 h3 + 筛选条 + 列表 三件套包进 .history-section，并在 h3 里加 ▲▼
+  function wrapOne(id) {
+    var list = $('history-' + id);
+    if (!list) return false;
+    if (list.parentElement && list.parentElement.classList.contains('history-section')) return true;
+    var filterBar = list.previousElementSibling;
+    var h3 = filterBar ? filterBar.previousElementSibling : null;
+    if (!h3 || h3.tagName !== 'H3') return false;
+    var wrap = document.createElement('div');
+    wrap.className = 'history-section';
+    wrap.setAttribute('data-hsec', id);
+    h3.parentNode.insertBefore(wrap, h3);
+    wrap.appendChild(h3);
+    if (filterBar && filterBar.classList.contains('history-filter-bar')) wrap.appendChild(filterBar);
+    wrap.appendChild(list);
+    var ops = document.createElement('span');
+    ops.className = 'hsec-ops';
+    ops.innerHTML = '<button type="button" data-hdir="-1" title="上移（排更前）">▲</button>' +
+                    '<button type="button" data-hdir="1" title="下移">▼</button>';
+    h3.appendChild(ops);
+    return true;
+  }
+
+  function currentIds() {
+    var cur = [];
+    document.querySelectorAll('#panel-history .history-section[data-hsec]').forEach(function (w) {
+      cur.push(w.getAttribute('data-hsec'));
+    });
+    IDS.forEach(function (id) { if (cur.indexOf(id) < 0 && $('history-' + id)) cur.push(id); });
+    return cur;
+  }
+
+  function applyOrder() {
+    var panel = $('panel-history');
+    if (!panel) return;
+    var cur = currentIds();
+    if (cur.length < IDS.length) return; // 五段尚未齐备
+    var wraps = {};
+    panel.querySelectorAll('.history-section[data-hsec]').forEach(function (w) {
+      wraps[w.getAttribute('data-hsec')] = w;
+    });
+    var order = getOrder().filter(function (id) { return cur.indexOf(id) >= 0; });
+    cur.forEach(function (id) { if (order.indexOf(id) < 0) order.push(id); });
+    order.forEach(function (id) { panel.appendChild(wraps[id]); });
+    order.forEach(function (id, i) {
+      var btns = wraps[id].querySelectorAll('.hsec-ops button');
+      if (btns.length === 2) {
+        btns[0].disabled = i === 0;
+        btns[1].disabled = i === order.length - 1;
+      }
+    });
+  }
+
+  function moveSec(id, dir) {
+    var order = getOrder();
+    var cur = currentIds();
+    order = order.filter(function (x) { return cur.indexOf(x) >= 0; });
+    cur.forEach(function (x) { if (order.indexOf(x) < 0) order.push(x); });
+    var i = order.indexOf(id);
+    var j = i + dir;
+    if (i < 0 || j < 0 || j >= order.length) return;
+    var t = order[i]; order[i] = order[j]; order[j] = t;
+    saveOrder(order);
+    applyOrder();
+  }
+
+  function tryInit(times) {
+    var panel = $('panel-history');
+    if (!panel) { retry(times); return; }
+    var ok = IDS.every(wrapOne);
+    if (!ok) { retry(times); return; }
+    panel.addEventListener('click', function (e) {
+      var b = e.target.closest ? e.target.closest('.hsec-ops button[data-hdir]') : null;
+      if (!b) return;
+      var sec = b.closest('.history-section');
+      if (!sec) return;
+      moveSec(sec.getAttribute('data-hsec'), parseInt(b.getAttribute('data-hdir'), 10));
+    });
+    injectStyle();
+    applyOrder();
+  }
+  function retry(times) {
+    if (times > 0) setTimeout(function () { tryInit(times - 1); }, 300);
+  }
+
+  function init() { tryInit(20); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+  // 兜底：v13 动态注入月度工作汇总/待办记录段后再补一次
+  setTimeout(init, 600);
+})();
+
+</script>
+<script>
+/* ===== 项目板块：「📊 看板」/「📋 项目列表」子目录视图 =====
+ * 看板视图 = 基础统计卡片 + 全年项目跟进表（重点信息一览）+ 导出（统计 + 跟进表两个 sheet）。
+ * 跟进表列参考用户年度项目 Excel：序号/活动日期/单位名称/项目·培训·其他/活动项目介绍/
+ * 是否成交/跟进情况/最终成交金额/提成或利润/利润率（实际）。
+ * 视图选择存 localStorage 'wb_proj_view'（本地偏好，不占云同步）。
+ * 子标签显示设置（⚙️）：勾选 = 显示 / 取消 = 隐藏，▲▼ = 排序；
+ *   隐藏键 'wb_proj_tabs'、顺序键 'wb_proj_tabs_order'（参与云同步）。
+ * 纯注入式 patch：包裹在运行时完成，不改动 base 原代码结构。
+ */
+(function () {
+  'use strict';
+
+  var VIEW_KEY = 'wb_proj_view';
+  var HIDDEN_KEY = 'wb_proj_tabs';       // 隐藏的子标签 id 数组
+  var ORDER_KEY = 'wb_proj_tabs_order';  // 子标签顺序数组
+  var PROJECTS_KEY = 'sport_projects';
+  var TAB_LABELS = { kanban: '📊 看板', list: '📋 项目列表' };
+
+  function $(id) { return document.getElementById(id); }
+  function esc(s) {
+    s = (s == null ? '' : String(s));
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;');
+  }
+  function fmtDate(v) {
+    if (!v) return '';
+    return String(v).substring(0, 10);
+  }
+  function curYear() {
+    try { if (typeof window.getGlobalYear === 'function') return String(window.getGlobalYear()); } catch (e) {}
+    return String(new Date().getFullYear());
+  }
+
+  function injectStyle() {
+    if ($('projview-style')) return;
+    var st = document.createElement('style');
+    st.id = 'projview-style';
+    st.textContent = [
+      '#projSubbar { display:flex; gap:8px; margin-bottom:14px; flex-wrap:wrap; }',
+      '.proj-subtab { padding:8px 18px; border-radius:999px; border:1px solid var(--ui-border,rgba(0,0,0,.12)); background:transparent; color:var(--ui-text-soft,#6e6e73); font-size:14px; cursor:pointer; }',
+      '.proj-subtab:hover { background:rgba(0,102,204,.08); color:var(--ui-primary,#0066cc); }',
+      '.proj-subtab.active { background:var(--ui-primary,#0066cc); border-color:var(--ui-primary,#0066cc); color:#fff; font-weight:600; }',
+      '.proj-view { display:none; }',
+      '.proj-view.active { display:block; }',
+      '.proj-track-h { font-size:17px; color:var(--ui-text,#1d1d1f); margin:20px 0 4px; }',
+      '.proj-track-tip { font-size:12.5px; color:var(--ui-text-soft,#6e6e73); margin:0 0 10px; }',
+      '.proj-track-wrap { overflow-x:auto; border:1px solid var(--ui-border,rgba(0,0,0,.08)); border-radius:12px; background:var(--ui-card-bg,#fff); }',
+      '.proj-track { border-collapse:collapse; width:100%; min-width:960px; font-size:13px; }',
+      '.proj-track th { position:sticky; top:0; background:var(--ui-bg-soft,#f5f5f7); color:var(--ui-text,#1d1d1f); font-weight:700; padding:8px 10px; text-align:left; white-space:nowrap; border-bottom:1px solid var(--ui-border,rgba(0,0,0,.08)); }',
+      '.proj-track td { padding:7px 10px; border-bottom:1px solid rgba(0,0,0,.05); color:var(--ui-text,#1d1d1f); vertical-align:top; }',
+      '.proj-track tr:hover td { background:rgba(0,102,204,.04); }',
+      '.proj-track .num { text-align:right; white-space:nowrap; }',
+      '.proj-track .yes { color:#00b894; font-weight:700; }',
+      '.proj-track .no { color:#c45c5c; font-weight:700; }',
+      '.proj-track-empty { padding:20px; text-align:center; color:var(--ui-text-soft,#6e6e73); font-size:13px; }',
+      '@media (prefers-color-scheme: dark) { .proj-subtab { border-color:rgba(255,255,255,.16); } .proj-track tr:hover td { background:rgba(10,132,255,.10); } .proj-track td { border-bottom-color:rgba(255,255,255,.08); } }',
+      'body.dark-mode .proj-subtab { border-color:rgba(255,255,255,.16); }',
+      'body.dark-mode .proj-track tr:hover td { background:rgba(10,132,255,.10); }',
+      'body.dark-mode .proj-track td { border-bottom-color:rgba(255,255,255,.08); }',
+      /* 子标签显示设置（对齐日常工作板块的齿轮弹层） */
+      '#projSubbar { position:relative; }',
+      '#pvtSettingsBtn { margin-left:auto; font-size:14px; opacity:.75; padding:8px 12px; border-radius:999px; border:1px solid var(--ui-border,rgba(0,0,0,.12)); background:transparent; color:var(--ui-text-soft,#6e6e73); cursor:pointer; }',
+      '#pvtSettingsBtn:hover { opacity:1; }',
+      '#pvtPopover { position:absolute; top:calc(100% + 8px); right:0; z-index:60; min-width:240px;',
+        'background:var(--ui-card-bg,#fff); color:var(--ui-text,#1d1d1f); border:1px solid var(--ui-border,rgba(0,0,0,.1));',
+        'border-radius:14px; box-shadow:0 10px 32px rgba(0,0,0,.14); padding:14px 16px; display:none; }',
+      '#pvtPopover.open { display:block; }',
+      '#pvtPopover .pvt-title { font-weight:700; font-size:14px; margin-bottom:6px; }',
+      '#pvtPopover .pvt-desc { font-size:12px; color:var(--ui-text-soft,#6e6e73); margin-bottom:10px; line-height:1.5; }',
+      '#pvtPopover label.pvt-item { display:flex; align-items:center; gap:10px; padding:6px 4px; font-size:14px; cursor:pointer; border-radius:8px; }',
+      '#pvtPopover label.pvt-item:hover { background:rgba(0,102,204,.06); }',
+      '#pvtPopover input[data-pvt] { width:18px; height:18px; min-width:18px; flex:0 0 auto; padding:0; margin:0; accent-color:var(--ui-primary,#0066cc); cursor:pointer; }',
+      '#pvtPopover .pvt-label { flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }',
+      '#pvtPopover .pvt-ops { display:flex; gap:2px; flex:0 0 auto; }',
+      '#pvtPopover .pvt-ops button { font-size:11px; line-height:1; padding:4px 6px; border-radius:6px; border:1px solid var(--ui-border,rgba(0,0,0,.12)); background:transparent; color:var(--ui-text-soft,#6e6e73); cursor:pointer; }',
+      '#pvtPopover .pvt-ops button:hover { background:rgba(0,102,204,.1); color:var(--ui-primary,#0066cc); border-color:var(--ui-primary,#0066cc); }',
+      '#pvtPopover .pvt-ops button:disabled { opacity:.25; cursor:default; background:transparent; color:var(--ui-text-soft,#6e6e73); border-color:var(--ui-border,rgba(0,0,0,.12)); }',
+      '#pvtPopover .pvt-hint { font-size:11px; color:var(--ui-text-soft,#6e6e73); margin-top:8px; }',
+      '@media (prefers-color-scheme: dark) { #pvtPopover { background:#1c1c1e; border-color:rgba(255,255,255,.14); } }',
+      'body.dark-mode #pvtPopover { background:#1c1c1e; border-color:rgba(255,255,255,.14); }'
+    ].join('\n');
+    document.head.appendChild(st);
+  }
+
+  function getView() {
+    var v = null;
+    try { v = localStorage.getItem(VIEW_KEY); } catch (e) {}
+    return (v === 'kanban' || v === 'list') ? v : 'list';
+  }
+
+  // ---------- 子标签显示设置（显隐 + 排序） ----------
+  function getHiddenTabs() {
+    try { var v = JSON.parse(localStorage.getItem(HIDDEN_KEY) || '[]'); return Array.isArray(v) ? v : []; }
+    catch (e) { return []; }
+  }
+  function saveHiddenTabs(arr) {
+    try { localStorage.setItem(HIDDEN_KEY, JSON.stringify(arr)); } catch (e) {}
+    if (window.markDirty) { try { window.markDirty(HIDDEN_KEY); } catch (e) {} }
+    if (window.setStorage) { try { window.setStorage(HIDDEN_KEY, arr); } catch (e) {} }
+  }
+  function getTabOrder() {
+    try { var v = JSON.parse(localStorage.getItem(ORDER_KEY) || '[]'); return Array.isArray(v) ? v : []; }
+    catch (e) { return []; }
+  }
+  function saveTabOrder(arr) {
+    try { localStorage.setItem(ORDER_KEY, JSON.stringify(arr)); } catch (e) {}
+    if (window.markDirty) { try { window.markDirty(ORDER_KEY); } catch (e) {} }
+    if (window.setStorage) { try { window.setStorage(ORDER_KEY, arr); } catch (e) {} }
+  }
+  function allTabIds() {
+    var ids = [];
+    document.querySelectorAll('#projSubbar .proj-subtab[data-pv]').forEach(function (b) {
+      var id = b.getAttribute('data-pv');
+      if (id && ids.indexOf(id) < 0) ids.push(id);
+    });
+    return ids;
+  }
+  function normOrder() {
+    var order = getTabOrder();
+    var ids = allTabIds();
+    order = order.filter(function (id) { return ids.indexOf(id) >= 0; });
+    ids.forEach(function (id) { if (order.indexOf(id) < 0) order.push(id); });
+    return order;
+  }
+  // 按保存的顺序把子标签按钮排到 ⚙️ 之前
+  function applyTabOrder() {
+    var bar = $('projSubbar'); if (!bar) return;
+    var btn = $('pvtSettingsBtn');
+    normOrder().forEach(function (id) {
+      var b = bar.querySelector('.proj-subtab[data-pv="' + id + '"]');
+      if (b && btn) bar.insertBefore(b, btn);
+    });
+  }
+  function applyTabVisibility() {
+    var hidden = getHiddenTabs();
+    var ids = allTabIds();
+    // 至少保留一个可见视图
+    var visible = ids.filter(function (id) { return hidden.indexOf(id) < 0; });
+    if (!visible.length) { hidden = []; saveHiddenTabs(hidden); }
+    document.querySelectorAll('#projSubbar .proj-subtab').forEach(function (b) {
+      b.style.display = hidden.indexOf(b.getAttribute('data-pv')) >= 0 ? 'none' : '';
+    });
+    // 当前视图被隐藏时，切到第一个可见视图
+    if (hidden.indexOf(getView()) >= 0 && visible.length) window.showProjView(visible[0]);
+  }
+  function renderPopoverRows() {
+    var pop = $('pvtPopover'); if (!pop) return;
+    var rows = pop.querySelector('.pvt-rows'); if (!rows) return;
+    var order = normOrder();
+    var hidden = getHiddenTabs();
+    rows.innerHTML = order.map(function (id, i) {
+      var checked = hidden.indexOf(id) < 0 ? ' checked' : '';
+      return '<label class="pvt-item">' +
+        '<input type="checkbox" data-pvt="' + id + '"' + checked + '>' +
+        '<span class="pvt-label">' + (TAB_LABELS[id] || id) + '</span>' +
+        '<span class="pvt-ops">' +
+        '<button type="button" data-id="' + id + '" data-dir="-1" title="上移"' + (i === 0 ? ' disabled' : '') + '>▲</button>' +
+        '<button type="button" data-id="' + id + '" data-dir="1" title="下移"' + (i === order.length - 1 ? ' disabled' : '') + '>▼</button>' +
+        '</span></label>';
+    }).join('');
+  }
+  function buildSettings() {
+    var bar = $('projSubbar');
+    if (!bar || $('pvtSettingsBtn')) return;
+    var btn = document.createElement('button');
+    btn.className = 'pvt-gear';
+    btn.id = 'pvtSettingsBtn';
+    btn.type = 'button';
+    btn.title = '子标签显示设置';
+    btn.textContent = '⚙️';
+    bar.appendChild(btn);
+    var pop = document.createElement('div');
+    pop.id = 'pvtPopover';
+    pop.innerHTML = '<div class="pvt-title">子标签显示设置</div>' +
+      '<div class="pvt-desc">勾选 = 显示；取消勾选 = 隐藏（数据不会删除，随时可再打开）<br>▲▼ = 调整标签排列顺序</div>' +
+      '<div class="pvt-rows"></div>' +
+      '<div class="pvt-hint">顺序调整后立即生效，并同步到其他设备。</div>';
+    bar.appendChild(pop);
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      renderPopoverRows();
+      applyTabOrder();
+      pop.classList.toggle('open');
+    });
+    pop.addEventListener('change', function (e) {
+      var cb = e.target.closest ? e.target.closest('input[data-pvt]') : null;
+      if (!cb) return;
+      var hidden = getHiddenTabs();
+      var id = cb.getAttribute('data-pvt');
+      if (cb.checked) { hidden = hidden.filter(function (x) { return x !== id; }); }
+      else if (hidden.indexOf(id) < 0) { hidden.push(id); }
+      saveHiddenTabs(hidden);
+      applyTabVisibility();
+      renderPopoverRows();
+    });
+    pop.addEventListener('click', function (e) {
+      var mv = e.target.closest ? e.target.closest('.pvt-ops button[data-dir]') : null;
+      if (!mv) return;
+      e.stopPropagation();
+      var id = mv.getAttribute('data-id');
+      var dir = parseInt(mv.getAttribute('data-dir'), 10);
+      var order = normOrder();
+      var i = order.indexOf(id);
+      var j = i + dir;
+      if (i < 0 || j < 0 || j >= order.length) return;
+      var tmp = order[i]; order[i] = order[j]; order[j] = tmp;
+      saveTabOrder(order);
+      applyTabOrder();
+      renderPopoverRows();
+    });
+    document.addEventListener('click', function (e) {
+      if (!pop.contains(e.target) && e.target !== btn && !btn.contains(e.target)) {
+        pop.classList.remove('open');
+      }
+    });
+  }
+
+  // ---------- 全年项目跟进表数据 ----------
+  function loadProjects() {
+    try { var s = localStorage.getItem(PROJECTS_KEY); var v = s ? JSON.parse(s) : []; return Array.isArray(v) ? v : []; }
+    catch (e) { return []; }
+  }
+  function projDate(p) {
+    return p.endDate || p.startDate || (p.createdAt ? String(p.createdAt).substring(0, 10) : '');
+  }
+  function trackRows() {
+    var year = curYear();
+    var list = loadProjects().filter(function (p) {
+      var d = projDate(p);
+      var y = d ? d.substring(0, 4) : '';
+      return y === year || y === '';
+    });
+    list.sort(function (a, b) { return projDate(a).localeCompare(projDate(b)); });
+    return list.map(function (p, i) {
+      var comm = Number(p.commission) || 0;
+      var contract = Number(p.contractAmount) || 0;
+      var rate = (comm > 0 && contract > 0) ? (comm / contract * 100).toFixed(1) + '%' : '';
+      return [
+        i + 1,
+        fmtDate(projDate(p)),
+        p.client || '',
+        p.type || '',
+        p.name || '',
+        p.deal ? '是' : '否',
+        p.followStatus || '跟进中',
+        contract,
+        comm,
+        rate
+      ];
+    });
+  }
+  var TRACK_HEAD = ['序号', '活动日期', '单位名称', '项目·培训·其他', '活动项目介绍', '是否成交', '跟进情况', '最终成交金额', '提成或利润', '利润率（实际）'];
+
+  function renderTrackTable() {
+    var box = $('projTrackBox');
+    if (!box) return;
+    var rows = trackRows();
+    if (!rows.length) {
+      box.innerHTML = '<div class="proj-track-empty">当前年份暂无项目跟进记录</div>';
+      return;
+    }
+    var html = ['<table class="proj-track"><thead><tr>'];
+    TRACK_HEAD.forEach(function (h) { html.push('<th>' + h + '</th>'); });
+    html.push('</tr></thead><tbody>');
+    rows.forEach(function (r) {
+      html.push('<tr><td>' + r[0] + '</td><td>' + esc(r[1]) + '</td><td>' + esc(r[2]) + '</td><td>' + esc(r[3]) + '</td><td>' + esc(r[4]) + '</td><td class="' + (r[5] === '是' ? 'yes' : 'no') + '">' + r[5] + '</td><td>' + esc(r[6]) + '</td><td class="num">' + r[7] + '</td><td class="num">' + r[8] + '</td><td class="num">' + esc(r[9]) + '</td></tr>');
+    });
+    html.push('</tbody></table>');
+    box.innerHTML = html.join('');
+  }
+
+  window.showProjView = function (v) {
+    if (v !== 'kanban' && v !== 'list') v = 'list';
+    try { localStorage.setItem(VIEW_KEY, v); } catch (e) {}
+    var k = $('projViewKanban');
+    var l = $('projViewList');
+    if (k) k.classList.toggle('active', v === 'kanban');
+    if (l) l.classList.toggle('active', v === 'list');
+    document.querySelectorAll('#projSubbar .proj-subtab').forEach(function (b) {
+      b.classList.toggle('active', b.getAttribute('data-pv') === v);
+    });
+    if (v === 'kanban') renderTrackTable();
+  };
+
+  function wrapView(refNode, id) {
+    if (!refNode) return null;
+    var wrap = document.createElement('div');
+    wrap.className = 'proj-view';
+    wrap.id = id;
+    refNode.parentNode.insertBefore(wrap, refNode);
+    wrap.appendChild(refNode);
+    return wrap;
+  }
+
+  function tryInit(times) {
+    var panel = $('panel-projects');
+    var stats = $('project-stats');
+    var list = $('project-list');
+    if ($('projSubbar') && $('projViewKanban') && $('projViewList')) {
+      buildSettings(); applyTabOrder();
+      window.showProjView(getView()); applyTabVisibility(); return;
+    }
+    if (!panel || !stats || !list) { retry(times); return; }
+    injectStyle();
+
+    // 列表视图 = 按钮组 + 筛选条 + 项目卡片列表
+    var btnGroup = panel.querySelector('.btn-group');
+    var filterBar = panel.querySelector('.filter-bar');
+    var listWrap = wrapView(list, 'projViewList');
+    if (listWrap && filterBar) listWrap.insertBefore(filterBar, listWrap.firstChild);
+    if (listWrap && btnGroup) listWrap.insertBefore(btnGroup, listWrap.firstChild);
+
+    // 看板视图 = 导出按钮 + 统计卡片区 + 全年项目跟进表
+    var kanbanWrap = wrapView(stats, 'projViewKanban');
+    if (kanbanWrap) {
+      var exp = document.createElement('div');
+      exp.className = 'btn-group';
+      exp.style.marginBottom = '12px';
+      exp.innerHTML = '<button class="btn-export" onclick="exportProjectStatsExcel()" type="button">📤 导出看板表格</button>';
+      kanbanWrap.insertBefore(exp, kanbanWrap.firstChild);
+
+      var track = document.createElement('div');
+      track.innerHTML = '<h3 class="proj-track-h">📅 全年项目跟进（重点信息）</h3>' +
+        '<p class="proj-track-tip">按活动日期排序，一屏看清全年项目成交 / 跟进 / 回款情况；点上方「导出看板表格」可导出 Excel（含本表）。</p>' +
+        '<div class="proj-track-wrap" id="projTrackBox"></div>';
+      kanbanWrap.appendChild(track);
+    }
+
+    // 子目录栏（排最前）
+    var bar = document.createElement('div');
+    bar.id = 'projSubbar';
+    bar.innerHTML = '<button class="proj-subtab" data-pv="kanban" type="button">📊 看板</button>' +
+                    '<button class="proj-subtab" data-pv="list" type="button">📋 项目列表</button>';
+    panel.insertBefore(bar, panel.firstChild);
+
+    bar.addEventListener('click', function (e) {
+      var b = e.target.closest ? e.target.closest('.proj-subtab[data-pv]') : null;
+      if (b) window.showProjView(b.getAttribute('data-pv'));
+    });
+    buildSettings();
+    applyTabOrder();
+    window.showProjView(getView());
+    applyTabVisibility();
+    // 项目数据变化时刷新跟进表
+    if (typeof window.renderProjects === 'function' && !window.renderProjects.__trackWrapped) {
+      var orig = window.renderProjects;
+      var wrapped = function () { var r = orig.apply(this, arguments); try { renderTrackTable(); } catch (e) {} return r; };
+      wrapped.__trackWrapped = true;
+      window.renderProjects = wrapped;
+    }
+    window.showProjView(getView());
+  }
+  function retry(times) {
+    if (times > 0) setTimeout(function () { tryInit(times - 1); }, 300);
+  }
+
+  // 看板统计导出为 Excel（sheet1 统计 + sheet2 全年项目跟进）
+  window.exportProjectStatsExcel = function () {
+    if (typeof XLSX === 'undefined') { alert('导出组件尚未加载完成，请稍后重试'); return; }
+    var s = window.__projStats;
+    if (!s) { alert('请先打开「📊 看板」让统计渲染后再导出'); return; }
+    var rows = [['指标', '数值']];
+    rows.push(['项目总数', s.total]);
+    rows.push(['本月新建', s.thisMonthNew]);
+    Object.keys(s.byStatus || {}).forEach(function (k) { rows.push(['状态 · ' + k, s.byStatus[k]]); });
+    rows.push(['合同总额', s.contractSum]);
+    rows.push(['已回款', s.paidSum]);
+    rows.push(['待回款', s.unpaidSum]);
+    rows.push(['项目业绩合计', s.perfSum]);
+    rows.push(['个人提成合计', s.commSum]);
+    Object.keys(s.byGrade || {}).forEach(function (k) { rows.push(['等级 · ' + k, s.byGrade[k]]); });
+    var wb = XLSX.utils.book_new();
+    var ws = XLSX.utils.aoa_to_sheet(rows);
+    XLSX.utils.book_append_sheet(wb, ws, '项目看板');
+    var tRows = [TRACK_HEAD].concat(trackRows());
+    var ws2 = XLSX.utils.aoa_to_sheet(tRows);
+    XLSX.utils.book_append_sheet(wb, ws2, '全年项目跟进');
+    XLSX.writeFile(wb, '项目看板统计_' + new Date().toISOString().substring(0, 10) + '.xlsx');
+  };
+
+  function init() { tryInit(20); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+  setTimeout(init, 600);
+})();
+
+</script>
+<script>
+/* ===== 全局缩放控件（整个工作台默认放大，用户可再调） =====
+ * 默认 110%：整个工作台整体放大、文字够看，无需手动放大。
+ * 用户需要更大时点 A＋（10% 步进，80%–160%）；⟲ 回到默认 110%。
+ * 偏好存 localStorage 'wb_ui_zoom'（本地，不占云同步）。
+ * 纯注入式 patch。
+ */
+(function () {
+  'use strict';
+  var KEY = 'wb_ui_zoom';
+  var DEFAULT_ZOOM = 1.1;
+
+  function getZoom() {
+    var z = DEFAULT_ZOOM;
+    try { z = parseFloat(localStorage.getItem(KEY)); if (isNaN(z)) z = DEFAULT_ZOOM; } catch (e) {}
+    return Math.min(1.6, Math.max(0.8, z));
+  }
+  function apply(z) {
+    document.body.style.zoom = (z === 1) ? '' : String(z);
+  }
+  function setZoom(z) {
+    z = Math.round(z * 100) / 100;
+    try { localStorage.setItem(KEY, String(z)); } catch (e) {}
+    apply(z);
+    var el = document.getElementById('zoomLevel');
+    if (el) el.textContent = Math.round(z * 100) + '%';
+  }
+
+  function build() {
+    if (document.getElementById('zoomCtl')) { apply(getZoom()); return; }
+    var st = document.createElement('style');
+    st.textContent = [
+      '#zoomCtl{position:fixed;right:14px;bottom:14px;z-index:9990;display:flex;align-items:center;gap:2px;',
+      'background:var(--ui-card-bg,#fff);border:1px solid var(--ui-border,rgba(0,0,0,.1));border-radius:999px;',
+      'padding:4px 10px;box-shadow:0 4px 16px rgba(0,0,0,.10);font-size:12px;color:var(--ui-text,#1d1d1f);}',
+      '#zoomCtl button{border:none;background:transparent;cursor:pointer;font-size:13px;font-weight:700;',
+      'color:var(--ui-primary,#0066cc);padding:2px 7px;border-radius:8px;font-family:inherit;}',
+      '#zoomCtl button:hover{background:rgba(0,102,204,.08);}',
+      '#zoomCtl #zoomLevel{min-width:38px;text-align:center;font-weight:600;}',
+      '@media (prefers-color-scheme: dark){#zoomCtl{background:#1c1c1e;border-color:rgba(255,255,255,.16);color:#f5f5f7;}}',
+      'body.dark-mode #zoomCtl{background:#1c1c1e;border-color:rgba(255,255,255,.16);color:#f5f5f7;}'
+    ].join('\n');
+    document.head.appendChild(st);
+    var ctl = document.createElement('div');
+    ctl.id = 'zoomCtl';
+    ctl.innerHTML = '<button id="zoomMinus" title="缩小" type="button">A−</button>' +
+      '<span id="zoomLevel">100%</span>' +
+      '<button id="zoomPlus" title="放大" type="button">A＋</button>' +
+      '<button id="zoomReset" title="回到默认 110%" type="button">⟲</button>';
+    document.body.appendChild(ctl);
+    document.getElementById('zoomMinus').onclick = function () { setZoom(getZoom() - 0.1); };
+    document.getElementById('zoomPlus').onclick = function () { setZoom(getZoom() + 0.1); };
+    document.getElementById('zoomReset').onclick = function () { setZoom(DEFAULT_ZOOM); };
+    var z = getZoom();
+    apply(z);
+    document.getElementById('zoomLevel').textContent = Math.round(z * 100) + '%';
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', build);
+  else build();
 })();
 
 </script></body>
