@@ -11,7 +11,7 @@
   <link rel="icon" type="image/png" href="./icon-192.png" />
   <link rel="apple-touch-icon" href="./icon-192.png" />
   <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIuiupOecn+W3peS9nOWPsCIsCiAgInNob3J0X25hbWUiOiAi5bel5L2c5Y+wIiwKICAiZGVzY3JpcHRpb24iOiAi5Zub5bed5rS75Yqo5oOF5oql5pCc6ZuG5LiO5pS/5LyB5a6i5oi3566h55CGIiwKICAic3RhcnRfdXJsIjogIi4vIiwKICAic2NvcGUiOiAiLi8iLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJvcmllbnRhdGlvbiI6ICJwb3J0cmFpdCIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiI2Y1ZjVmNyIsCiAgInRoZW1lX2NvbG9yIjogIiMwMDY2Y2MiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24tMTkyLnBuZyIsCiAgICAgICJzaXplcyI6ICIxOTJ4MTkyIiwKICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIiwKICAgICAgInB1cnBvc2UiOiAiYW55IgogICAgfSwKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24tNTEyLnBuZyIsCiAgICAgICJzaXplcyI6ICI1MTJ4NTEyIiwKICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIiwKICAgICAgInB1cnBvc2UiOiAiYW55IgogICAgfSwKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24uc3ZnIiwKICAgICAgInNpemVzIjogImFueSIsCiAgICAgICJ0eXBlIjogImltYWdlL3N2Zyt4bWwiLAogICAgICAicHVycG9zZSI6ICJhbnkiCiAgICB9CiAgXQp9Cg==" />
-  <script>window.APP_VERSION = "build@1791867011";</script>
+  <script>window.APP_VERSION = "build@1791870933";</script>
   <title>DSC销售 · 项目管理工作台（完整版）</title>
   <script src="./xlsx.full.min.js"></script>
   <script>
@@ -2741,6 +2741,51 @@ body.dark-mode .pt-actions .btn-refresh-stat:hover, body.dark-mode .pt-actions .
 }
 body.dark-mode .proj-toolbar .dir-tab { background: #1c1c1e; border-color: rgba(255,255,255,.14); color: #98989d; }
 body.dark-mode .proj-toolbar .dir-tab.active { background: #0a84ff; border-color: #0a84ff; color: #fff; }
+
+/* ===== V29：分层次重排（目录标签下移到筛选行下方 + 层级颜色区分） ===== */
+/* 工具栏改为纵向：行1 视图切换（灰导航层） / 行2 操作按钮（蓝操作层） */
+.proj-toolbar {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 12px;
+  margin: 0 0 14px;
+}
+.proj-toolbar .pt-nav { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; }
+.proj-toolbar .pt-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 !important; }
+
+/* 目录标签：目录层（青色，缩进显示为筛选行的下一级，区别于蓝色操作层/灰色导航层） */
+.proj-dir-tabs {
+  margin: 0 0 12px;
+  padding-left: 4px;
+  gap: 8px;
+}
+.proj-dir-tabs .dir-tab {
+  box-sizing: border-box;
+  height: 32px;
+  padding: 0 14px;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  background: var(--ui-card-bg, #fff);
+  border: 1px solid var(--ui-border, rgba(0,0,0,.12));
+  color: var(--ui-text-soft, #6e6e73);
+  font-size: 13px;
+  font-weight: 600;
+  box-shadow: none;
+}
+.proj-dir-tabs .dir-tab:hover { border-color: #00b894; color: #00b894; background: var(--ui-card-bg, #fff); }
+.proj-dir-tabs .dir-tab.active {
+  background: #00b894;
+  border-color: #00b894;
+  color: #fff;
+  box-shadow: 0 1px 4px rgba(0,184,148,.28);
+}
+@media (prefers-color-scheme: dark) {
+  .proj-dir-tabs .dir-tab { background: #1c1c1e; border-color: rgba(255,255,255,.14); color: #98989d; }
+  .proj-dir-tabs .dir-tab.active { background: #00b894; border-color: #00b894; color: #fff; }
+}
+body.dark-mode .proj-dir-tabs .dir-tab { background: #1c1c1e; border-color: rgba(255,255,255,.14); color: #98989d; }
+body.dark-mode .proj-dir-tabs .dir-tab.active { background: #00b894; border-color: #00b894; color: #fff; }
 
     /* ==================================================================
        增强模块样式：云同步状态 / 历史折叠 / 草稿提示 / 移动端优化
@@ -18982,11 +19027,19 @@ select to_regclass('public.wb_kv');</div>
 
 </script>
 <script>
-/* ===== V26：项目管理顶栏层级重构（抓重点） =====
+/* ===== V26→V29：项目管理顶栏层级重构（抓重点 + 分层次） =====
  * 问题：视图切换 / 二级目录 / 操作按钮 三行全是蓝色胶囊，视觉权重相同，抓不到重点。
- * 方案：DOM 重排为一行工具栏（窄屏自动换行）：
- *   [ 视图切换(分段控件)  目录标签(浅色胶囊) ].........[ ➕新建项目(唯一蓝) 刷新 导出(幽灵按钮) ]
- * 只挪容器 + 纯 CSS 分级，不改任何业务逻辑与数据。
+ * V29 新需求（用户截图反馈）：
+ *   - 目录标签（跟进中/丢单取消）应在「跟进情况」筛选行的【下方一级】显示，不可与视图切换行齐平；
+ *   - 操作按钮行（新建项目/刷新/导出）应在「跟进情况」筛选行的【上方】；
+ *   - 不同层级用不同颜色区分。
+ * 布局（list 视图）：
+ *   行1 [视图切换(灰分段控件) · ⚙️]                 —— #projToolbar（导航层，灰）
+ *   行2 [ ➕新建项目(蓝)  刷新  导出(幽灵) ]          —— #projToolbar 内 .pt-actions（操作层，蓝）
+ *   行3 [ 跟进情况 | 成交 | 客户 | 等级 | 需求 | 排序 | 清空 ]  —— .filter-bar（筛选层，中性）
+ *   行4 [ 📌 跟进中（N）  ✕ 丢单取消（N） ]（缩进+青色） —— #projDirTabs（目录层，青）
+ *   + 项目卡片列表
+ * 实现：V29 把 #projDirTabs 从工具栏挪到 #projViewList 中、筛选条之下；操作按钮留在工具栏（看板视图也可见，延续 V26 便利）。
  */
 (function () {
   var TRIES = 20;
@@ -18996,6 +19049,7 @@ select to_regclass('public.wb_kv');</div>
     var panel = $('panel-projects');
     var subbar = $('projSubbar');       // 视图切换（📋 项目列表 / 📊 看板）— projview.js 运行时创建
     var dirtabs = $('projDirTabs');     // V25 二级目录（📌 跟进中 / ✕ 丢单取消）— base 静态
+    var listView = $('projViewList');   // 列表视图容器 — projview.js 创建
     // ⚠️ panel 内有两个 .btn-group（看板视图里 projview.js 创建的导出组 + base 的动作组），按 onclick 精确定位
     var btnGroup = null;
     if (panel) {
@@ -19005,28 +19059,44 @@ select to_regclass('public.wb_kv');</div>
         if (b0) { btnGroup = groups[i]; break; }
       }
     }
-    if (!panel || !subbar || !dirtabs || !btnGroup) {
+    if (!panel || !subbar || !dirtabs || !listView || !btnGroup) {
       if (TRIES-- > 0) setTimeout(init, 300);
       return;
     }
     if ($('projToolbar')) return; // 幂等
 
+    /* ---- 行1+行2：工具栏（导航层 + 操作层） ---- */
     var bar = document.createElement('div');
     bar.id = 'projToolbar';
     bar.className = 'proj-toolbar';
-    var left = document.createElement('div');
-    left.className = 'pt-left';
-    var right = document.createElement('div');
-    right.className = 'pt-right';
 
-    panel.insertBefore(bar, panel.firstChild);
-    left.appendChild(subbar);
-    left.appendChild(dirtabs);
-    btnGroup.removeAttribute('style');   // 去掉 base 的内联 margin-bottom，交给工具栏统一间距
-    btnGroup.classList.add('pt-actions');
-    right.appendChild(btnGroup);
-    bar.appendChild(left);
-    bar.appendChild(right);
+    var nav = document.createElement('div');
+    nav.className = 'pt-nav';
+    nav.appendChild(subbar);            // 视图切换（灰分段控件）
+
+    var acts = document.createElement('div');
+    acts.className = 'pt-actions';
+    btnGroup.removeAttribute('style');  // 去掉 base 的内联 margin-bottom，交给工具栏统一间距
+    btnGroup.classList.add('pt-actions'); // 复用样式类
+    // 把操作按钮从 btnGroup 解包到 acts（看板视图也保留可见，延续 V26 便利）
+    while (btnGroup.firstChild) acts.appendChild(btnGroup.firstChild);
+    btnGroup.parentNode && btnGroup.parentNode.removeChild(btnGroup);
+
+    bar.appendChild(nav);
+    bar.appendChild(acts);
+
+    /* ---- 行3+行4：列表视图内，[筛选条] 之下插入 [目录标签]，并让操作层位于筛选条上方 ---- */
+    panel.insertBefore(bar, panel.firstChild); // 工具栏始终最前（导航层）
+    // 目录标签放到筛选条之下（目录层），缩进显示为子级
+    var filterBar = listView.querySelector('.filter-bar');
+    if (filterBar) {
+      if (filterBar.nextSibling) listView.insertBefore(dirtabs, filterBar.nextSibling);
+      else listView.appendChild(dirtabs);
+    } else {
+      listView.insertBefore(dirtabs, listView.firstChild);
+    }
+
+    // 操作层已在工具栏（行2），位于列表内容（含筛选条行3）上方 —— 满足「新建项目在跟进情况上方」
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
