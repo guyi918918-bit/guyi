@@ -11,7 +11,7 @@
   <link rel="icon" type="image/png" href="./icon-192.png" />
   <link rel="apple-touch-icon" href="./icon-192.png" />
   <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIuiupOecn+W3peS9nOWPsCIsCiAgInNob3J0X25hbWUiOiAi5bel5L2c5Y+wIiwKICAiZGVzY3JpcHRpb24iOiAi5Zub5bed5rS75Yqo5oOF5oql5pCc6ZuG5LiO5pS/5LyB5a6i5oi3566h55CGIiwKICAic3RhcnRfdXJsIjogIi4vIiwKICAic2NvcGUiOiAiLi8iLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJvcmllbnRhdGlvbiI6ICJwb3J0cmFpdCIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiI2Y1ZjVmNyIsCiAgInRoZW1lX2NvbG9yIjogIiMwMDY2Y2MiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24tMTkyLnBuZyIsCiAgICAgICJzaXplcyI6ICIxOTJ4MTkyIiwKICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIiwKICAgICAgInB1cnBvc2UiOiAiYW55IgogICAgfSwKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24tNTEyLnBuZyIsCiAgICAgICJzaXplcyI6ICI1MTJ4NTEyIiwKICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIiwKICAgICAgInB1cnBvc2UiOiAiYW55IgogICAgfSwKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24uc3ZnIiwKICAgICAgInNpemVzIjogImFueSIsCiAgICAgICJ0eXBlIjogImltYWdlL3N2Zyt4bWwiLAogICAgICAicHVycG9zZSI6ICJhbnkiCiAgICB9CiAgXQp9Cg==" />
-  <script>window.APP_VERSION = "build@1791854391";</script>
+  <script>window.APP_VERSION = "build@1791858791";</script>
   <title>DSC销售 · 项目管理工作台（完整版）</title>
   <script src="./xlsx.full.min.js"></script>
   <script>
@@ -2537,6 +2537,44 @@ body.dark-mode .fld-hint { color: #98989d; }
 }
 .project-status { background: transparent; padding: 0; }
 
+/* ===== V25：项目列表二级目录（跟进中 / 丢单取消） ===== */
+.proj-dir-tabs {
+  display: flex;
+  gap: 8px;
+  margin: 0 0 12px;
+  flex-wrap: wrap;
+}
+.dir-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 16px;
+  border-radius: 999px;
+  border: 1px solid var(--ui-border, rgba(0,0,0,.08));
+  background: var(--ui-card-bg, #fff);
+  color: var(--ui-text-soft, #6e6e73);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .2s ease;
+  white-space: nowrap;
+}
+.dir-tab:hover { border-color: var(--ui-primary, #0066cc); color: var(--ui-primary, #0066cc); }
+.dir-tab.active {
+  background: var(--ui-primary, #0066cc);
+  border-color: var(--ui-primary, #0066cc);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0,102,204,.25);
+}
+.dir-tab:active { transform: scale(.97); }
+
+@media (prefers-color-scheme: dark) {
+  .dir-tab { background: #1c1c1e; border-color: rgba(255,255,255,.12); color: #98989d; }
+  .dir-tab.active { background: #0a84ff; border-color: #0a84ff; color: #fff; }
+}
+body.dark-mode .dir-tab { background: #1c1c1e; border-color: rgba(255,255,255,.12); color: #98989d; }
+body.dark-mode .dir-tab.active { background: #0a84ff; border-color: #0a84ff; color: #fff; }
+
     /* ==================================================================
        增强模块样式：云同步状态 / 历史折叠 / 草稿提示 / 移动端优化
        ================================================================== */
@@ -3595,6 +3633,7 @@ body.dark-mode .fld-hint { color: #98989d; }
       <button class="btn-refresh-stat" onclick="renderProjects()">🔄 刷新列表</button>
       <button class="btn-export" onclick="exportProjectsExcel()">📤 导出项目</button>
     </div>
+    <div class="proj-dir-tabs" id="projDirTabs"></div>
     <div class="filter-bar">
       <label>跟进情况</label>
       <select id="proj-filter-follow" onchange="renderProjects()">
@@ -5438,6 +5477,10 @@ body.dark-mode .fld-hint { color: #98989d; }
         const y = p.startDate ? parseInt(p.startDate.split('-')[0]) : null;
         return y === year || y === null;
       });
+      // V25：二级目录过滤 —— 默认「跟进中」（非丢单/取消），可切「丢单取消」
+      const dir = projDirTab();
+      renderProjDirTabs(filtered, dir);
+      filtered = filtered.filter(p => dir === 'lost' ? inLostDir(p) : !inLostDir(p));
       const followFilter = document.getElementById('proj-filter-follow').value;
       const dealFilter = document.getElementById('proj-filter-deal').value;
       const clientFilter = document.getElementById('proj-filter-client').value.trim().toLowerCase();
@@ -5482,7 +5525,10 @@ body.dark-mode .fld-hint { color: #98989d; }
           return 0;
         });
       }
-      if (!filtered.length) { container.innerHTML = '<div class="empty-tip">暂无项目匹配筛选条件</div>'; renderProjectStats(); return; }
+      if (!filtered.length) {
+        const emptyTip = dir === 'lost' ? '✌️ 没有丢单/取消的项目，一切尽在掌握' : '暂无在跟进的项目匹配筛选条件';
+        container.innerHTML = `<div class="empty-tip">${emptyTip}</div>`; renderProjectStats(); return;
+      }
       container.innerHTML = filtered.map((p, index) => {
         const progress = calcProgress(p);
         const days = calcCountdown(p);
@@ -5602,6 +5648,27 @@ body.dark-mode .fld-hint { color: #98989d; }
     function gradeDot(g) {
       if (!g) return '';
       return `<span class="grade-dot" style="background:${gradeDotColor(g)}"></span>`;
+    }
+
+    // V25：项目列表二级目录 —— 「跟进中」/「丢单取消」按是否还需跟进划分
+    const LOST_ST = ['丢单', '取消'];
+    function inLostDir(p) { return LOST_ST.indexOf(p.followStatus || '跟进中') >= 0; }
+    function projDirTab() { try { return localStorage.getItem('wb_proj_dir_tab') || 'active'; } catch (e) { return 'active'; } }
+    function switchProjDir(t) {
+      try { localStorage.setItem('wb_proj_dir_tab', t); } catch (e) {}
+      // 切目录时重置跟进情况筛选，避免「丢单取消目录 + 跟进中筛选」的矛盾组合
+      const f = document.getElementById('proj-filter-follow');
+      if (f) f.value = '';
+      renderProjects();
+    }
+    function renderProjDirTabs(yearSet, dir) {
+      const box = document.getElementById('projDirTabs');
+      if (!box) return;
+      const nActive = yearSet.filter(p => !inLostDir(p)).length;
+      const nLost = yearSet.length - nActive;
+      box.innerHTML =
+        `<button class="dir-tab ${dir === 'active' ? 'active' : ''}" onclick="switchProjDir('active')">📌 跟进中（${nActive}）</button>` +
+        `<button class="dir-tab ${dir === 'lost' ? 'active' : ''}" onclick="switchProjDir('lost')">✕ 丢单取消（${nLost}）</button>`;
     }
     // V24：跟进状态彩色徽章（跟进中蓝 / 成交执行交付中青 / 延期橙 / 丢单·取消灰 / 交付完成绿）
     function statusChipColor(st) {
@@ -5783,13 +5850,19 @@ body.dark-mode .fld-hint { color: #98989d; }
       const projects = getProjects();
       const p = projects.find(pr => pr.id === id);
       if (!p) return;
+      const prevSt = p.followStatus || '跟进中';
       readModalFormInto(p);
       p.updatedAt = new Date().toISOString();
       if (p.client) syncClient(p.client);
       setProjects(projects);
       renderProjects();
       closeProjectModal();
-      alert('✅ 项目已保存');
+      // V25：状态变更跨目录时给出明确去向提示
+      const nowSt = p.followStatus || '跟进中';
+      let moved = '';
+      if (LOST_ST.indexOf(nowSt) >= 0 && LOST_ST.indexOf(prevSt) < 0) moved = '（已移入「✕ 丢单取消」目录）';
+      else if (LOST_ST.indexOf(nowSt) < 0 && LOST_ST.indexOf(prevSt) >= 0) moved = '（已移回「📌 跟进中」目录）';
+      alert('✅ 项目已保存' + moved);
     }
 
     function deleteProject(id) {
