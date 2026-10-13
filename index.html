@@ -11,7 +11,7 @@
   <link rel="icon" type="image/png" href="./icon-192.png" />
   <link rel="apple-touch-icon" href="./icon-192.png" />
   <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIuiupOecn+W3peS9nOWPsCIsCiAgInNob3J0X25hbWUiOiAi5bel5L2c5Y+wIiwKICAiZGVzY3JpcHRpb24iOiAi5Zub5bed5rS75Yqo5oOF5oql5pCc6ZuG5LiO5pS/5LyB5a6i5oi3566h55CGIiwKICAic3RhcnRfdXJsIjogIi4vIiwKICAic2NvcGUiOiAiLi8iLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJvcmllbnRhdGlvbiI6ICJwb3J0cmFpdCIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiI2Y1ZjVmNyIsCiAgInRoZW1lX2NvbG9yIjogIiMwMDY2Y2MiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24tMTkyLnBuZyIsCiAgICAgICJzaXplcyI6ICIxOTJ4MTkyIiwKICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIiwKICAgICAgInB1cnBvc2UiOiAiYW55IgogICAgfSwKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24tNTEyLnBuZyIsCiAgICAgICJzaXplcyI6ICI1MTJ4NTEyIiwKICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIiwKICAgICAgInB1cnBvc2UiOiAiYW55IgogICAgfSwKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24uc3ZnIiwKICAgICAgInNpemVzIjogImFueSIsCiAgICAgICJ0eXBlIjogImltYWdlL3N2Zyt4bWwiLAogICAgICAicHVycG9zZSI6ICJhbnkiCiAgICB9CiAgXQp9Cg==" />
-  <script>window.APP_VERSION = "build@1791858791";</script>
+  <script>window.APP_VERSION = "build@1791861085";</script>
   <title>DSC销售 · 项目管理工作台（完整版）</title>
   <script src="./xlsx.full.min.js"></script>
   <script>
@@ -2574,6 +2574,97 @@ body.dark-mode .fld-hint { color: #98989d; }
 }
 body.dark-mode .dir-tab { background: #1c1c1e; border-color: rgba(255,255,255,.12); color: #98989d; }
 body.dark-mode .dir-tab.active { background: #0a84ff; border-color: #0a84ff; color: #fff; }
+
+/* ===== V26：项目管理顶栏层级重构（导航行 + 动作行，抓重点） ===== */
+.proj-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 16px;
+  margin: 0 0 16px;
+}
+.pt-left {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 18px;
+  min-width: 0;
+}
+.pt-right { display: flex; margin-left: auto; }
+.pt-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 !important; }
+
+/* 视图切换 → iOS 分段控件（降权重：不再是蓝色大胶囊） */
+.proj-toolbar #projSubbar {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 10px;
+  background: rgba(0,0,0,.05);
+  margin: 0;
+}
+.proj-toolbar #projSubbar .proj-subtab {
+  padding: 6px 14px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--ui-text-soft, #6e6e73);
+  font-size: 13px;
+  box-shadow: none;
+}
+.proj-toolbar #projSubbar .proj-subtab:hover { background: transparent; color: var(--ui-primary, #0066cc); }
+.proj-toolbar #projSubbar .proj-subtab.active {
+  background: #fff;
+  border: none;
+  color: var(--ui-primary, #0066cc);
+  font-weight: 600;
+  box-shadow: 0 1px 3px rgba(0,0,0,.12);
+}
+.proj-toolbar #pvtSettingsBtn {
+  padding: 6px 10px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+}
+.proj-toolbar #pvtSettingsBtn:hover { background: rgba(0,0,0,.06); }
+
+/* 目录标签 → 浅青染胶囊（选中不再用实心蓝，与主按钮分层） */
+.proj-toolbar .dir-tab { background: transparent; }
+.proj-toolbar .dir-tab.active {
+  background: rgba(0,184,148,.10);
+  border-color: rgba(0,184,148,.35);
+  color: #048a6c;
+  box-shadow: none;
+}
+
+/* 操作按钮：新建项目保持唯一蓝色主按钮；刷新/导出降为幽灵描边按钮 */
+.pt-actions .btn-refresh-stat,
+.pt-actions .btn-export {
+  background: transparent;
+  color: var(--ui-text, #1d1d1f);
+  border: 1px solid var(--ui-border, rgba(0,0,0,.12));
+  box-shadow: none;
+}
+.pt-actions .btn-refresh-stat:hover,
+.pt-actions .btn-export:hover {
+  border-color: var(--ui-primary, #0066cc);
+  color: var(--ui-primary, #0066cc);
+  background: rgba(0,102,204,.05);
+}
+
+@media (prefers-color-scheme: dark) {
+  .proj-toolbar #projSubbar { background: rgba(255,255,255,.08); }
+  .proj-toolbar #projSubbar .proj-subtab.active { background: #48484a; color: #fff; box-shadow: none; }
+  .proj-toolbar #pvtSettingsBtn:hover { background: rgba(255,255,255,.10); }
+  .proj-toolbar .dir-tab.active { background: rgba(0,184,148,.16); border-color: rgba(0,184,148,.4); color: #3ddbb8; }
+  .pt-actions .btn-refresh-stat, .pt-actions .btn-export { color: #f5f5f7; border-color: rgba(255,255,255,.16); }
+  .pt-actions .btn-refresh-stat:hover, .pt-actions .btn-export:hover { color: #0a84ff; border-color: #0a84ff; background: rgba(10,132,255,.10); }
+}
+body.dark-mode .proj-toolbar #projSubbar { background: rgba(255,255,255,.08); }
+body.dark-mode .proj-toolbar #projSubbar .proj-subtab.active { background: #48484a; color: #fff; box-shadow: none; }
+body.dark-mode .proj-toolbar #pvtSettingsBtn:hover { background: rgba(255,255,255,.10); }
+body.dark-mode .proj-toolbar .dir-tab.active { background: rgba(0,184,148,.16); border-color: rgba(0,184,148,.4); color: #3ddbb8; }
+body.dark-mode .pt-actions .btn-refresh-stat, body.dark-mode .pt-actions .btn-export { color: #f5f5f7; border-color: rgba(255,255,255,.16); }
+body.dark-mode .pt-actions .btn-refresh-stat:hover, body.dark-mode .pt-actions .btn-export:hover { color: #0a84ff; border-color: #0a84ff; background: rgba(10,132,255,.10); }
 
     /* ==================================================================
        增强模块样式：云同步状态 / 历史折叠 / 草稿提示 / 移动端优化
@@ -18811,6 +18902,59 @@ select to_regclass('public.wb_kv');</div>
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', build);
   else build();
+})();
+
+</script>
+<script>
+/* ===== V26：项目管理顶栏层级重构（抓重点） =====
+ * 问题：视图切换 / 二级目录 / 操作按钮 三行全是蓝色胶囊，视觉权重相同，抓不到重点。
+ * 方案：DOM 重排为一行工具栏（窄屏自动换行）：
+ *   [ 视图切换(分段控件)  目录标签(浅色胶囊) ].........[ ➕新建项目(唯一蓝) 刷新 导出(幽灵按钮) ]
+ * 只挪容器 + 纯 CSS 分级，不改任何业务逻辑与数据。
+ */
+(function () {
+  var TRIES = 20;
+  function $(id) { return document.getElementById(id); }
+
+  function init() {
+    var panel = $('panel-projects');
+    var subbar = $('projSubbar');       // 视图切换（📋 项目列表 / 📊 看板）— projview.js 运行时创建
+    var dirtabs = $('projDirTabs');     // V25 二级目录（📌 跟进中 / ✕ 丢单取消）— base 静态
+    // ⚠️ panel 内有两个 .btn-group（看板视图里 projview.js 创建的导出组 + base 的动作组），按 onclick 精确定位
+    var btnGroup = null;
+    if (panel) {
+      var groups = panel.querySelectorAll('.btn-group');
+      for (var i = 0; i < groups.length; i++) {
+        var b0 = groups[i].querySelector('button[onclick*="showProjectModal"]');
+        if (b0) { btnGroup = groups[i]; break; }
+      }
+    }
+    if (!panel || !subbar || !dirtabs || !btnGroup) {
+      if (TRIES-- > 0) setTimeout(init, 300);
+      return;
+    }
+    if ($('projToolbar')) return; // 幂等
+
+    var bar = document.createElement('div');
+    bar.id = 'projToolbar';
+    bar.className = 'proj-toolbar';
+    var left = document.createElement('div');
+    left.className = 'pt-left';
+    var right = document.createElement('div');
+    right.className = 'pt-right';
+
+    panel.insertBefore(bar, panel.firstChild);
+    left.appendChild(subbar);
+    left.appendChild(dirtabs);
+    btnGroup.removeAttribute('style');   // 去掉 base 的内联 margin-bottom，交给工具栏统一间距
+    btnGroup.classList.add('pt-actions');
+    right.appendChild(btnGroup);
+    bar.appendChild(left);
+    bar.appendChild(right);
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
 })();
 
 </script></body>
