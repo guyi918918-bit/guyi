@@ -11,7 +11,7 @@
   <link rel="icon" type="image/png" href="./icon-192.png" />
   <link rel="apple-touch-icon" href="./icon-192.png" />
   <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIuiupOecn+W3peS9nOWPsCIsCiAgInNob3J0X25hbWUiOiAi5bel5L2c5Y+wIiwKICAiZGVzY3JpcHRpb24iOiAi5Zub5bed5rS75Yqo5oOF5oql5pCc6ZuG5LiO5pS/5LyB5a6i5oi3566h55CGIiwKICAic3RhcnRfdXJsIjogIi4vIiwKICAic2NvcGUiOiAiLi8iLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJvcmllbnRhdGlvbiI6ICJwb3J0cmFpdCIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiI2Y1ZjVmNyIsCiAgInRoZW1lX2NvbG9yIjogIiMwMDY2Y2MiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24tMTkyLnBuZyIsCiAgICAgICJzaXplcyI6ICIxOTJ4MTkyIiwKICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIiwKICAgICAgInB1cnBvc2UiOiAiYW55IgogICAgfSwKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24tNTEyLnBuZyIsCiAgICAgICJzaXplcyI6ICI1MTJ4NTEyIiwKICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIiwKICAgICAgInB1cnBvc2UiOiAiYW55IgogICAgfSwKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24uc3ZnIiwKICAgICAgInNpemVzIjogImFueSIsCiAgICAgICJ0eXBlIjogImltYWdlL3N2Zyt4bWwiLAogICAgICAicHVycG9zZSI6ICJhbnkiCiAgICB9CiAgXQp9Cg==" />
-  <script>window.APP_VERSION = "build@1791872425";</script>
+  <script>window.APP_VERSION = "build@1791874039";</script>
   <title>DSC销售 · 项目管理工作台（完整版）</title>
   <script src="./xlsx.full.min.js"></script>
   <script>
@@ -2790,6 +2790,9 @@ body.dark-mode .proj-dir-tabs .dir-tab.active { background: #00b894; border-colo
 /* ===== V30：项目列表筛选条默认收起（点「🔎 筛选」展开，同看板模式） ===== */
 .filter-bar.pvk-collapsed { display: none; }
 #projFilterToggle { margin: 0 0 12px; }
+
+/* ===== V31：筛选切换按钮与操作行平齐（清掉 V30 的下方留白），延期自动沉底为 JS 逻辑无需样式 ===== */
+#projFilterToggle { margin: 0; }
 
     /* ==================================================================
        增强模块样式：云同步状态 / 历史折叠 / 草稿提示 / 移动端优化
@@ -5731,6 +5734,10 @@ body.dark-mode .proj-dir-tabs .dir-tab.active { background: #00b894; border-colo
         });
       } else {
         filtered.sort((a, b) => {
+          // V31：延期的项目自动沉底（正常组内才参与紧急优先/日期排序），无需清空活动时间
+          const dlyA = (a.followStatus || '跟进中') === '延期';
+          const dlyB = (b.followStatus || '跟进中') === '延期';
+          if (dlyA !== dlyB) return dlyA ? 1 : -1;
           const daysA = calcCountdown(a);
           const daysB = calcCountdown(b);
           const isUrgentA = (daysA !== null && daysA !== '已结束' && daysA < 7);
@@ -5794,7 +5801,7 @@ body.dark-mode .proj-dir-tabs .dir-tab.active { background: #00b894; border-colo
                       ${payAlert}
                       <div class="project-tags">${tagsHtml}</div>
                       <div class="project-meta">建立时间：${createdText}</div>
-                      <div class="project-meta">${p.startDate?formatDateCN(new Date(p.startDate)):''} ~ ${p.endDate?formatDateCN(new Date(p.endDate)):''}</div>
+                      <div class="project-meta">活动时间：${p.startDate?formatDateCN(new Date(p.startDate)):''} ~ ${p.endDate?formatDateCN(new Date(p.endDate)):''}</div>
                       <div class="progress-bar"><div class="fill" style="width:${progress}%"></div></div>
                       <div style="display:flex;justify-content:space-between;font-size:13px;">
                           <span>进度 ${progress}% (${doneSteps}/${totalSteps})</span>
@@ -19102,15 +19109,16 @@ select to_regclass('public.wb_kv');</div>
 
     // 操作层已在工具栏（行2），位于列表内容（含筛选条行3）上方 —— 满足「新建项目在跟进情况上方」
 
-    /* ---- V30：列表筛选条默认收起，点「🔎 筛选」展开（同看板 pvk 模式，偏好记本地） ---- */
+    /* ---- V30→V31：筛选切换按钮移入操作行（与新建/刷新/导出平齐），筛选条在下方展开、默认收起 ---- */
     var fbar = listView.querySelector('.filter-bar'); // 只作用于项目面板（客户面板也有 .filter-bar，不碰）
     if (fbar && !$('projFilterToggle')) {
       fbar.id = 'projFilterBar';
-      var tglBar = document.createElement('div');
-      tglBar.className = 'pvk-bar';
-      tglBar.innerHTML = '<button type="button" class="pvk-toggle" id="projFilterToggle">🔎 筛选<span class="pvk-arrow">▾</span></button>';
-      listView.insertBefore(tglBar, fbar);
-      var tglBtn = tglBar.querySelector('#projFilterToggle');
+      var tglBtn = document.createElement('button');
+      tglBtn.type = 'button';
+      tglBtn.className = 'pvk-toggle';
+      tglBtn.id = 'projFilterToggle';
+      tglBtn.innerHTML = '🔎 筛选<span class="pvk-arrow">▾</span>';
+      acts.appendChild(tglBtn); // V31：与操作按钮同一行（省一行空间），展开的筛选条显示在下方
       var PF_KEY = 'wb_proj_filter_open'; // 本地偏好，不进云同步
       function applyProjFilterOpen(open) {
         fbar.classList.toggle('pvk-collapsed', !open);
@@ -19123,6 +19131,23 @@ select to_regclass('public.wb_kv');</div>
       var open0 = false;
       try { open0 = localStorage.getItem(PF_KEY) === '1'; } catch (e) {}
       applyProjFilterOpen(open0);
+
+      // 看板视图隐藏筛选切换按钮（看板有自己的「🔎 筛选」）
+      if (typeof window.showProjView === 'function' && !window.showProjView.__v31filt) {
+        var origSPV = window.showProjView;
+        var spv = function (v) {
+          var r = origSPV.apply(this, arguments);
+          try { tglBtn.style.display = (v === 'kanban') ? 'none' : ''; } catch (e) {}
+          return r;
+        };
+        spv.__v31filt = true;
+        window.showProjView = spv;
+      }
+      // 按当前激活视图立即纠正一次
+      try {
+        var curKan = $('projViewKanban');
+        tglBtn.style.display = (curKan && curKan.classList.contains('active')) ? 'none' : '';
+      } catch (e) {}
     }
   }
 
