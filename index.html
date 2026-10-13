@@ -11,7 +11,7 @@
   <link rel="icon" type="image/png" href="./icon-192.png" />
   <link rel="apple-touch-icon" href="./icon-192.png" />
   <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIuiupOecn+W3peS9nOWPsCIsCiAgInNob3J0X25hbWUiOiAi5bel5L2c5Y+wIiwKICAiZGVzY3JpcHRpb24iOiAi5Zub5bed5rS75Yqo5oOF5oql5pCc6ZuG5LiO5pS/5LyB5a6i5oi3566h55CGIiwKICAic3RhcnRfdXJsIjogIi4vIiwKICAic2NvcGUiOiAiLi8iLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJvcmllbnRhdGlvbiI6ICJwb3J0cmFpdCIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiI2Y1ZjVmNyIsCiAgInRoZW1lX2NvbG9yIjogIiMwMDY2Y2MiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24tMTkyLnBuZyIsCiAgICAgICJzaXplcyI6ICIxOTJ4MTkyIiwKICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIiwKICAgICAgInB1cnBvc2UiOiAiYW55IgogICAgfSwKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24tNTEyLnBuZyIsCiAgICAgICJzaXplcyI6ICI1MTJ4NTEyIiwKICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIiwKICAgICAgInB1cnBvc2UiOiAiYW55IgogICAgfSwKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24uc3ZnIiwKICAgICAgInNpemVzIjogImFueSIsCiAgICAgICJ0eXBlIjogImltYWdlL3N2Zyt4bWwiLAogICAgICAicHVycG9zZSI6ICJhbnkiCiAgICB9CiAgXQp9Cg==" />
-  <script>window.APP_VERSION = "build@1791874039";</script>
+  <script>window.APP_VERSION = "build@1791885818";</script>
   <title>DSC销售 · 项目管理工作台（完整版）</title>
   <script src="./xlsx.full.min.js"></script>
   <script>
@@ -2793,6 +2793,35 @@ body.dark-mode .proj-dir-tabs .dir-tab.active { background: #00b894; border-colo
 
 /* ===== V31：筛选切换按钮与操作行平齐（清掉 V30 的下方留白），延期自动沉底为 JS 逻辑无需样式 ===== */
 #projFilterToggle { margin: 0; }
+
+/* ===== V32：倒计时徽章分档配色（≤10红/≤20橙/≤30黄/≤60蓝/>60青绿，已结束灰；Apple 胶囊风） ===== */
+.cd-badge {
+  display: inline-flex; align-items: center;
+  padding: 2px 10px; border-radius: 999px;
+  font-size: 12px; font-weight: 700; line-height: 1.6;
+  white-space: nowrap;
+}
+.cd-badge.cd-none { display: none; }
+.cd-badge.cd-10  { background: #ffe3e3; color: #c0392b; }
+.cd-badge.cd-20  { background: #ffeedd; color: #d35400; }
+.cd-badge.cd-30  { background: #fff8d6; color: #a68b00; }
+.cd-badge.cd-60  { background: #e3f0ff; color: #0066cc; }
+.cd-badge.cd-60p { background: #e0f5ee; color: #00875a; }
+.cd-badge.cd-done{ background: #f0f0f2; color: #8e8e93; }
+@media (prefers-color-scheme: dark) {
+  .cd-badge.cd-10  { background: rgba(255, 105, 97, .18); color: #ff8a80; }
+  .cd-badge.cd-20  { background: rgba(255, 159, 67, .18); color: #ffb36b; }
+  .cd-badge.cd-30  { background: rgba(255, 214, 10, .16); color: #ffd60a; }
+  .cd-badge.cd-60  { background: rgba(10, 132, 255, .20); color: #6db3ff; }
+  .cd-badge.cd-60p { background: rgba(48, 209, 88, .16);  color: #5fdba7; }
+  .cd-badge.cd-done{ background: rgba(255,255,255,.10);   color: #98989d; }
+}
+body.dark-mode .cd-badge.cd-10  { background: rgba(255, 105, 97, .18); color: #ff8a80; }
+body.dark-mode .cd-badge.cd-20  { background: rgba(255, 159, 67, .18); color: #ffb36b; }
+body.dark-mode .cd-badge.cd-30  { background: rgba(255, 214, 10, .16); color: #ffd60a; }
+body.dark-mode .cd-badge.cd-60  { background: rgba(10, 132, 255, .20); color: #6db3ff; }
+body.dark-mode .cd-badge.cd-60p { background: rgba(48, 209, 88, .16);  color: #5fdba7; }
+body.dark-mode .cd-badge.cd-done{ background: rgba(255,255,255,.10);   color: #98989d; }
 
     /* ==================================================================
        增强模块样式：云同步状态 / 历史折叠 / 草稿提示 / 移动端优化
@@ -5759,6 +5788,10 @@ body.dark-mode .proj-dir-tabs .dir-tab.active { background: #00b894; border-colo
         const followDone = (p.followStatus === '交付完成' || p.followStatus === '丢单' || p.followStatus === '取消');
         const statusClass = followDone ? 'deadline-safe' : (isUrgent ? 'deadline-urgent' :
           'deadline-normal');
+        const cdTier = (days === null || followDone) ? 'cd-none' :
+          (days === '已结束' ? 'cd-done' :
+            days <= 10 ? 'cd-10' : days <= 20 ? 'cd-20' : days <= 30 ? 'cd-30' :
+            days <= 60 ? 'cd-60' : 'cd-60p');
         const doneSteps = p.steps.filter(s => s.done).length;
         const totalSteps = p.steps.length;
         const tagsHtml = (p.grade ? `<span class="tag tag-grade">${gradeDot(p.grade)}${p.grade} 级</span>` : '') +
@@ -5805,7 +5838,7 @@ body.dark-mode .proj-dir-tabs .dir-tab.active { background: #00b894; border-colo
                       <div class="progress-bar"><div class="fill" style="width:${progress}%"></div></div>
                       <div style="display:flex;justify-content:space-between;font-size:13px;">
                           <span>进度 ${progress}% (${doneSteps}/${totalSteps})</span>
-                          <span class="${statusClass}">${days !== null ? (days === '已结束' ? '⏳ 已结束' : '⏳ '+days+'天') : ''}</span>
+                          <span class="cd-badge ${cdTier}">${days !== null ? (days === '已结束' ? '⏳ 已结束' : '⏳ '+days+'天') : ''}</span>
                       </div>
                       <div class="steps-preview">${p.steps.filter(s=>s.done).map(s=>s.label).slice(0,3).join('、')}${p.steps.filter(s=>s.done).length>3?' ...':''}</div>
                       <div class="card-actions">
