@@ -11,7 +11,7 @@
   <link rel="icon" type="image/png" href="./icon-192.png" />
   <link rel="apple-touch-icon" href="./icon-192.png" />
   <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIuiupOecn+W3peS9nOWPsCIsCiAgInNob3J0X25hbWUiOiAi5bel5L2c5Y+wIiwKICAiZGVzY3JpcHRpb24iOiAi5Zub5bed5rS75Yqo5oOF5oql5pCc6ZuG5LiO5pS/5LyB5a6i5oi3566h55CGIiwKICAic3RhcnRfdXJsIjogIi4vIiwKICAic2NvcGUiOiAiLi8iLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJvcmllbnRhdGlvbiI6ICJwb3J0cmFpdCIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiI2Y1ZjVmNyIsCiAgInRoZW1lX2NvbG9yIjogIiMwMDY2Y2MiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24tMTkyLnBuZyIsCiAgICAgICJzaXplcyI6ICIxOTJ4MTkyIiwKICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIiwKICAgICAgInB1cnBvc2UiOiAiYW55IgogICAgfSwKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24tNTEyLnBuZyIsCiAgICAgICJzaXplcyI6ICI1MTJ4NTEyIiwKICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIiwKICAgICAgInB1cnBvc2UiOiAiYW55IgogICAgfSwKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24uc3ZnIiwKICAgICAgInNpemVzIjogImFueSIsCiAgICAgICJ0eXBlIjogImltYWdlL3N2Zyt4bWwiLAogICAgICAicHVycG9zZSI6ICJhbnkiCiAgICB9CiAgXQp9Cg==" />
-  <script>window.APP_VERSION = "build@1791794839";</script>
+  <script>window.APP_VERSION = "build@1791854391";</script>
   <title>DSC销售 · 项目管理工作台（完整版）</title>
   <script src="./xlsx.full.min.js"></script>
   <script>
@@ -2524,6 +2524,18 @@ body.dark-mode .fld-hint { color: #98989d; }
 /* ===== V21：待办看板移入日常工作子标签（panel-todo 去双重卡片感） ===== */
 #panel-todo { padding: 0; background: transparent; box-shadow: none; }
 #panel-todo .todo-board { margin-bottom: 0; }
+
+/* ===== V24：跟进状态彩色徽章 ===== */
+.status-chip {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+.project-status { background: transparent; padding: 0; }
 
     /* ==================================================================
        增强模块样式：云同步状态 / 历史折叠 / 草稿提示 / 移动端优化
@@ -5439,10 +5451,20 @@ body.dark-mode .fld-hint { color: #98989d; }
       const now = new Date();
       const sortSel = document.getElementById('proj-filter-sort');
       if (sortSel && sortSel.value === 'date-desc') {
-        // V20：时间排序 —— 最近活动（开始日期）排最前，无日期的排最后
+        // V24：时间排序 —— 状态顺延：正常项目按最近活动排最前；
+        // 延期的顺延到正常项目之后（按新档期 = 结束日期，无则按开始日期）；
+        // 丢单/取消的沉底（不再花精力跟）
+        const statusGroup = (p) => {
+          const st = p.followStatus || '跟进中';
+          if (st === '丢单' || st === '取消') return 2;
+          if (st === '延期') return 1;
+          return 0;
+        };
         filtered.sort((a, b) => {
-          const da = a.startDate || a.createdAt || '';
-          const db = b.startDate || b.createdAt || '';
+          const ga = statusGroup(a), gb = statusGroup(b);
+          if (ga !== gb) return ga - gb;
+          const da = ga === 1 ? (a.endDate || a.startDate || a.createdAt || '') : (a.startDate || a.createdAt || '');
+          const db = gb === 1 ? (b.endDate || b.startDate || b.createdAt || '') : (b.startDate || b.createdAt || '');
           if (!da && !db) return 0;
           if (!da) return 1;
           if (!db) return -1;
@@ -5502,7 +5524,7 @@ body.dark-mode .fld-hint { color: #98989d; }
                   <div class="project-card ${isUrgent ? 'urgent' : ''}" onclick="openProjectModal('${p.id}')">
                       <div class="header-row">
                           <span class="project-name">${p.name}${urgentBadge}</span>
-                          <span class="project-status">${p.followStatus || '跟进中'}</span>
+                          <span class="project-status">${statusChip(p.followStatus || '跟进中')}</span>
                       </div>
                       <div class="project-meta">客户：${p.client||'未指定'} ｜ 类型：${p.type||'-'} ｜ 跟进：${p.followStatus||'跟进中'}</div>
                       ${(p.province||p.city||p.district||p.address) ? `<div class="project-meta">📍 地点：${[p.province,p.city,p.district].filter(Boolean).join(' ')}${p.address?' '+p.address:''}</div>` : ''}
@@ -5580,6 +5602,15 @@ body.dark-mode .fld-hint { color: #98989d; }
     function gradeDot(g) {
       if (!g) return '';
       return `<span class="grade-dot" style="background:${gradeDotColor(g)}"></span>`;
+    }
+    // V24：跟进状态彩色徽章（跟进中蓝 / 成交执行交付中青 / 延期橙 / 丢单·取消灰 / 交付完成绿）
+    function statusChipColor(st) {
+      return { '跟进中': '#1971c2', '成交执行交付中': '#0ca678', '延期': '#e8590c', '丢单': '#868e96', '取消': '#868e96', '交付完成': '#2f9e44' }[st] || '#1971c2';
+    }
+    function statusChip(st) {
+      const c = statusChipColor(st);
+      const icon = { '跟进中': '🔎', '成交执行交付中': '💼', '延期': '🕒', '丢单': '✕', '取消': '🚫', '交付完成': '✔' }[st] || '🔎';
+      return `<span class="status-chip" style="color:${c};background:${c}14;border:1px solid ${c}45;">${icon} ${st}</span>`;
     }
     // 把弹窗中已填写的表单值读回项目对象（不关弹窗、不弹提示）——
     // 用于点击子步骤等局部操作时保留用户未保存的输入（V20 修清空 bug）
@@ -18236,7 +18267,7 @@ select to_regclass('public.wb_kv');</div>
         '<td>' + gradeCell(r[GRADE_COL]) + '</td>' +
         '<td>' + esc(r[6]) + '</td>' +
         '<td class="' + (r[7] === '是' ? 'yes' : 'no') + '">' + r[7] + '</td>' +
-        '<td>' + esc(r[8]) + '</td>' +
+        '<td style="color:' + (window.statusChipColor ? window.statusChipColor(r[8]) : 'inherit') + ';font-weight:600;">' + esc(r[8]) + '</td>' +
         '<td class="num">' + r[9] + '</td>' +
         '<td class="num">' + r[10] + '</td>' +
         '<td class="num">' + esc(r[11]) + '</td>' +
@@ -18477,6 +18508,173 @@ select to_regclass('public.wb_kv');</div>
     } catch (e) { console.warn('[region]', e); }
     return r;
   };
+})();
+
+</script>
+<script>
+/* ===== V24：项目弹窗客户选择器升级 =====
+ * 替换原生 datalist（滚动麻烦、信息只有名字）为自定义搜索下拉：
+ * - 输入关键字即时过滤（客户名/联系人/备注），关键字高亮
+ * - 每项显示：客户名 + 联系人 ｜ 级别 ｜ 消费 ｜ 紧密度 ｜ 项目数
+ * - ↑↓ 选择 · Enter 确认 · Esc 关闭 · 点击选择
+ * - 无匹配时提示「保存后将作为新客户名」
+ */
+(function () {
+  'use strict';
+  var TAG = '[clientpicker]';
+  function log() { try { console.log.apply(console, [TAG].concat([].slice.call(arguments))); } catch (e) {} }
+  function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+
+  function injectStyle() {
+    if (document.getElementById('clientpicker-style')) return;
+    var st = document.createElement('style');
+    st.id = 'clientpicker-style';
+    st.textContent = [
+      '.cp-wrap{position:relative;}',
+      '.cp-drop{position:absolute;z-index:80;left:0;right:0;top:calc(100% + 4px);background:#fff;border:1px solid rgba(0,0,0,.1);border-radius:12px;box-shadow:0 12px 32px rgba(0,0,0,.14);max-height:264px;overflow:auto;font-size:13px;}',
+      '.cp-head{padding:6px 12px;font-size:12px;color:#6e6e73;border-bottom:1px solid rgba(0,0,0,.06);position:sticky;top:0;background:#f5f5f7;z-index:1;}',
+      '.cp-item{padding:8px 12px;cursor:pointer;border-bottom:1px solid rgba(0,0,0,.04);}',
+      '.cp-item:last-child{border-bottom:none;}',
+      '.cp-item:hover,.cp-item.cur{background:rgba(0,102,204,.08);}',
+      '.cp-name{color:#1d1d1f;font-weight:600;line-height:1.4;word-break:break-all;}',
+      '.cp-info{color:#6e6e73;font-size:12px;margin-top:2px;line-height:1.5;}',
+      '.cp-hl{background:#ffe08a;color:inherit;border-radius:3px;padding:0 1px;}',
+      '.cp-empty{padding:14px 12px;color:#868e96;text-align:center;}',
+      'body.dark-mode .cp-drop{background:#2c2c2e;border-color:rgba(255,255,255,.16);box-shadow:0 12px 32px rgba(0,0,0,.5);}',
+      'body.dark-mode .cp-head{background:#1c1c1e;color:#98989d;border-bottom-color:rgba(255,255,255,.08);}',
+      'body.dark-mode .cp-item{border-bottom-color:rgba(255,255,255,.06);}',
+      'body.dark-mode .cp-item:hover,body.dark-mode .cp-item.cur{background:rgba(10,132,255,.18);}',
+      'body.dark-mode .cp-name{color:#f5f5f7;}',
+      'body.dark-mode .cp-info{color:#98989d;}',
+      'body.dark-mode .cp-hl{background:#8a6d00;color:#f5f5f7;}',
+      '@media (prefers-color-scheme: dark){',
+      ' body:not(.light-mode) .cp-drop{background:#2c2c2e;border-color:rgba(255,255,255,.16);box-shadow:0 12px 32px rgba(0,0,0,.5);}',
+      ' body:not(.light-mode) .cp-head{background:#1c1c1e;color:#98989d;border-bottom-color:rgba(255,255,255,.08);}',
+      ' body:not(.light-mode) .cp-item{border-bottom-color:rgba(255,255,255,.06);}',
+      ' body:not(.light-mode) .cp-item:hover,body:not(.light-mode) .cp-item.cur{background:rgba(10,132,255,.18);}',
+      ' body:not(.light-mode) .cp-name{color:#f5f5f7;}',
+      ' body:not(.light-mode) .cp-info{color:#98989d;}',
+      ' body:not(.light-mode) .cp-hl{background:#8a6d00;color:#f5f5f7;}',
+      '}'
+    ].join('\n');
+    document.head.appendChild(st);
+  }
+
+  function hl(text, k) {
+    var t = String(text || '');
+    if (!k) return esc(t);
+    var lt = t.toLowerCase(), lk = String(k).toLowerCase();
+    var idx = lt.indexOf(lk);
+    if (idx < 0) return esc(t);
+    return esc(t.slice(0, idx)) + '<mark class="cp-hl">' + esc(t.slice(idx, idx + k.length)) + '</mark>' + esc(t.slice(idx + k.length));
+  }
+
+  function projectCount(name) {
+    try { return (window.getProjects ? window.getProjects() : []).filter(function (p) { return p.client === name; }).length; }
+    catch (e) { return 0; }
+  }
+
+  function clientInfo(c) {
+    var parts = [];
+    if (c.contact) parts.push('👤 ' + c.contact);
+    if (c.level) parts.push('级别 ' + c.level);
+    if (c.importance) parts.push('消费 ' + c.importance);
+    if (c.closeness) parts.push('紧密度 ' + c.closeness);
+    parts.push('🗂 ' + projectCount(c.name) + ' 个项目');
+    return parts.join(' ｜ ');
+  }
+
+  function enhancePicker() {
+    var input = document.getElementById('modal-p-client');
+    if (!input || input.dataset.cpReady === '1') return;
+    // 关掉原生 datalist 弹层，换成自定义下拉
+    input.removeAttribute('list');
+    input.setAttribute('autocomplete', 'off');
+    input.dataset.cpReady = '1';
+
+    var wrap = document.createElement('div');
+    wrap.className = 'cp-wrap';
+    input.parentNode.insertBefore(wrap, input);
+    wrap.appendChild(input);
+    var drop = document.createElement('div');
+    drop.className = 'cp-drop';
+    drop.style.display = 'none';
+    wrap.appendChild(drop);
+
+    var items = [], cur = -1, suppress = false;
+
+    function mark() {
+      var nodes = drop.querySelectorAll('.cp-item');
+      for (var i = 0; i < nodes.length; i++) nodes[i].classList.toggle('cur', i === cur);
+      if (cur >= 0 && nodes[cur] && nodes[cur].scrollIntoView) {
+        try { nodes[cur].scrollIntoView({ block: 'nearest' }); } catch (e) {}
+      }
+    }
+    function hide() { drop.style.display = 'none'; drop.innerHTML = ''; cur = -1; }
+    function choose(name) {
+      input.value = name;
+      suppress = true; // 程序派发的 input/change 不再触发下拉重开
+      hide();
+      try { input.dispatchEvent(new Event('input', { bubbles: true })); } catch (e) {}
+      try { input.dispatchEvent(new Event('change', { bubbles: true })); } catch (e) {}
+      suppress = false;
+    }
+    function render(kw) {
+      var clients = [];
+      try { clients = (window.getClients ? window.getClients() : []).slice(); } catch (e) {}
+      var k = String(kw || '').trim().toLowerCase();
+      items = k ? clients.filter(function (c) {
+        return ((c.name || '') + ' ' + (c.contact || '') + ' ' + (c.remark || '')).toLowerCase().indexOf(k) >= 0;
+      }) : clients;
+      if (!items.length) {
+        drop.innerHTML = '<div class="cp-empty">未找到匹配客户（保存后将按此名称作为新客户）</div>';
+      } else {
+        drop.innerHTML = '<div class="cp-head">共 ' + items.length + ' 家客户' +
+          (k ? '（关键词“' + esc(kw) + '”）' : '') + '，↑↓ 选择 · Enter 确认</div>' +
+          items.map(function (c, i) {
+            return '<div class="cp-item" data-i="' + i + '" data-name="' + esc(c.name) + '">' +
+              '<div class="cp-name">' + hl(c.name, k) + '</div>' +
+              '<div class="cp-info">' + esc(clientInfo(c)) + '</div>' +
+              '</div>';
+          }).join('');
+      }
+      drop.style.display = 'block';
+      cur = -1;
+    }
+
+    input.addEventListener('focus', function () { if (suppress) return; render(input.value); });
+    input.addEventListener('input', function () { if (suppress) return; render(input.value); });
+    input.addEventListener('keydown', function (e) {
+      if (drop.style.display === 'none') return;
+      if (e.key === 'ArrowDown') { e.preventDefault(); if (items.length) { cur = Math.min(cur + 1, items.length - 1); mark(); } }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); if (items.length) { cur = Math.max(cur - 1, 0); mark(); } }
+      else if (e.key === 'Enter') {
+        if (cur >= 0 && items[cur]) { e.preventDefault(); choose(items[cur].name); }
+        else hide();
+      }
+      else if (e.key === 'Escape') { hide(); }
+    });
+    drop.addEventListener('mousedown', function (e) {
+      var it = e.target && e.target.closest ? e.target.closest('.cp-item') : null;
+      if (it) { e.preventDefault(); choose(it.getAttribute('data-name')); }
+    });
+    document.addEventListener('click', function (e) {
+      if (drop.style.display === 'none') return;
+      if (!wrap.contains(e.target)) hide();
+    });
+    log('客户选择器已挂载');
+  }
+
+  // 包装 openProjectModal：弹窗渲染后挂载选择器（与 region.js 的包装链式叠加）
+  var origOpen = window.openProjectModal;
+  window.openProjectModal = function () {
+    var r = origOpen ? origOpen.apply(this, arguments) : undefined;
+    try { enhancePicker(); } catch (e) { log('挂载失败', e && e.message); }
+    return r;
+  };
+
+  injectStyle();
+  log('ready');
 })();
 
 </script>
