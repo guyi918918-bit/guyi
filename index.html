@@ -11,7 +11,7 @@
   <link rel="icon" type="image/png" href="./icon-192.png" />
   <link rel="apple-touch-icon" href="./icon-192.png" />
   <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIuiupOecn+W3peS9nOWPsCIsCiAgInNob3J0X25hbWUiOiAi5bel5L2c5Y+wIiwKICAiZGVzY3JpcHRpb24iOiAi5Zub5bed5rS75Yqo5oOF5oql5pCc6ZuG5LiO5pS/5LyB5a6i5oi3566h55CGIiwKICAic3RhcnRfdXJsIjogIi4vIiwKICAic2NvcGUiOiAiLi8iLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJvcmllbnRhdGlvbiI6ICJwb3J0cmFpdCIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiI2Y1ZjVmNyIsCiAgInRoZW1lX2NvbG9yIjogIiMwMDY2Y2MiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24tMTkyLnBuZyIsCiAgICAgICJzaXplcyI6ICIxOTJ4MTkyIiwKICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIiwKICAgICAgInB1cnBvc2UiOiAiYW55IgogICAgfSwKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24tNTEyLnBuZyIsCiAgICAgICJzaXplcyI6ICI1MTJ4NTEyIiwKICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIiwKICAgICAgInB1cnBvc2UiOiAiYW55IgogICAgfSwKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24uc3ZnIiwKICAgICAgInNpemVzIjogImFueSIsCiAgICAgICJ0eXBlIjogImltYWdlL3N2Zyt4bWwiLAogICAgICAicHVycG9zZSI6ICJhbnkiCiAgICB9CiAgXQp9Cg==" />
-  <script>window.APP_VERSION = "build@1791865355";</script>
+  <script>window.APP_VERSION = "build@1791867011";</script>
   <title>DSC销售 · 项目管理工作台（完整版）</title>
   <script src="./xlsx.full.min.js"></script>
   <script>
@@ -2665,6 +2665,82 @@ body.dark-mode .proj-toolbar #pvtSettingsBtn:hover { background: rgba(255,255,25
 body.dark-mode .proj-toolbar .dir-tab.active { background: rgba(0,184,148,.16); border-color: rgba(0,184,148,.4); color: #3ddbb8; }
 body.dark-mode .pt-actions .btn-refresh-stat, body.dark-mode .pt-actions .btn-export { color: #f5f5f7; border-color: rgba(255,255,255,.16); }
 body.dark-mode .pt-actions .btn-refresh-stat:hover, body.dark-mode .pt-actions .btn-export:hover { color: #0a84ff; border-color: #0a84ff; background: rgba(10,132,255,.10); }
+
+/* ===== V28：看板统计卡一行化 + 工具栏对齐（目录标签归位为面板子标签） ===== */
+
+/* ① 统计格调小：固定 8 列，数量行恰好一行放下（金额行 5 张同宽） */
+.stat-wrap.project-stats {
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  gap: 10px;
+  margin: 12px 0;
+}
+.stat-wrap.project-stats .stat-card {
+  padding: 10px 12px;
+  border-left-width: 3px;
+  border-radius: 8px;
+  min-width: 0;
+}
+.stat-wrap.project-stats .stat-card > div:first-child {
+  font-size: 12px;
+  color: var(--ui-text-soft, #6e6e73);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.stat-wrap.project-stats .stat-num { font-size: 18px; margin-top: 3px; }
+@media (max-width: 900px) {
+  .stat-wrap.project-stats { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); }
+}
+
+/* ② 工具栏对齐：分段控件与目录标签统一 32px 总高，垂直居中（修「高低不平」） */
+.proj-toolbar .proj-dir-tabs { margin: 0; gap: 8px; }
+.proj-toolbar #projSubbar .proj-subtab {
+  height: 26px;
+  padding: 0 14px;
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
+}
+.proj-toolbar #pvtSettingsBtn {
+  height: 26px;
+  padding: 0 10px;
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
+}
+
+/* ③ 目录标签 → 面板子标签样式（参考日常工作页签：白胶囊+描边，选中实心蓝） */
+.proj-toolbar .dir-tab {
+  box-sizing: border-box;
+  height: 32px;
+  padding: 0 14px;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  background: var(--ui-card-bg, #fff);
+  border: 1px solid var(--ui-border, rgba(0,0,0,.12));
+  color: var(--ui-text-soft, #6e6e73);
+  font-size: 13px;
+  font-weight: 600;
+  box-shadow: none;
+}
+.proj-toolbar .dir-tab:hover {
+  border-color: var(--ui-primary, #0066cc);
+  color: var(--ui-primary, #0066cc);
+  background: var(--ui-card-bg, #fff);
+}
+.proj-toolbar .dir-tab.active {
+  background: var(--ui-primary, #0066cc);
+  border-color: var(--ui-primary, #0066cc);
+  color: #fff;
+  box-shadow: 0 1px 4px rgba(0,102,204,.28);
+}
+@media (prefers-color-scheme: dark) {
+  .proj-toolbar .dir-tab { background: #1c1c1e; border-color: rgba(255,255,255,.14); color: #98989d; }
+  .proj-toolbar .dir-tab.active { background: #0a84ff; border-color: #0a84ff; color: #fff; }
+}
+body.dark-mode .proj-toolbar .dir-tab { background: #1c1c1e; border-color: rgba(255,255,255,.14); color: #98989d; }
+body.dark-mode .proj-toolbar .dir-tab.active { background: #0a84ff; border-color: #0a84ff; color: #fff; }
 
     /* ==================================================================
        增强模块样式：云同步状态 / 历史折叠 / 草稿提示 / 移动端优化
