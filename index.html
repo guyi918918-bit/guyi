@@ -11,7 +11,7 @@
   <link rel="icon" type="image/png" href="./icon-192.png" />
   <link rel="apple-touch-icon" href="./icon-192.png" />
   <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIuiupOecn+W3peS9nOWPsCIsCiAgInNob3J0X25hbWUiOiAi5bel5L2c5Y+wIiwKICAiZGVzY3JpcHRpb24iOiAi5Zub5bed5rS75Yqo5oOF5oql5pCc6ZuG5LiO5pS/5LyB5a6i5oi3566h55CGIiwKICAic3RhcnRfdXJsIjogIi4vIiwKICAic2NvcGUiOiAiLi8iLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJvcmllbnRhdGlvbiI6ICJwb3J0cmFpdCIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiI2Y1ZjVmNyIsCiAgInRoZW1lX2NvbG9yIjogIiMwMDY2Y2MiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24tMTkyLnBuZyIsCiAgICAgICJzaXplcyI6ICIxOTJ4MTkyIiwKICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIiwKICAgICAgInB1cnBvc2UiOiAiYW55IgogICAgfSwKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24tNTEyLnBuZyIsCiAgICAgICJzaXplcyI6ICI1MTJ4NTEyIiwKICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIiwKICAgICAgInB1cnBvc2UiOiAiYW55IgogICAgfSwKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24uc3ZnIiwKICAgICAgInNpemVzIjogImFueSIsCiAgICAgICJ0eXBlIjogImltYWdlL3N2Zyt4bWwiLAogICAgICAicHVycG9zZSI6ICJhbnkiCiAgICB9CiAgXQp9Cg==" />
-  <script>window.APP_VERSION = "build@1791861085";</script>
+  <script>window.APP_VERSION = "build@1791865355";</script>
   <title>DSC销售 · 项目管理工作台（完整版）</title>
   <script src="./xlsx.full.min.js"></script>
   <script>
@@ -18951,6 +18951,154 @@ select to_regclass('public.wb_kv');</div>
     right.appendChild(btnGroup);
     bar.appendChild(left);
     bar.appendChild(right);
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+})();
+
+</script>
+<script>
+/* ===== V27：项目看板三项升级 =====
+ * 1) 目录标签（📌 跟进中 / ✕ 丢单取消）只属于「项目列表」视图 —— 看板视图自动隐藏
+ * 2) 金额类统计只统计已成交项目（未成交项目的金额是预估，不计入）
+ * 3) 统计卡重排：第一行 = 数量 + 等级；分隔说明；第二行 = 金额（仅已成交口径）
+ * 实现说明：base 的 renderProjectStats 是闭包内函数无法直接替换，
+ *   但所有统计渲染都经由 renderProjects()，这里包装后用 V27 版本重渲染 #project-stats。
+ */
+(function () {
+  var TRIES = 24;
+  function $(id) { return document.getElementById(id); }
+  function escS(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+  function gradeDot(g) {
+    var c = g === 'A' ? '#e03131' : (g === 'B' ? '#f08c00' : '#1971c2');
+    return g ? '<span class="grade-dot" style="background:' + c + '"></span>' : '';
+  }
+
+  function loadProjects() {
+    try {
+      if (typeof window.getProjects === 'function') {
+        var v = window.getProjects();
+        if (Array.isArray(v)) return v;
+      }
+    } catch (e) {}
+    try {
+      var s = localStorage.getItem('sport_projects');
+      var v2 = s ? JSON.parse(s) : [];
+      return Array.isArray(v2) ? v2 : [];
+    } catch (e) { return []; }
+  }
+
+  // —— V27 版统计渲染：金额只算已成交 + 卡片重排 ——
+  function renderProjectStatsV27() {
+    var el = $('project-stats');
+    if (!el) return;
+    var projects = loadProjects();
+    var total = projects.length, byStatus = {}, byGrade = {};
+    var unpaidSum = 0, contractSum = 0, paidSum = 0, perfSum = 0, commSum = 0;
+    var now = new Date();
+    var ym = now.getFullYear() + '-' + ('0' + (now.getMonth() + 1)).slice(-2);
+    var thisMonthNew = 0;
+    projects.forEach(function (p) {
+      var st = p.followStatus || '跟进中';
+      byStatus[st] = (byStatus[st] || 0) + 1;
+      var g = p.grade || '未分级';
+      byGrade[g] = (byGrade[g] || 0) + 1;
+      if (p.createdAt && String(p.createdAt).substring(0, 7) === ym) thisMonthNew++;
+      // V27：未成交项目金额为预估，不计入金额统计
+      if (p.deal) {
+        unpaidSum += (Number(p.unpaidAmount) || 0);
+        contractSum += (Number(p.contractAmount) || 0);
+        paidSum += (Number(p.paidAmount) || 0);
+        perfSum += (Number(p.projectPerformance) || 0);
+        commSum += (Number(p.commission) || 0);
+      }
+    });
+    function card(label, val, cls) {
+      return '<div class="stat-card' + (cls ? ' ' + cls : '') + '"><div>' + label + '</div><div class="stat-num">' + val + '</div></div>';
+    }
+    var KNOWN_ST = ['跟进中', '成交执行交付中', '延期', '丢单', '取消', '交付完成'];
+    var html = '<h3 style="margin:0 0 8px;grid-column:1/-1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">📊 项目看板 · 基础信息统计</h3>';
+    // —— 第一行：数量 + 等级 ——
+    html += card('项目总数', total) + card('本月新建', thisMonthNew);
+    KNOWN_ST.forEach(function (st) { if (byStatus[st]) html += card(escS(st), byStatus[st]); });
+    Object.keys(byStatus).forEach(function (st) {
+      if (KNOWN_ST.indexOf(st) < 0) html += card(escS(st), byStatus[st]);
+    });
+    ['A', 'B', 'C'].forEach(function (g) { if (byGrade[g]) html += card(gradeDot(g) + g, byGrade[g]); });
+    if (byGrade['未分级']) html += card('未分级', byGrade['未分级']);
+    Object.keys(byGrade).forEach(function (g) {
+      if (['A', 'B', 'C', '未分级'].indexOf(g) < 0) html += card(escS(g), byGrade[g]);
+    });
+    // —— 分隔说明行 ——
+    html += '<div style="grid-column:1/-1;font-size:12px;color:var(--ui-text-soft,#6e6e73);margin-top:6px;">💰 金额统计（仅统计<b>已成交</b>项目；未成交项目的金额为预估，不计入）</div>';
+    // —— 第二行：金额（仅已成交口径） ——
+    html += card('合同总额', '¥' + contractSum.toFixed(2)) +
+            card('已回款', '¥' + paidSum.toFixed(2)) +
+            card('待回款', '¥' + unpaidSum.toFixed(2), unpaidSum > 0 ? 'stat-danger' : '') +
+            card('项目业绩合计', '¥' + perfSum.toFixed(2)) +
+            card('个人提成合计', '¥' + commSum.toFixed(2));
+    el.innerHTML = html;
+    window.__projStats = { total: total, thisMonthNew: thisMonthNew, byStatus: byStatus, byGrade: byGrade,
+      contractSum: contractSum, paidSum: paidSum, unpaidSum: unpaidSum, perfSum: perfSum, commSum: commSum };
+  }
+
+  function applyDirTabVisibility(view) {
+    var dt = $('projDirTabs');
+    if (dt) dt.style.display = (view === 'kanban') ? 'none' : '';
+  }
+
+  function init() {
+    if (TRIES-- <= 0) return;
+    var pending = false;
+
+    // 1) 包装 showProjView：看板视图隐藏目录标签
+    if (typeof window.showProjView === 'function' && $('projDirTabs') && !window.showProjView.__v27dir) {
+      var origSPV = window.showProjView;
+      var wrappedSPV = function (v) {
+        var r = origSPV.apply(this, arguments);
+        try { applyDirTabVisibility(v); } catch (e) {}
+        return r;
+      };
+      wrappedSPV.__v27dir = true;
+      window.showProjView = wrappedSPV;
+      // 按当前激活视图立即纠正一次（包装前最后一次切换来不及生效）
+      var k = $('projViewKanban');
+      applyDirTabVisibility(k && k.classList.contains('active') ? 'kanban' : 'list');
+    } else if (!(window.showProjView && window.showProjView.__v27dir)) {
+      pending = true;
+    }
+
+    // 2&3) 包装 renderProjects：渲染完列表后用 V27 版本重绘统计
+    if (typeof window.renderProjects === 'function' && !window.renderProjects.__v27stats) {
+      var origRP = window.renderProjects;
+      var wrappedRP = function () {
+        var r = origRP.apply(this, arguments);
+        try { renderProjectStatsV27(); } catch (e) {}
+        return r;
+      };
+      wrappedRP.__v27stats = true;
+      window.renderProjects = wrappedRP;
+      // 若项目面板当前可见，立即重绘一次统计
+      var pp = $('panel-projects');
+      if (pp && pp.classList.contains('show')) {
+        try { renderProjectStatsV27(); } catch (e) {}
+      }
+    } else if (!(window.renderProjects && window.renderProjects.__v27stats)) {
+      pending = true;
+    }
+
+    // 直接调用 renderProjectStats 的路径也走 V27 版（兜底）
+    if (typeof window.renderProjectStats === 'function' && !window.renderProjectStats.__v27) {
+      var origRS = window.renderProjectStats;
+      var wrappedRS = function () {
+        try { return renderProjectStatsV27(); } catch (e) { return origRS.apply(this, arguments); }
+      };
+      wrappedRS.__v27 = true;
+      window.renderProjectStats = wrappedRS;
+    }
+
+    if (pending) setTimeout(init, 300);
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
