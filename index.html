@@ -11,7 +11,7 @@
   <link rel="icon" type="image/png" href="./icon-192.png" />
   <link rel="apple-touch-icon" href="./icon-192.png" />
   <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIuiupOecn+W3peS9nOWPsCIsCiAgInNob3J0X25hbWUiOiAi5bel5L2c5Y+wIiwKICAiZGVzY3JpcHRpb24iOiAi5Zub5bed5rS75Yqo5oOF5oql5pCc6ZuG5LiO5pS/5LyB5a6i5oi3566h55CGIiwKICAic3RhcnRfdXJsIjogIi4vIiwKICAic2NvcGUiOiAiLi8iLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJvcmllbnRhdGlvbiI6ICJwb3J0cmFpdCIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiI2Y1ZjVmNyIsCiAgInRoZW1lX2NvbG9yIjogIiMwMDY2Y2MiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24tMTkyLnBuZyIsCiAgICAgICJzaXplcyI6ICIxOTJ4MTkyIiwKICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIiwKICAgICAgInB1cnBvc2UiOiAiYW55IgogICAgfSwKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24tNTEyLnBuZyIsCiAgICAgICJzaXplcyI6ICI1MTJ4NTEyIiwKICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIiwKICAgICAgInB1cnBvc2UiOiAiYW55IgogICAgfSwKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24uc3ZnIiwKICAgICAgInNpemVzIjogImFueSIsCiAgICAgICJ0eXBlIjogImltYWdlL3N2Zyt4bWwiLAogICAgICAicHVycG9zZSI6ICJhbnkiCiAgICB9CiAgXQp9Cg==" />
-  <script>window.APP_VERSION = "build@1791870933";</script>
+  <script>window.APP_VERSION = "build@1791872425";</script>
   <title>DSC销售 · 项目管理工作台（完整版）</title>
   <script src="./xlsx.full.min.js"></script>
   <script>
@@ -2786,6 +2786,10 @@ body.dark-mode .proj-toolbar .dir-tab.active { background: #0a84ff; border-color
 }
 body.dark-mode .proj-dir-tabs .dir-tab { background: #1c1c1e; border-color: rgba(255,255,255,.14); color: #98989d; }
 body.dark-mode .proj-dir-tabs .dir-tab.active { background: #00b894; border-color: #00b894; color: #fff; }
+
+/* ===== V30：项目列表筛选条默认收起（点「🔎 筛选」展开，同看板模式） ===== */
+.filter-bar.pvk-collapsed { display: none; }
+#projFilterToggle { margin: 0 0 12px; }
 
     /* ==================================================================
        增强模块样式：云同步状态 / 历史折叠 / 草稿提示 / 移动端优化
@@ -19097,6 +19101,29 @@ select to_regclass('public.wb_kv');</div>
     }
 
     // 操作层已在工具栏（行2），位于列表内容（含筛选条行3）上方 —— 满足「新建项目在跟进情况上方」
+
+    /* ---- V30：列表筛选条默认收起，点「🔎 筛选」展开（同看板 pvk 模式，偏好记本地） ---- */
+    var fbar = listView.querySelector('.filter-bar'); // 只作用于项目面板（客户面板也有 .filter-bar，不碰）
+    if (fbar && !$('projFilterToggle')) {
+      fbar.id = 'projFilterBar';
+      var tglBar = document.createElement('div');
+      tglBar.className = 'pvk-bar';
+      tglBar.innerHTML = '<button type="button" class="pvk-toggle" id="projFilterToggle">🔎 筛选<span class="pvk-arrow">▾</span></button>';
+      listView.insertBefore(tglBar, fbar);
+      var tglBtn = tglBar.querySelector('#projFilterToggle');
+      var PF_KEY = 'wb_proj_filter_open'; // 本地偏好，不进云同步
+      function applyProjFilterOpen(open) {
+        fbar.classList.toggle('pvk-collapsed', !open);
+        tglBtn.classList.toggle('open', !!open);
+        try { localStorage.setItem(PF_KEY, open ? '1' : '0'); } catch (e) {}
+      }
+      tglBtn.addEventListener('click', function () {
+        applyProjFilterOpen(fbar.classList.contains('pvk-collapsed'));
+      });
+      var open0 = false;
+      try { open0 = localStorage.getItem(PF_KEY) === '1'; } catch (e) {}
+      applyProjFilterOpen(open0);
+    }
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
