@@ -11,7 +11,7 @@
   <link rel="icon" type="image/png" href="./icon-192.png" />
   <link rel="apple-touch-icon" href="./icon-192.png" />
   <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIuiupOecn+W3peS9nOWPsCIsCiAgInNob3J0X25hbWUiOiAi5bel5L2c5Y+wIiwKICAiZGVzY3JpcHRpb24iOiAi5Zub5bed5rS75Yqo5oOF5oql5pCc6ZuG5LiO5pS/5LyB5a6i5oi3566h55CGIiwKICAic3RhcnRfdXJsIjogIi4vIiwKICAic2NvcGUiOiAiLi8iLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJvcmllbnRhdGlvbiI6ICJwb3J0cmFpdCIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiI2Y1ZjVmNyIsCiAgInRoZW1lX2NvbG9yIjogIiMwMDY2Y2MiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24tMTkyLnBuZyIsCiAgICAgICJzaXplcyI6ICIxOTJ4MTkyIiwKICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIiwKICAgICAgInB1cnBvc2UiOiAiYW55IgogICAgfSwKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24tNTEyLnBuZyIsCiAgICAgICJzaXplcyI6ICI1MTJ4NTEyIiwKICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIiwKICAgICAgInB1cnBvc2UiOiAiYW55IgogICAgfSwKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24uc3ZnIiwKICAgICAgInNpemVzIjogImFueSIsCiAgICAgICJ0eXBlIjogImltYWdlL3N2Zyt4bWwiLAogICAgICAicHVycG9zZSI6ICJhbnkiCiAgICB9CiAgXQp9Cg==" />
-  <script>window.APP_VERSION = "build@1794282548";</script>
+  <script>window.APP_VERSION = "build@1794283895";</script>
   <title>DSC销售 · 项目管理工作台（完整版）</title>
   <script src="./xlsx.full.min.js"></script>
   <script>
@@ -3341,12 +3341,37 @@ body.dark-mode .project-card.dealed { border-top: 2px solid #0ca678 !important; 
       opacity: .85;
     }
     .todo-done-date-group.collapsed .todo-list { display: none; }
+
+    /* ===== V36：已完成「一键展开/收起」按钮 + 进行中编辑模式 ===== */
+    .todo-done-btn {
+      border: 1px solid var(--border-color);
+      background: var(--card-bg);
+      color: var(--text-color);
+      font-size: 10.5px;
+      font-weight: 700;
+      line-height: 1.6;
+      padding: 2px 9px;
+      border-radius: 999px;
+      cursor: pointer;
+      margin-left: 6px;
+      transition: background .15s, color .15s, border-color .15s;
+    }
+    .todo-done-btn:hover { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+    /* 进行中待办：编辑开关控制条 */
+    .todo-list > li.todo-ip-control { background: transparent; margin: 0 0 6px; padding: 0; }
+    .todo-list > li.todo-ip-control .todo-edit-btn { margin-left: 0; }
+    /* 默认隐藏进行中项的 上移/下移/删除 按钮，仅编辑模式显示（与已完成一致） */
+    .todo-list:not(.edit-on) > li.todo-item:not(.done) .todo-actions { display: none; }
+
     @media (prefers-color-scheme: dark) {
       .todo-edit-btn { background: #2c2c2e; border-color: #3a3a3c; }
       .todo-done-date { background: #2c2c2e; }
+      .todo-done-btn { background: #2c2c2e; border-color: #3a3a3c; }
     }
     body.dark-mode .todo-edit-btn { background: #2c2c2e; border-color: #3a3a3c; }
     body.dark-mode .todo-done-date { background: #2c2c2e; }
+    body.dark-mode .todo-done-btn { background: #2c2c2e; border-color: #3a3a3c; }
 
     /* ---------- 草稿提示 ---------- */
     .draft-tip {
@@ -9613,11 +9638,44 @@ select to_regclass('public.wb_kv');</div>
         head.className = 'todo-done-head';
         head.innerHTML = '<span class="arrow">▼</span><span class="done-head-text">✅ 已完成（' + doneEls.length + '）· ' + _foldLabel + '</span>';
 
+        // 一键展开 / 一键收起：作用于各日期分组
+        function setAllDateGroups(collapsed) {
+          body.querySelectorAll('.todo-done-date-group').forEach(function (dg) {
+            dg.classList.toggle('collapsed', collapsed);
+            var dh = dg.querySelector('.todo-done-date');
+            if (dh) {
+              dh.querySelector('.arrow').textContent = collapsed ? '▸' : '▾';
+              dh.querySelector('.dt-toggle').textContent = collapsed ? '显示' : '收起';
+            }
+          });
+        }
+
+        // 一键展开 / 收起 按钮
+        var expandAllBtn = document.createElement('button');
+        expandAllBtn.type = 'button';
+        expandAllBtn.className = 'todo-done-btn todo-done-expandall';
+        expandAllBtn.textContent = '▽ 展开';
+        expandAllBtn.addEventListener('click', function (ev) {
+          ev.stopPropagation();
+          setAllDateGroups(false);
+        });
+
+        var collapseAllBtn = document.createElement('button');
+        collapseAllBtn.type = 'button';
+        collapseAllBtn.className = 'todo-done-btn todo-done-collapseall';
+        collapseAllBtn.textContent = '△ 收起';
+        collapseAllBtn.addEventListener('click', function (ev) {
+          ev.stopPropagation();
+          setAllDateGroups(true);
+        });
+
         // 编辑按钮：点击进入/退出编辑模式（显隐已完成项的 上移/下移/删除 按钮）
         var editBtn = document.createElement('button');
         editBtn.type = 'button';
         editBtn.className = 'todo-edit-btn';
         editBtn.textContent = '✏️ 编辑';
+        head.appendChild(expandAllBtn);
+        head.appendChild(collapseAllBtn);
         head.appendChild(editBtn);
 
         editBtn.addEventListener('click', function (ev) {
@@ -9625,14 +9683,7 @@ select to_regclass('public.wb_kv');</div>
           var on = grp.classList.toggle('edit-on');
           editBtn.textContent = on ? '✅ 完成' : '✏️ 编辑';
           // 进入编辑：展开所有日期分组以便操作；退出：收回到默认（收起）
-          body.querySelectorAll('.todo-done-date-group').forEach(function (dg) {
-            dg.classList.toggle('collapsed', !on);
-            var dh = dg.querySelector('.todo-done-date');
-            if (dh) {
-              dh.querySelector('.arrow').textContent = on ? '▾' : '▸';
-              dh.querySelector('.dt-toggle').textContent = on ? '收起' : '显示';
-            }
-          });
+          setAllDateGroups(!on);
         });
 
         head.addEventListener('click', function (ev) {
@@ -9680,6 +9731,42 @@ select to_regclass('public.wb_kv');</div>
         ul.appendChild(holder);
       }
 
+      /* ===== V36：进行中待办——与已完成一致，默认隐藏操作按钮，编辑模式显隐 ===== */
+      var _inProgressEdit = { todoDailyList: false, todoWeeklyList: false, todoMonthlyList: false };
+
+      function applyInProgressEdit(listId) {
+        var ul = $(listId);
+        if (!ul) return;
+        var on = !!_inProgressEdit[listId];
+        ul.classList.toggle('edit-on', on);
+        var btn = ul.querySelector('li.todo-ip-control .todo-edit-btn');
+        if (btn) btn.textContent = on ? '✅ 完成' : '✏️ 编辑';
+      }
+
+      function ensureInProgressEdit(listId) {
+        var ul = $(listId);
+        if (!ul) return;
+        // 仅在进行中项存在时显示编辑开关
+        var ipItems = ul.querySelectorAll('li.todo-item:not(.done)');
+        if (!ipItems.length) return;
+        var ctrl = ul.querySelector('li.todo-ip-control');
+        if (!ctrl) {
+          ctrl = document.createElement('li');
+          ctrl.className = 'todo-ip-control';
+          var ipBtn = document.createElement('button');
+          ipBtn.type = 'button';
+          ipBtn.className = 'todo-edit-btn ip';
+          ipBtn.textContent = '✏️ 编辑';
+          ipBtn.addEventListener('click', function () {
+            _inProgressEdit[listId] = !_inProgressEdit[listId];
+            applyInProgressEdit(listId);
+          });
+          ctrl.appendChild(ipBtn);
+          ul.insertBefore(ctrl, ul.firstChild);
+        }
+        applyInProgressEdit(listId);
+      }
+
       var _origRenderTodos = window.renderTodos;
       if (typeof _origRenderTodos === 'function') {
         window.renderTodos = function () {
@@ -9688,6 +9775,9 @@ select to_regclass('public.wb_kv');</div>
             groupDoneTodos('todoDailyList');
             groupDoneTodos('todoWeeklyList');
             groupDoneTodos('todoMonthlyList');
+            ensureInProgressEdit('todoDailyList');
+            ensureInProgressEdit('todoWeeklyList');
+            ensureInProgressEdit('todoMonthlyList');
           } catch (e) { console.warn('[todo group]', e); }
         };
       }
