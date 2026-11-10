@@ -11,7 +11,7 @@
   <link rel="icon" type="image/png" href="./icon-192.png" />
   <link rel="apple-touch-icon" href="./icon-192.png" />
   <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIuiupOecn+W3peS9nOWPsCIsCiAgInNob3J0X25hbWUiOiAi5bel5L2c5Y+wIiwKICAiZGVzY3JpcHRpb24iOiAi5Zub5bed5rS75Yqo5oOF5oql5pCc6ZuG5LiO5pS/5LyB5a6i5oi3566h55CGIiwKICAic3RhcnRfdXJsIjogIi4vIiwKICAic2NvcGUiOiAiLi8iLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJvcmllbnRhdGlvbiI6ICJwb3J0cmFpdCIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiI2Y1ZjVmNyIsCiAgInRoZW1lX2NvbG9yIjogIiMwMDY2Y2MiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24tMTkyLnBuZyIsCiAgICAgICJzaXplcyI6ICIxOTJ4MTkyIiwKICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIiwKICAgICAgInB1cnBvc2UiOiAiYW55IgogICAgfSwKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24tNTEyLnBuZyIsCiAgICAgICJzaXplcyI6ICI1MTJ4NTEyIiwKICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIiwKICAgICAgInB1cnBvc2UiOiAiYW55IgogICAgfSwKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24uc3ZnIiwKICAgICAgInNpemVzIjogImFueSIsCiAgICAgICJ0eXBlIjogImltYWdlL3N2Zyt4bWwiLAogICAgICAicHVycG9zZSI6ICJhbnkiCiAgICB9CiAgXQp9Cg==" />
-  <script>window.APP_VERSION = "build@1794281565";</script>
+  <script>window.APP_VERSION = "build@1794282548";</script>
   <title>DSC销售 · 项目管理工作台（完整版）</title>
   <script src="./xlsx.full.min.js"></script>
   <script>
@@ -3295,6 +3295,58 @@ body.dark-mode .project-card.dealed { border-top: 2px solid #0ca678 !important; 
       margin: 8px 0 3px;
       padding-left: 2px;
     }
+
+    /* ===== V35：已完成待办——按日独立收起 + 编辑模式显隐操作按钮 ===== */
+    .todo-done-head { flex-wrap: wrap; }
+    .todo-edit-btn {
+      margin-left: auto;
+      border: 1px solid var(--border-color);
+      background: var(--card-bg);
+      color: var(--text-color);
+      font-size: 11px;
+      font-weight: 700;
+      line-height: 1.6;
+      padding: 2px 10px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: background .15s, color .15s, border-color .15s;
+    }
+    .todo-edit-btn:hover { background: var(--primary); color: #fff; border-color: var(--primary); }
+    /* 默认隐藏已完成项的 上移/下移/删除 按钮，仅编辑模式显示 */
+    .todo-done-group:not(.edit-on) .todo-actions { display: none; }
+
+    .todo-done-date-group { margin: 4px 0; }
+    .todo-done-date {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      font-size: 11.5px;
+      font-weight: 700;
+      opacity: .7;
+      margin: 8px 0 3px;
+      padding: 4px 6px;
+      border-radius: 8px;
+      background: var(--bg-panel);
+      user-select: none;
+      transition: opacity .15s, background .15s;
+    }
+    .todo-done-date:hover { opacity: 1; }
+    .todo-done-date .dt-text { flex: 1 1 auto; min-width: 0; }
+    .todo-done-date .dt-toggle {
+      flex: 0 0 auto;
+      font-size: 10.5px;
+      font-weight: 700;
+      color: var(--primary);
+      opacity: .85;
+    }
+    .todo-done-date-group.collapsed .todo-list { display: none; }
+    @media (prefers-color-scheme: dark) {
+      .todo-edit-btn { background: #2c2c2e; border-color: #3a3a3c; }
+      .todo-done-date { background: #2c2c2e; }
+    }
+    body.dark-mode .todo-edit-btn { background: #2c2c2e; border-color: #3a3a3c; }
+    body.dark-mode .todo-done-date { background: #2c2c2e; }
 
     /* ---------- 草稿提示 ---------- */
     .draft-tip {
@@ -9551,15 +9603,40 @@ select to_regclass('public.wb_kv');</div>
 
         var gid = 'donegrp::' + listId;
         var collapse = getCollapse();
-        var collapsed = (gid in collapse) ? !!collapse[gid] : true;
+        // 顶层默认展开（让日期分组可见），各日期分组默认收起
+        var grpCollapsed = (gid in collapse) ? !!collapse[gid] : false;
 
         var grp = document.createElement('div');
-        grp.className = 'todo-done-group' + (collapsed ? ' collapsed' : '');
+        grp.className = 'todo-done-group' + (grpCollapsed ? ' collapsed' : '');
 
         var head = document.createElement('div');
         head.className = 'todo-done-head';
-        head.innerHTML = '<span class="arrow">▼</span><span>✅ 已完成（' + doneEls.length + '）· ' + _foldLabel + '</span>';
-        head.addEventListener('click', function () {
+        head.innerHTML = '<span class="arrow">▼</span><span class="done-head-text">✅ 已完成（' + doneEls.length + '）· ' + _foldLabel + '</span>';
+
+        // 编辑按钮：点击进入/退出编辑模式（显隐已完成项的 上移/下移/删除 按钮）
+        var editBtn = document.createElement('button');
+        editBtn.type = 'button';
+        editBtn.className = 'todo-edit-btn';
+        editBtn.textContent = '✏️ 编辑';
+        head.appendChild(editBtn);
+
+        editBtn.addEventListener('click', function (ev) {
+          ev.stopPropagation();
+          var on = grp.classList.toggle('edit-on');
+          editBtn.textContent = on ? '✅ 完成' : '✏️ 编辑';
+          // 进入编辑：展开所有日期分组以便操作；退出：收回到默认（收起）
+          body.querySelectorAll('.todo-done-date-group').forEach(function (dg) {
+            dg.classList.toggle('collapsed', !on);
+            var dh = dg.querySelector('.todo-done-date');
+            if (dh) {
+              dh.querySelector('.arrow').textContent = on ? '▾' : '▸';
+              dh.querySelector('.dt-toggle').textContent = on ? '收起' : '显示';
+            }
+          });
+        });
+
+        head.addEventListener('click', function (ev) {
+          if (ev.target === editBtn) return; // 编辑按钮单独处理，不触发整组折叠
           grp.classList.toggle('collapsed');
           var c = getCollapse();
           c[gid] = grp.classList.contains('collapsed');
@@ -9569,16 +9646,29 @@ select to_regclass('public.wb_kv');</div>
         var body = document.createElement('div');
         body.className = 'todo-done-body';
         order.forEach(function (k) {
-          var dt = document.createElement('div');
-          dt.className = 'todo-done-date';
-          dt.textContent = '📅 ' + k + '（' + map[k].length + '）';
-          body.appendChild(dt);
+          var dateGrp = document.createElement('div');
+          dateGrp.className = 'todo-done-date-group collapsed'; // 默认收起
+
+          var dateHead = document.createElement('div');
+          dateHead.className = 'todo-done-date';
+          dateHead.innerHTML = '<span class="arrow">▸</span>' +
+            '<span class="dt-text">📅 ' + k + '（' + map[k].length + '）</span>' +
+            '<span class="dt-toggle">显示</span>';
+          dateHead.addEventListener('click', function () {
+            var nowCollapsed = dateGrp.classList.toggle('collapsed');
+            dateHead.querySelector('.arrow').textContent = nowCollapsed ? '▸' : '▾';
+            dateHead.querySelector('.dt-toggle').textContent = nowCollapsed ? '显示' : '收起';
+          });
+
           var sub = document.createElement('ul');
           sub.className = 'todo-list';
           sub.style.padding = '0';
           sub.style.margin = '0';
           map[k].forEach(function (li) { sub.appendChild(li); });
-          body.appendChild(sub);
+
+          dateGrp.appendChild(dateHead);
+          dateGrp.appendChild(sub);
+          body.appendChild(dateGrp);
         });
 
         grp.appendChild(head);
