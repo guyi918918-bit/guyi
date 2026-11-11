@@ -11,7 +11,7 @@
   <link rel="icon" type="image/png" href="./icon-192.png" />
   <link rel="apple-touch-icon" href="./icon-192.png" />
   <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIuiupOecn+W3peS9nOWPsCIsCiAgInNob3J0X25hbWUiOiAi5bel5L2c5Y+wIiwKICAiZGVzY3JpcHRpb24iOiAi5Zub5bed5rS75Yqo5oOF5oql5pCc6ZuG5LiO5pS/5LyB5a6i5oi3566h55CGIiwKICAic3RhcnRfdXJsIjogIi4vIiwKICAic2NvcGUiOiAiLi8iLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJvcmllbnRhdGlvbiI6ICJwb3J0cmFpdCIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiI2Y1ZjVmNyIsCiAgInRoZW1lX2NvbG9yIjogIiMwMDY2Y2MiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24tMTkyLnBuZyIsCiAgICAgICJzaXplcyI6ICIxOTJ4MTkyIiwKICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIiwKICAgICAgInB1cnBvc2UiOiAiYW55IgogICAgfSwKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24tNTEyLnBuZyIsCiAgICAgICJzaXplcyI6ICI1MTJ4NTEyIiwKICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIiwKICAgICAgInB1cnBvc2UiOiAiYW55IgogICAgfSwKICAgIHsKICAgICAgInNyYyI6ICIuL2ljb24uc3ZnIiwKICAgICAgInNpemVzIjogImFueSIsCiAgICAgICJ0eXBlIjogImltYWdlL3N2Zyt4bWwiLAogICAgICAicHVycG9zZSI6ICJhbnkiCiAgICB9CiAgXQp9Cg==" />
-  <script>window.APP_VERSION = "build@1794297983";</script>
+  <script>window.APP_VERSION = "build@1794361986";</script>
   <title>DSC销售 · 项目管理工作台（完整版）</title>
   <script src="./xlsx.full.min.js"></script>
   <script>
@@ -3358,15 +3358,14 @@ body.dark-mode .project-card.dealed { border-top: 2px solid #0ca678 !important; 
     }
     .todo-done-btn:hover { background: var(--primary); color: #fff; border-color: var(--primary); }
 
-    /* 进行中待办：编辑开关控制条（置于进行中待办之后） */
-    .todo-list > li.todo-ip-control {
-      background: transparent;
-      margin: 8px 0 6px;
-      padding: 8px 0 0;
-      border-top: 1px dashed rgba(0,0,0,.10);
-      list-style: none;
+    /* 进行中待办：编辑开关置于栏目头部「清空全部」左侧 */
+    .todo-section .todo-header .todo-edit-btn.ip {
+      margin-left: auto;
+      margin-right: 6px;
+      padding: 2px 10px;
+      font-size: 12px;
+      align-self: center;
     }
-    .todo-list > li.todo-ip-control .todo-edit-btn { margin-left: 0; }
     /* 默认隐藏进行中项的 上移/下移/删除 按钮，仅编辑模式显示（与已完成一致） */
     .todo-list:not(.edit-on) > li.todo-item:not(.done) .todo-actions { display: none; }
 
@@ -3374,12 +3373,10 @@ body.dark-mode .project-card.dealed { border-top: 2px solid #0ca678 !important; 
       .todo-edit-btn { background: #2c2c2e; border-color: #3a3a3c; }
       .todo-done-date { background: #2c2c2e; }
       .todo-done-btn { background: #2c2c2e; border-color: #3a3a3c; }
-      .todo-list > li.todo-ip-control { border-top-color: rgba(255,255,255,.12); }
     }
     body.dark-mode .todo-edit-btn { background: #2c2c2e; border-color: #3a3a3c; }
     body.dark-mode .todo-done-date { background: #2c2c2e; }
     body.dark-mode .todo-done-btn { background: #2c2c2e; border-color: #3a3a3c; }
-    body.dark-mode .todo-list > li.todo-ip-control { border-top-color: rgba(255,255,255,.12); }
 
     /* ---------- 草稿提示 ---------- */
     .draft-tip {
@@ -9739,29 +9736,45 @@ select to_regclass('public.wb_kv');</div>
         ul.appendChild(holder);
       }
 
-      /* ===== V36：进行中待办——与已完成一致，默认隐藏操作按钮，编辑模式显隐 ===== */
+      /* ===== V36：进行中待办——与已完成一致，默认隐藏操作按钮，编辑模式显隐 =====
+       * 编辑开关放在栏目头部「清空全部」按钮左边（与标题同行右侧）。 */
       var _inProgressEdit = { todoDailyList: false, todoWeeklyList: false, todoMonthlyList: false };
+
+      function _ipHeaderBtn(listId) {
+        var ul = $(listId);
+        if (!ul) return null;
+        var section = ul.closest('.todo-section');
+        if (!section) return null;
+        var header = section.querySelector('.todo-header');
+        if (!header) return null;
+        return header.querySelector('.todo-edit-btn.ip');
+      }
 
       function applyInProgressEdit(listId) {
         var ul = $(listId);
         if (!ul) return;
         var on = !!_inProgressEdit[listId];
         ul.classList.toggle('edit-on', on);
-        var btn = ul.querySelector('li.todo-ip-control .todo-edit-btn');
+        var btn = _ipHeaderBtn(listId);
         if (btn) btn.textContent = on ? '✅ 完成' : '✏️ 编辑';
       }
 
       function ensureInProgressEdit(listId) {
         var ul = $(listId);
         if (!ul) return;
-        // 仅在进行中项存在时显示编辑开关
+        var section = ul.closest('.todo-section');
+        if (!section) return;
+        var header = section.querySelector('.todo-header');
+        if (!header) return;
+        // 仅在进行中项存在时显示编辑开关；否则隐藏
         var ipItems = ul.querySelectorAll('li.todo-item:not(.done)');
-        if (!ipItems.length) return;
-        var ctrl = ul.querySelector('li.todo-ip-control');
-        if (!ctrl) {
-          ctrl = document.createElement('li');
-          ctrl.className = 'todo-ip-control';
-          var ipBtn = document.createElement('button');
+        var ipBtn = header.querySelector('.todo-edit-btn.ip');
+        if (!ipItems.length) {
+          if (ipBtn) ipBtn.style.display = 'none';
+          return;
+        }
+        if (!ipBtn) {
+          ipBtn = document.createElement('button');
           ipBtn.type = 'button';
           ipBtn.className = 'todo-edit-btn ip';
           ipBtn.textContent = '✏️ 编辑';
@@ -9769,13 +9782,12 @@ select to_regclass('public.wb_kv');</div>
             _inProgressEdit[listId] = !_inProgressEdit[listId];
             applyInProgressEdit(listId);
           });
-          ctrl.appendChild(ipBtn);
-          // 移到进行中待办之后、已完成分组之前（不在顶部，避免突兀）
-          var doneHolder = ul.querySelector('.todo-done-group');
-          var ref = doneHolder ? doneHolder.closest('li') : null;
-          if (ref) ul.insertBefore(ctrl, ref);
-          else ul.appendChild(ctrl);
+          // 插入到「清空全部」按钮之前（头部右侧）
+          var clearBtn = header.querySelector('button.btn-sm');
+          if (clearBtn) header.insertBefore(ipBtn, clearBtn);
+          else header.appendChild(ipBtn);
         }
+        ipBtn.style.display = '';
         applyInProgressEdit(listId);
       }
 
